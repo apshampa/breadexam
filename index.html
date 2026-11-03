@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharma-Pulse | 15-Day Strategic Exam Mastery</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti for Gamification -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Marked for markdown preview -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            pharma: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d'
+            },
+            caduceus: {
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Card Flip 3D Styles */
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.3); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.5); }
+    
+    /* Pulse glow */
+    @keyframes subtlePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .boss-pulse { animation: subtlePulse 3s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Navigation & Gamification Bar -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Rank -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg text-white tracking-tight">Pharma-Pulse</h1>
+            <span id="rankBadge" class="text-xs px-2 py-0.5 rounded-full font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              Lvl 1 • Intern
+            </span>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-400">
+            <span>⭐ <strong id="xpCount" class="text-amber-400 font-bold">0</strong> XP</span>
+            <span>🔥 <strong id="streakCount" class="text-rose-400 font-bold">1</strong>-Day Streak</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: 80/20 Smart Play Triage Switch -->
+      <div class="hidden md:flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 shadow-inner">
+        <button onclick="setTriageMode('pass')" id="btnTriagePass" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5">
+          <span>🛡️</span> Pass & Secure (80/20)
+        </button>
+        <button onclick="setTriageMode('first_class')" id="btnTriageStandard" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5">
+          <span>🎯</span> First Class
+        </button>
+        <button onclick="setTriageMode('distinction')" id="btnTriageDistinction" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5">
+          <span>🏆</span> Distinction
+        </button>
+      </div>
+
+      <!-- Right Controls: Timer, Focus Mode, Quick Search -->
+      <div class="flex items-center gap-2">
+        
+        <!-- Pomodoro Widget -->
+        <div class="bg-slate-800 border border-slate-700 px-3 py-1 rounded-lg flex items-center gap-2 text-xs">
+          <span class="text-indigo-400">⏱️</span>
+          <span id="pomoTimer" class="font-mono font-bold text-slate-200">25:00</span>
+          <button onclick="togglePomodoro()" id="btnPomoToggle" class="text-slate-400 hover:text-white transition">
+            ▶
+          </button>
+          <button onclick="resetPomodoro()" class="text-slate-500 hover:text-slate-300 transition text-[10px]">
+            ↺
+          </button>
+        </div>
+
+        <!-- Zen Focus Mode -->
+        <button onclick="toggleFocusMode()" title="Toggle Zen Focus Mode" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Readiness Progress Bar -->
+  <div class="bg-slate-800/60 border-b border-slate-800 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <span class="text-slate-400">Overall Exam Readiness:</span>
+        <span id="readinessScore" class="font-bold text-emerald-400">0%</span>
+        <span id="readinessStatus" class="text-[11px] text-slate-400 italic">Preparing for takeoff...</span>
+      </div>
+      <div class="w-full sm:w-96 bg-slate-700/80 rounded-full h-2.5 overflow-hidden border border-slate-600/50">
+        <div id="readinessBar" class="bg-gradient-to-r from-emerald-500 via-indigo-500 to-amber-400 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Tab Navigation -->
+    <div class="flex border-b border-slate-800 gap-2 sm:gap-4 overflow-x-auto pb-1 text-sm">
+      <button onclick="switchTab('today')" id="tabBtnToday" class="px-4 py-2.5 font-medium border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 whitespace-nowrap">
+        <span>📅</span> Today's Mission
+      </button>
+      <button onclick="switchTab('cards')" id="tabBtnCards" class="px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <span>⚡</span> Active Recall Cards
+        <span id="badgeCardCount" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-indigo-300 border border-slate-700">47</span>
+      </button>
+      <button onclick="switchTab('matrix')" id="tabBtnMatrix" class="px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <span>🧪</span> Drugs of Choice & Antidotes
+      </button>
+      <button onclick="switchTab('classifications')" id="tabBtnClassifications" class="px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <span>🌳</span> Classification Trees
+      </button>
+      <button onclick="switchTab('timeline')" id="tabBtnTimeline" class="px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <span>🗺️</span> 15-Day Map
+      </button>
+    </div>
+
+    <!-- TAB 1: TODAY'S MISSION -->
+    <section id="tabToday" class="space-y-6">
+      
+      <!-- Day Selector Carousel / Jump Bar -->
+      <div class="bg-slate-800/40 border border-slate-800 p-3 rounded-2xl flex items-center justify-between gap-3 overflow-x-auto">
+        <div class="flex items-center gap-1.5" id="dayPickerPills">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="jumpPreviousDay()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+            ◀ Prev
+          </button>
+          <button onclick="jumpNextDay()" class="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30">
+            Next ▶
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Day Card Hero -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Objectives & Content (2 cols) -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-gradient-to-br from-slate-800/90 to-slate-900/90 border border-slate-700/70 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div class="flex items-center gap-2">
+                <span id="currentDayBadge" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-3 py-1 rounded-full text-xs">
+                  DAY 1 of 15
+                </span>
+                <span id="currentSystemBadge" class="text-xs px-2.5 py-1 rounded-full bg-slate-700 text-slate-300">
+                  General Principles
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="openMarkdownEditor()" class="text-xs bg-slate-700/80 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 flex items-center gap-1.5 transition">
+                  <span>✏️</span> Edit .md Notes
+                </button>
+              </div>
+            </div>
+
+            <h2 id="currentDayTitle" class="text-2xl font-extrabold text-white tracking-tight mb-2">
+              General Pharmacology: Pharmacokinetics & Dynamics
+            </h2>
+
+            <!-- Textbook References -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4 text-xs">
+              <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl flex items-center gap-3">
+                <div class="text-xl">📘</div>
+                <div>
+                  <div class="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Primary High-Yield</div>
+                  <div id="refShanbhag" class="text-slate-200 font-medium">Shanbhag Ch 1 - 4 (pp. 1-38)</div>
+                </div>
+              </div>
+              <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl flex items-center gap-3">
+                <div class="text-xl">📕</div>
+                <div>
+                  <div class="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Reference / Flowcharts</div>
+                  <div id="refKDT" class="text-slate-200 font-medium">KD Tripathi Section 1 (Ch 1 - 6)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checklist of Objectives -->
+            <div class="mt-6">
+              <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between mb-3">
+                <span>🎯 Core High-Yield Milestones</span>
+                <span id="objectiveProgress" class="text-xs text-indigo-400 font-mono">0 / 5 Complete</span>
+              </h3>
+              <div id="objectivesList" class="space-y-2.5">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- High-Yield Pearls -->
+          <div class="bg-amber-950/20 border border-amber-600/30 rounded-3xl p-6 relative">
+            <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2 mb-3">
+              <span>💡</span> High-Yield Exam Pearls (Guaranteed Marks)
+            </h3>
+            <div id="pearlsList" class="space-y-2 text-xs sm:text-sm text-amber-200/90 leading-relaxed">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Daily Boss Battle Card (1 col) -->
+        <div class="space-y-6">
+          <div class="bg-gradient-to-b from-indigo-950/40 via-slate-800/80 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 text-center shadow-xl relative overflow-hidden">
+            <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="inline-block p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-4xl mb-3 boss-pulse">
+              👾
+            </div>
+            <div class="text-xs uppercase font-bold tracking-widest text-indigo-400">Daily Boss Battle</div>
+            <h3 id="bossName" class="text-xl font-black text-white mt-1">The Kinetic Titan</h3>
+            <p class="text-xs text-slate-400 mt-2 px-2">
+              Defeat the daily boss with 5 high-speed university exam questions to claim <strong class="text-amber-400">+200 XP</strong> and lock in retention!
+            </p>
+
+            <!-- Boss Status / Play Button -->
+            <div class="mt-6">
+              <div id="bossStatusBadge" class="hidden mb-3 text-xs py-1 px-3 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                ✅ Boss Defeated!
+              </div>
+              <button onclick="startBossBattle()" id="btnStartBoss" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition-all transform hover:scale-[1.02]">
+                ⚔️ Enter Boss Arena (5 Questions)
+              </button>
+            </div>
+
+            <!-- Quick Action Cards below Boss -->
+            <div class="mt-6 pt-6 border-t border-slate-700/60 grid grid-cols-2 gap-2 text-left">
+              <button onclick="openAnkiExporter()" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs transition">
+                <div class="font-bold text-indigo-300">📥 Export Anki</div>
+                <div class="text-[10px] text-slate-400">Download .csv deck</div>
+              </button>
+              <button onclick="switchTab('cards')" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs transition">
+                <div class="font-bold text-emerald-300">⚡ Flash Drill</div>
+                <div class="text-[10px] text-slate-400">Active recall cards</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Motivational Tip Box -->
+          <div class="bg-slate-800/40 border border-slate-800 rounded-3xl p-5 text-xs text-slate-400 space-y-2">
+            <div class="font-bold text-slate-300 flex items-center gap-1.5">
+              <span>🧠</span> 15-Day Strategy Rule
+            </div>
+            <p>
+              Don't spend more than 3 hours on primary reading. The real retention happens when answering "Why" questions and classifying drugs by memory.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: ACTIVE RECALL FLASHCARDS (DIGITAL ANKI) -->
+    <section id="tabCards" class="hidden space-y-6">
+      
+      <!-- Card Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-800/50 p-4 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-2 overflow-x-auto text-xs">
+          <button onclick="filterCards('all')" id="btnFilterAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium">All (<span id="countAll">0</span>)</button>
+          <button onclick="filterCards('red')" id="btnFilterRed" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 font-medium">🔴 Needs Review (<span id="countRed">0</span>)</button>
+          <button onclick="filterCards('green')" id="btnFilterGreen" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 font-medium">🟢 Mastered (<span id="countGreen">0</span>)</button>
+          <button onclick="filterCards('why')" id="btnFilterWhy" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Explain Why</button>
+          <button onclick="filterCards('doc')" id="btnFilterDoc" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Drug of Choice</button>
+          <button onclick="filterCards('antidote')" id="btnFilterAntidote" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Antidotes</button>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <button onclick="openAnkiExporter()" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-semibold text-slate-200 border border-slate-600 flex items-center gap-1.5">
+            <span>📥</span> Download Anki Deck (.csv)
+          </button>
+        </div>
+      </div>
+
+      <!-- Flashcard Arena -->
+      <div class="max-w-2xl mx-auto space-y-4">
+        
+        <div class="flex items-center justify-between text-xs text-slate-400 px-2">
+          <span>Card <strong id="currentCardIndex" class="text-white">1</strong> of <strong id="totalCardsCount" class="text-white">47</strong></span>
+          <span id="currentCardTag" class="px-2 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700 text-[10px]">HighYield::ExplainWhy</span>
+        </div>
+
+        <!-- The 3D Flip Card Container -->
+        <div onclick="flipCurrentCard()" class="perspective-1000 cursor-pointer min-h-[300px]">
+          <div id="flipCardInner" class="relative w-full min-h-[300px] transition-transform duration-500 transform-style-3d bg-slate-800/90 border border-slate-700 rounded-3xl p-8 flex flex-col justify-between shadow-2xl hover:border-slate-600">
+            
+            <!-- Front Face -->
+            <div id="cardFront" class="space-y-4">
+              <div class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center justify-between">
+                <span>QUESTION / CHALLENGE</span>
+                <span class="text-slate-500 text-[10px]">Click or press Space to flip ↺</span>
+              </div>
+              <div id="cardFrontText" class="text-lg sm:text-xl font-bold text-white leading-relaxed pt-4">
+                Loading question...
+              </div>
+            </div>
+
+            <!-- Back Face (Revealed on flip) -->
+            <div id="cardBack" class="hidden space-y-4 border-t border-slate-700/80 pt-4">
+              <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                EXAM-STANDARD RATIONALE & KEYWORDS
+              </div>
+              <div id="cardBackText" class="text-sm sm:text-base text-slate-200 leading-relaxed space-y-2">
+                Loading answer...
+              </div>
+            </div>
+
+            <!-- Footer Hint -->
+            <div class="pt-4 text-center text-xs text-slate-500">
+              <span id="flipPrompt">Click anywhere to flip and see answer</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Rating Buttons (Spaced Repetition Controls) -->
+        <div class="grid grid-cols-3 gap-3">
+          <button onclick="rateCurrentCard('red')" class="py-3 px-4 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/40 text-rose-300 font-bold text-xs sm:text-sm flex flex-col items-center gap-1 transition">
+            <span>🔴 Review Soon [1]</span>
+            <span class="text-[10px] font-normal text-rose-400/80">Struggled or blanked</span>
+          </button>
+          <button onclick="rateCurrentCard('yellow')" class="py-3 px-4 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/40 text-amber-300 font-bold text-xs sm:text-sm flex flex-col items-center gap-1 transition">
+            <span>🟡 Medium [2]</span>
+            <span class="text-[10px] font-normal text-amber-400/80">Partial recall</span>
+          </button>
+          <button onclick="rateCurrentCard('green')" class="py-3 px-4 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 font-bold text-xs sm:text-sm flex flex-col items-center gap-1 transition">
+            <span>🟢 Mastered [3]</span>
+            <span class="text-[10px] font-normal text-emerald-400/80">Reflex recall (+15 XP)</span>
+          </button>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="prevCard()" class="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800">
+            ← Previous (Left Arrow)
+          </button>
+          <button onclick="nextCard()" class="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800">
+            Next (Right Arrow) →
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: SEARCHABLE DOC & ANTIDOTE MATRIX -->
+    <section id="tabMatrix" class="hidden space-y-6">
+      
+      <!-- Search & Filter Controls -->
+      <div class="bg-slate-800/60 border border-slate-700/80 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="relative w-full sm:w-96">
+          <input type="text" id="matrixSearchInput" oninput="renderMatrixTables()" placeholder="Search condition, drug, or poison (e.g. 'shock', 'heparin')..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+          <span class="absolute right-3 top-2.5 text-slate-500 text-xs">🔍</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <button onclick="toggleMatrixCategory('all')" id="btnMatrixAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium">All</button>
+          <button onclick="toggleMatrixCategory('doc')" id="btnMatrixDoc" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Drugs of Choice (50)</button>
+          <button onclick="toggleMatrixCategory('antidote')" id="btnMatrixAntidote" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Antidotes (30)</button>
+        </div>
+      </div>
+
+      <!-- Results Container -->
+      <div id="matrixResultsContainer" class="space-y-6">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 4: HIGH-YIELD CLASSIFICATION TREES -->
+    <section id="tabClassifications" class="hidden space-y-6">
+      <div class="bg-slate-800/40 border border-slate-800 p-4 rounded-2xl text-xs text-slate-300 flex items-center justify-between">
+        <div>
+          <strong class="text-white">Exam Strategy Tip:</strong> Drawing these clean classification trees on your answer sheet gets full marks before examiners even read paragraphs. Practice redrawing each tree from memory.
+        </div>
+      </div>
+      <div id="classificationsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Populated via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 5: 15-DAY MASTER TIMELINE MAP -->
+    <section id="tabTimeline" class="hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="timelineGrid">
+        <!-- Populated via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: BOSS BATTLE ARENA -->
+  <div id="bossModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-indigo-500/40 rounded-3xl max-w-xl w-full p-6 shadow-2xl relative space-y-5">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">👾</span>
+          <div>
+            <h3 id="modalBossName" class="font-bold text-white text-base">The Kinetic Titan</h3>
+            <div class="text-[11px] text-indigo-400">Day Boss Battle</div>
+          </div>
+        </div>
+        <button onclick="closeBossModal()" class="text-slate-500 hover:text-white text-xl">✕</button>
+      </div>
+
+      <!-- Boss HP Bar -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between text-xs font-semibold">
+          <span class="text-slate-400">Boss HP:</span>
+          <span id="bossHpText" class="text-rose-400">100 / 100 HP</span>
+        </div>
+        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+          <div id="bossHpBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Question Box -->
+      <div id="bossQuestionArea" class="space-y-4">
+        <div class="text-xs text-indigo-300 font-bold uppercase tracking-wider flex items-center justify-between">
+          <span id="bossQIndex">Question 1 of 5</span>
+          <span class="text-amber-400">+40 XP per hit</span>
+        </div>
+        <div id="bossQuestionText" class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+          Question loading...
+        </div>
+
+        <!-- 4 Multiple Choice Options -->
+        <div id="bossOptionsList" class="space-y-2">
+          <!-- Populated via JS -->
+        </div>
+
+        <!-- Explanation area revealed after answer -->
+        <div id="bossExplanationBox" class="hidden p-3 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-slate-300 leading-relaxed">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Victory Screen (Hidden until beat) -->
+      <div id="bossVictoryArea" class="hidden text-center py-6 space-y-4">
+        <div class="text-6xl animate-bounce">🏆</div>
+        <h3 class="text-2xl font-black text-white">BOSS DEFEATED!</h3>
+        <p class="text-sm text-slate-300">
+          Outstanding active recall! You earned <strong class="text-amber-400">+200 XP</strong> and secured mastery over today's core concepts.
+        </p>
+        <button onclick="closeBossModal()" class="py-2.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm">
+          Claim Victory & Continue
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: MARKDOWN EDITOR -->
+  <div id="mdEditorModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="font-bold text-white text-base">✏️ Edit Syllabus (.md) for Current Day</h3>
+          <p class="text-xs text-slate-400">Modify notes, paste university past questions, or customize objectives</p>
+        </div>
+        <button onclick="closeMarkdownEditor()" class="text-slate-500 hover:text-white text-xl">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-hidden">
+        <textarea id="mdEditorTextarea" class="w-full h-80 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+        <span class="text-xs text-slate-500">Saved to browser & synced to disk if server running</span>
+        <div class="flex items-center gap-2">
+          <button onclick="closeMarkdownEditor()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
+            Cancel
+          </button>
+          <button onclick="saveMarkdownContent()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow-lg shadow-emerald-600/30">
+            💾 Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ANKI EXPORT INFO -->
+  <div id="ankiExportModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-indigo-500/30 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🎴</span>
+          <h3 class="font-bold text-white text-base">Download Anki Flashcard Deck</h3>
+        </div>
+        <button onclick="closeAnkiExporter()" class="text-slate-500 hover:text-white text-xl">✕</button>
+      </div>
+
+      <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
+        <p>
+          You are about to download <strong class="text-white">pharma_high_yield_anki_deck.csv</strong> containing all 47+ pre-formatted high-yield exam cards with tags and HTML formatting.
+        </p>
+        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+          <div class="font-bold text-indigo-300 mb-1">Import Steps:</div>
+          <ol class="list-decimal list-inside space-y-1 text-slate-400">
+            <li>Open Anki Desktop $\rightarrow$ File $\rightarrow$ Import.</li>
+            <li>Select the downloaded CSV.</li>
+            <li>Check <strong>"Allow HTML in fields"</strong>.</li>
+            <li>Click <strong>Import</strong>!</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-2">
+        <button onclick="closeAnkiExporter()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
+          Close
+        </button>
+        <button onclick="triggerAnkiDownload()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
+          <span>📥</span> Download .CSV Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMBEDDED DATA & APPLICATION LOGIC -->
+  <script>
+    // --- 1. CORE DATA STORE ---
+    const DAYS_DATA = [
+      {
+        day: 1,
+        title: "General Pharmacology: Pharmacokinetics & Dynamics",
+        system: "General Principles",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 1 - 4 (pp. 1-38)",
+        kdt_ref: "KD Tripathi Section 1 (Ch 1 - 6)",
+        boss_name: "The Kinetic Titan",
+        boss_hp: 100,
+        objectives: [
+          "Differentiate First-pass metabolism, Bioavailability, and Volume of Distribution (Vd)",
+          "Master Zero-order vs First-order elimination kinetics (Phenytoin, Alcohol, Aspirin)",
+          "Memorize Microsomal Enzyme Inducers (GPRS Cell Phone) vs Inhibitors (Vitamin K Cannot Cause Enzyme Inhibition)",
+          "Understand Therapeutic Index (LD50 / ED50) & Margin of Safety",
+          "G-Protein Coupled Receptors (Gs, Gi, Gq pathways and secondary messengers)"
+        ],
+        pearls: [
+          "Enzyme Inducers: <b>G</b>riseofulvin, <b>P</b>henytoin, <b>R</b>ifampicin, <b>S</b>moking, <b>C</b>arbamazepine, <b>P</b>henobarbitone.",
+          "Enzyme Inhibitors: <b>V</b>alproate, <b>K</b>etoconazole, <b>C</b>iprofloxacin, <b>C</b>imetidine, <b>E</b>rythromycin, <b>I</b>soniazid.",
+          "Loading Dose = (Target plasma conc × Vd) / Bioavailability (F).",
+          "Maintenance Dose = (Target plasma conc × Clearance) / Bioavailability (F)."
+        ],
+        boss_questions: [
+          {
+            q: "Which of the following drugs follows zero-order kinetics of elimination at therapeutic or high doses?",
+            options: ["Phenytoin", "Penicillin", "Amoxicillin", "Gentamicin"],
+            answer: 0,
+            explanation: "Phenytoin, Ethanol, and high-dose Aspirin follow zero-order (constant amount per unit time) kinetics due to enzyme saturation."
+          },
+          {
+            q: "A drug with high volume of distribution (Vd > 5 L/kg) is primarily distributed in:",
+            options: ["Vascular compartment", "Extracellular fluid only", "Extravascular tissues and deep fat stores", "Plasma proteins"],
+            answer: 2,
+            explanation: "High Vd indicates extensive tissue binding / sequestration (e.g. Chloroquine, Digoxin). Hemodialysis is ineffective for such drugs."
+          },
+          {
+            q: "Which receptor subtype signals via the Gq pathway activating Phospholipase C (PLC) and IP3/DAG?",
+            options: ["Alpha-1 adrenergic", "Beta-1 adrenergic", "Alpha-2 adrenergic", "Dopamine D2"],
+            answer: 0,
+            explanation: "HAVe 1 M&M: H1, Alpha-1, V1, M1, M3 act via Gq -> Phospholipase C -> IP3 & DAG -> intracellular Ca2+ release."
+          },
+          {
+            q: "Which of the following is a potent hepatic microsomal enzyme inhibitor?",
+            options: ["Rifampicin", "Phenobarbitone", "Ketoconazole", "Carbamazepine"],
+            answer: 2,
+            explanation: "Ketoconazole, Ciprofloxacin, and Erythromycin are potent CYP3A4 inhibitors, precipitating toxic levels of co-administered drugs."
+          },
+          {
+            q: "Therapeutic Index is mathematically represented as:",
+            options: ["ED50 / LD50", "LD50 / ED50", "Vd / Clearance", "Bioavailability / Half-life"],
+            answer: 1,
+            explanation: "Therapeutic Index = Median Lethal Dose (LD50) / Median Effective Dose (ED50). Higher ratio means wider safety margin."
+          }
+        ]
+      },
+      {
+        day: 2,
+        title: "ANS 1: Cholinergic Agonists, Anticholinesterases & Atropine",
+        system: "Autonomic Nervous System",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 5 - 9 (pp. 39-74)",
+        kdt_ref: "KD Tripathi Section 2 (Ch 7 - 9)",
+        boss_name: "The Muscarinic Overlord",
+        boss_hp: 100,
+        objectives: [
+          "Classify Cholinergic agonists (Esters & Alkaloids: Pilocarpine, Bethanechol)",
+          "Anticholinesterases: Reversible (Physostigmine vs Neostigmine) vs Irreversible (Organophosphates)",
+          "Management of Myasthenia Gravis: Tensilon test vs Pyridostigmine vs Thymectomy",
+          "Organophosphate poisoning management: Atropine titration + Pralidoxime protocol",
+          "Atropine: Pharmacological actions, therapeutic uses, toxicity (Belladonna signs) & contraindications"
+        ],
+        pearls: [
+          "Physostigmine is a tertiary amine (crosses blood-brain barrier); Neostigmine is quaternary (no BBB penetration, stronger nicotinic action at NMJ).",
+          "Tensilon (Edrophonium) test: Improves myasthenic crisis within 60 seconds; worsens cholinergic crisis.",
+          "Atropine toxicity: 'Blind as a bat, dry as a bone, red as a beet, hot as a hare, mad as a hatter'."
+        ],
+        boss_questions: [
+          {
+            q: "Which anticholinesterase is preferred for treating Belladonna / Atropine poisoning?",
+            options: ["Neostigmine", "Physostigmine", "Pyridostigmine", "Pralidoxime"],
+            answer: 1,
+            explanation: "Physostigmine is a tertiary amine, so it crosses the BBB to reverse central delirium and hallucinations of atropine poisoning."
+          },
+          {
+            q: "Pralidoxime reverses organophosphate poisoning by:",
+            options: ["Directly blocking muscarinic receptors", "Reactivating phosphorylated acetylcholinesterase", "Competitively antagonizing acetylcholine", "Enhancing hepatic glucuronidation"],
+            answer: 1,
+            explanation: "Pralidoxime is a nucleophilic oxime that displaces the organophosphate group from the esteratic site of acetylcholinesterase before aging occurs."
+          },
+          {
+            q: "In Myasthenia Gravis maintenance therapy, the preferred oral anticholinesterase drug is:",
+            options: ["Neostigmine", "Pyridostigmine", "Edrophonium", "Pilocarpine"],
+            answer: 1,
+            explanation: "Pyridostigmine is longer acting (3-6 hours) than neostigmine with fewer muscarinic side effects, making it ideal for chronic maintenance."
+          },
+          {
+            q: "Atropine is strictly contraindicated in which ocular condition?",
+            options: ["Open-angle glaucoma", "Primary angle-closure glaucoma", "Uveitis", "Corneal ulcer"],
+            answer: 1,
+            explanation: "Atropine causes mydriasis and relaxation of pupillary sphincter, causing the iris to bunch up into the anterior chamber angle and triggering acute angle closure."
+          },
+          {
+            q: "Pilocarpine lowers intraocular pressure in glaucoma primarily by:",
+            options: ["Decreasing aqueous humor production via beta blockade", "Contracting ciliary muscle to open trabecular meshwork pores", "Increasing uveoscleral outflow via FP receptor", "Inhibiting carbonic anhydrase in ciliary epithelium"],
+            answer: 1,
+            explanation: "Pilocarpine contracts the ciliary muscle, pulling on the scleral spur to stretch trabecular meshwork spaces and facilitate trabecular drainage."
+          }
+        ]
+      },
+      {
+        day: 3,
+        title: "ANS 2: Adrenergic Agonists, Beta-Blockers & Glaucoma",
+        system: "Autonomic Nervous System",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 10 - 13 (pp. 75-104)",
+        kdt_ref: "KD Tripathi Section 2 (Ch 10 - 12)",
+        boss_name: "The Adrenergic Colossus",
+        boss_hp: 100,
+        objectives: [
+          "Adrenaline vs Noradrenaline vs Dopamine: Receptor profiles and clinical applications",
+          "Dale's Vasomotor Reversal phenomenon: Pharmacological basis",
+          "Alpha-blockers: Phenoxybenzamine vs Prazosin vs Tamsulosin (BPH)",
+          "Comprehensive classification of Beta-blockers (Cardioselective, ISA, combined alpha+beta)",
+          "Medical management of Glaucoma: Prostaglandin analogs (Latanoprost), Beta-blockers (Timolol), Alpha-2 agonists (Brimonidine)"
+        ],
+        pearls: [
+          "Adrenaline is drug of choice for Anaphylaxis (1:1000 IM, 0.5 mL in adult).",
+          "In Pheochromocytoma: ALWAYS give Alpha-blocker (Phenoxybenzamine) BEFORE Beta-blocker.",
+          "Tamsulosin: Selective α1A blocker for BPH; minimal effect on blood pressure (no postural hypotension).",
+          "Beta-blockers with intrinsic sympathomimetic activity (ISA): Pindolol, Acebutolol (cause less bradycardia)."
+        ],
+        boss_questions: [
+          {
+            q: "The phenomenon of Dale's Vasomotor Reversal is seen when Adrenaline is administered after pre-treatment with:",
+            options: ["Propranolol", "Phenoxybenzamine", "Atropine", "Hexamethonium"],
+            answer: 1,
+            explanation: "Alpha blockade eliminates α1-mediated vasoconstriction, unmasking β2-mediated vasodilation; adrenaline now causes BP to fall instead of rise."
+          },
+          {
+            q: "Which beta-blocker also produces vasodilation by stimulating endothelial Nitric Oxide (NO) release?",
+            options: ["Atenolol", "Nebivolol", "Metoprolol", "Propranolol"],
+            answer: 1,
+            explanation: "Nebivolol is a highly cardioselective β1 blocker that uniquely promotes endothelial NO production, reducing peripheral resistance."
+          },
+          {
+            q: "Which drug is first-line medical therapy for Chronic Open-Angle Glaucoma?",
+            options: ["Latanoprost", "Oral Acetazolamide", "Pilocarpine drops", "IV Mannitol"],
+            answer: 0,
+            explanation: "Prostaglandin F2α analogs (Latanoprost, Bimatoprost) once daily at night are first-line; they increase uveoscleral outflow."
+          },
+          {
+            q: "Dobutamine is preferred in acute decompensated heart failure with cardiogenic shock primarily because:",
+            options: ["It produces marked renal vasodilation via D1 receptors", "It selectively increases cardiac inotropy (β1) with minimal change in heart rate and afterload", "It is an irreversible alpha receptor blocker", "It has a 24-hour half-life"],
+            answer: 1,
+            explanation: "Dobutamine possesses selective β1 inotropic activity over chronotropy and causes mild β2 vasodilation, improving cardiac output without excessive tachycardia."
+          },
+          {
+            q: "Why is Propranolol contraindicated in patients with severe Bronchial Asthma?",
+            options: ["It blocks β2 receptors on bronchial smooth muscle, triggering bronchospasm", "It causes massive histamine degranulation from mast cells", "It blocks muscarinic M3 receptors in airways", "It prevents pulmonary clearance of adrenaline"],
+            answer: 0,
+            explanation: "Non-selective β-blockade antagonizes physiological β2-receptor mediated bronchodilation, precipitating life-threatening bronchospasm."
+          }
+        ]
+      },
+      {
+        day: 4,
+        title: "CVS 1: Antihypertensives & Antianginal Drugs",
+        system: "Cardiovascular System",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 23 - 26 (pp. 165-204)",
+        kdt_ref: "KD Tripathi Section 8 (Ch 39 - 41)",
+        boss_name: "The Vascular Warden",
+        boss_hp: 100,
+        objectives: [
+          "Classify Antihypertensive drugs into first-line classes (A-B-C-D regimen)",
+          "ACE Inhibitors vs ARBs: Hemodynamic actions, dry cough MOA, and Teratogenicity",
+          "Calcium Channel Blockers: Dihydropyridines (Amlodipine) vs Non-DHPs (Verapamil, Diltiazem)",
+          "Nitrates: Mechanism of vascular relaxation (cGMP), Nitrate Tolerance & prevention",
+          "Dangerous drug interaction: Sildenafil + Nitroglycerin"
+        ],
+        pearls: [
+          "ACE Inhibitors cause dry cough and angioedema by preventing Bradykinin breakdown (Kininase II inhibition).",
+          "Verapamil is contraindicated with Beta-blockers (risk of severe bradycardia, AV block, and cardiac arrest).",
+          "Nitrate tolerance is overcome by providing a daily 8-12 hour nitrate-free interval.",
+          "In Pre-eclampsia / Gestational HTN: Labetalol, Methyldopa, Nifedipine, Hydralazine are safe; ACEi/ARBs are strictly contraindicated."
+        ],
+        boss_questions: [
+          {
+            q: "Which antihypertensive drug is absolutely contraindicated in bilateral renal artery stenosis?",
+            options: ["Amlodipine", "Enalapril", "Hydrochlorothiazide", "Atenolol"],
+            answer: 1,
+            explanation: "In bilateral renal artery stenosis, GFR is preserved by Angiotensin II-mediated efferent arteriolar constriction. ACEi dilate efferent arterioles, causing acute renal failure."
+          },
+          {
+            q: "Nitroglycerin relieves exertional angina primarily by:",
+            options: ["Directly dilating coronary arterioles and reducing afterload", "Venodilation leading to decreased preload and reduced myocardial oxygen demand", "Inhibiting sodium channels in ischemic myocytes", "Increasing cardiac contractility via beta agonism"],
+            answer: 1,
+            explanation: "At therapeutic doses, nitrates are predominantly venodilators; reducing venous return (preload) lowers end-diastolic wall tension and myocardial O2 demand."
+          },
+          {
+            q: "A patient on Amlodipine frequently complains of ankle edema. The mechanism of this side effect is:",
+            options: ["Renal fluid retention secondary to hyperaldosteronism", "Precapillary arteriolar dilation increasing transcapillary hydrostatic pressure", "Systemic venous constriction", "Direct capillary endothelial damage"],
+            answer: 1,
+            explanation: "Dihydropyridines cause selective precapillary arteriolar vasodilation without postcapillary venodilation, raising intracapillary hydrostatic pressure and causing fluid extravasation."
+          },
+          {
+            q: "Which antianginal drug works by inhibiting the late inward sodium current (INa) in cardiac myocytes without affecting heart rate or BP?",
+            options: ["Ranolazine", "Nicorandil", "Ivabradine", "Trimetazidine"],
+            answer: 0,
+            explanation: "Ranolazine inhibits late INa, preventing intracellular sodium and secondary calcium overload in ischemic myocardium."
+          },
+          {
+            q: "Ivabradine lowers heart rate selectively by blocking which current in the SA node?",
+            options: ["L-type Calcium current (ICa-L)", "Delayed rectifier Potassium current (IKr)", "Hyperpolarization-activated cyclic nucleotide-gated funny current (If)", "Fast Sodium inward current (INa)"],
+            answer: 2,
+            explanation: "Ivabradine is a selective inhibitor of the cardiac pacemaker funny current (If) in the SA node, reducing heart rate without affecting inotropy or blood pressure."
+          }
+        ]
+      },
+      {
+        day: 5,
+        title: "CVS 2: Heart Failure, Diuretics & Antiarrhythmics",
+        system: "Cardiovascular & Renal",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 27 - 30 (pp. 205-242)",
+        kdt_ref: "KD Tripathi Section 8 (Ch 38, 42) & Section 9 (Ch 43)",
+        boss_name: "The Arrhythmic Behemoth",
+        boss_hp: 100,
+        objectives: [
+          "Digoxin: MOA (Na+/K+ ATPase), signs of digitalis toxicity, ECG findings, and predisposing factors",
+          "Cornerstones of HFrEF mortality reduction: ACEi/ARNI, Beta-blockers, MRAs, SGLT2 inhibitors (The 4 Pillars)",
+          "Loop Diuretics (Furosemide) vs Thiazides: Sites of action, efficacy ceiling, and electrolyte abnormalities",
+          "Potassium-sparing diuretics: Spironolactone (aldosterone antagonist) vs Amiloride (ENaC blocker)",
+          "Vaughan Williams Classification of Antiarrhythmics with classic prototypes"
+        ],
+        pearls: [
+          "Digoxin toxicity: Most common symptom is anorexia/nausea; most characteristic ocular symptom is xanthopsia (yellow-green vision); most common arrhythmia is ventricular bigeminy.",
+          "Loop diuretics act on Na+-K+-2Cl- symporter in Thick Ascending Limb of Henle; they cause hypocalcemia (Loops Lose Calcium).",
+          "Thiazides act on Na+-Cl- symporter in Distal Convoluted Tubule; they cause hypercalcemia (Thiazides Take Calcium).",
+          "Adenosine: Drug of choice for acute PSVT conversion (rapid IV push followed by saline flush)."
+        ],
+        boss_questions: [
+          {
+            q: "Which electrolyte disturbance most significantly potentiates Digoxin toxicity?",
+            options: ["Hyperkalemia", "Hypokalemia", "Hypernatremia", "Hypocalcemia"],
+            answer: 1,
+            explanation: "K+ and Digoxin compete for binding to the Na+/K+ ATPase pump. In hypokalemia, Digoxin binds avidly, precipitating toxicity even at normal serum levels."
+          },
+          {
+            q: "Sacubitril is combined with Valsartan (ARNI) because Sacubitril inhibits:",
+            options: ["Angiotensin Converting Enzyme", "Neprilysin (neutral endopeptidase)", "Phosphodiesterase-5", "Endothelin receptor"],
+            answer: 1,
+            explanation: "Sacubitril inhibits neprilysin, preventing degradation of beneficial natriuretic peptides (ANP, BNP) and bradykinin."
+          },
+          {
+            q: "Which diuretic class is uniquely useful in preventing recurrent Calcium oxalate kidney stones?",
+            options: ["Loop diuretics (Furosemide)", "Thiazides (Hydrochlorothiazide)", "Osmotic diuretics (Mannitol)", "Carbonic anhydrase inhibitors"],
+            answer: 1,
+            explanation: "Thiazides enhance distal tubule calcium reabsorption, reducing hypercalciuria and crystallization in the renal collecting system."
+          },
+          {
+            q: "Amiodarone (Class III antiarrhythmic) requires long-term monitoring of which organ function tests due to iodine content?",
+            options: ["Renal function tests only", "Thyroid function and pulmonary function tests", "Serum amylase and lipase", "Complete blood count and reticulocyte count"],
+            answer: 1,
+            explanation: "Amiodarone contains 37% iodine by weight; it can induce hypo- or hyperthyroidism and life-threatening pulmonary fibrosis."
+          },
+          {
+            q: "Drug of choice for converting acute Paroxysmal Supraventricular Tachycardia (PSVT) to sinus rhythm is:",
+            options: ["Amiodarone", "Lignocaine", "IV Adenosine", "Digoxin"],
+            answer: 2,
+            explanation: "Adenosine acts on A1 receptors in the AV node causing profound hyperpolarization and transient AV block with a half-life of less than 10 seconds."
+          }
+        ]
+      },
+      {
+        day: 6,
+        title: "CNS 1: Sedative-Hypnotics, Antiepileptics & Parkinsonism",
+        system: "Central Nervous System",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 14 - 17 (pp. 105-138)",
+        kdt_ref: "KD Tripathi Section 6 (Ch 28 - 31)",
+        boss_name: "The Cortical Phantom",
+        boss_hp: 100,
+        objectives: [
+          "Benzodiazepines vs Barbiturates: GABA-A receptor mechanisms (frequency vs duration of Cl- channel opening)",
+          "BZD antagonist: Flumazenil uses and risks in chronic dependence",
+          "Classification of Antiepileptics with clinical spectrum and first-line indications",
+          "Phenytoin: Saturation (zero-order) kinetics, gum hypertrophy, hirsutism, fetal hydantoin syndrome",
+          "Sodium Valproate: Broad spectrum mechanism, hepatotoxicity, pancreatitis, teratogenicity (neural tube defects)",
+          "Status Epilepticus stepped emergency management protocol"
+        ],
+        pearls: [
+          "Benzodiazepines: increase FREQUENCY of Cl- opening; Barbiturates: increase DURATION of Cl- opening (Benza-F-requent, Barbi-D-urate).",
+          "Drug of choice for Absence (Petit Mal) seizures: Ethosuximide (blocks T-type Ca2+ channels in thalamus) or Sodium Valproate.",
+          "Drug of choice for Trigeminal Neuralgia: Carbamazepine.",
+          "Levodopa is co-administered with Carbidopa to prevent peripheral conversion to dopamine, reducing nausea and arrhythmia."
+        ],
+        boss_questions: [
+          {
+            q: "Which antiepileptic drug exhibits dose-dependent saturation (zero-order) kinetics at therapeutic plasma ranges?",
+            options: ["Sodium Valproate", "Phenytoin", "Levetiracetam", "Ethosuximide"],
+            answer: 1,
+            explanation: "Phenytoin metabolism saturates at therapeutic levels (10-20 mcg/mL); a small dose increase can cause a steep jump in plasma levels and cerebellar toxicity."
+          },
+          {
+            q: "The first-line drug for immediate emergency termination of Status Epilepticus is:",
+            options: ["IV Lorazepam", "Oral Carbamazepine", "Sublingual Nitroglycerin", "IM Phenobarbitone"],
+            answer: 0,
+            explanation: "IV Lorazepam (0.1 mg/kg) or IV Diazepam is the first-line rapid-acting agent, followed immediately by IV Fosphenytoin to prevent recurrence."
+          },
+          {
+            q: "Which antiepileptic drug is associated with gingival hyperplasia, coarsening of facial features, and megaloblastic anemia?",
+            options: ["Phenytoin", "Levetiracetam", "Carbamazepine", "Topiramate"],
+            answer: 0,
+            explanation: "Phenytoin stimulates PDGF causing gum hypertrophy, and impairs folate absorption causing megaloblastic anemia."
+          },
+          {
+            q: "Why is Carbidopa added to Levodopa in the treatment of Parkinson's disease?",
+            options: ["It facilitates Levodopa transport across the blood-brain barrier", "It inhibits peripheral dopa decarboxylase, increasing central Levodopa bioavailability and decreasing nausea", "It blocks central dopamine breakdown by MAO-B", "It directly stimulates postsynaptic D2 receptors"],
+            answer: 1,
+            explanation: "Carbidopa does not cross the BBB; by blocking peripheral decarboxylation, more levodopa enters the brain while minimizing peripheral dopamine-induced vomiting."
+          },
+          {
+            q: "A pregnant epileptic woman taking Sodium Valproate carries the greatest risk of having an infant with:",
+            options: ["Phocomelia", "Neural tube defect (Spina Bifida)", "Clear cell adenocarcinoma of vagina", "Grey baby syndrome"],
+            answer: 1,
+            explanation: "Valproate impairs folic acid metabolism and carries a 1-2% risk of neural tube defects (spina bifida, anencephaly)."
+          }
+        ]
+      },
+      {
+        day: 7,
+        title: "CNS 2 & Autacoids: Opioids, NSAIDs, Gout & Antipsychotics",
+        system: "CNS & Autacoids",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 18 - 22 (pp. 139-164)",
+        kdt_ref: "KD Tripathi Section 3 (Ch 13 - 16) & Section 6 (Ch 32 - 35)",
+        boss_name: "The Nociceptive Titan",
+        boss_hp: 100,
+        objectives: [
+          "Morphine: Opioid receptor subtypes (μ, κ, δ), actions, adverse effects, and life-threatening contraindications",
+          "Acute Opioid Overdose triad (Coma, Pinpoint pupils, Respiratory depression) & Naloxone therapy",
+          "Aspirin: Irreversible COX-1/2 inhibition, antiplatelet dose vs anti-inflammatory dose, Reye's syndrome, Salicylism",
+          "Paracetamol (Acetaminophen) hepatotoxicity: NAPQI pathway and N-Acetylcysteine protocol",
+          "Gout pharmacology: Acute attack management (NSAIDs/Colchicine) vs Chronic hypouricemic therapy (Allopurinol/Febuxostat)",
+          "Typical vs Atypical Antipsychotics: Extrapyramidal symptoms (EPS) vs Metabolic syndrome; Clozapine and Agranulocytosis"
+        ],
+        pearls: [
+          "Morphine contraindications: Head injury, Bronchial asthma, Undiagnosed acute abdomen, BPH, Biliary colic.",
+          "Paracetamol toxicity antidote: N-Acetylcysteine (IV or oral) within 8-10 hours replenishes hepatic glutathione.",
+          "Clozapine: Most effective atypical antipsychotic for treatment-resistant schizophrenia; causes agranulocytosis (requires weekly ANC monitoring).",
+          "Colchicine: Inhibits microtubule assembly/tubulin polymerization in neutrophils, blocking inflammatory migration."
+        ],
+        boss_questions: [
+          {
+            q: "The specific antidote used to reverse acute opioid-induced respiratory depression is:",
+            options: ["Flumazenil", "Naloxone", "Naltrexone", "Atropine"],
+            answer: 1,
+            explanation: "IV Naloxone is a pure competitive opioid receptor antagonist that rapidly reverses coma, respiratory depression, and miosis."
+          },
+          {
+            q: "Paracetamol overdose produces centrilobular hepatic necrosis primarily due to:",
+            options: ["Direct inhibition of mitochondrial pyruvate dehydrogenase", "Depletion of glutathione by the reactive metabolite NAPQI", "Massive uncoupling of oxidative phosphorylation", "Autoimmune destruction of bile canaliculi"],
+            answer: 1,
+            explanation: "When glucuronide/sulfate pathways saturate, CYP2E1 generates N-acetyl-p-benzoquinone imine (NAPQI). Once glutathione is depleted, NAPQI binds hepatic macromolecules causing necrosis."
+          },
+          {
+            q: "Which NSAID irreversibly acetylates and inactivates platelet COX-1 enzyme for the entire lifespan of the platelet?",
+            options: ["Ibuprofen", "Aspirin", "Diclofenac", "Celecoxib"],
+            answer: 1,
+            explanation: "Aspirin covalently acetylates Serine 529 on platelet COX-1, permanently blocking Thromboxane A2 synthesis for the platelet's 7-10 day lifespan."
+          },
+          {
+            q: "Which antipsychotic drug has the highest propensity to cause Agranulocytosis?",
+            options: ["Haloperidol", "Risperidone", "Clozapine", "Olanzapine"],
+            answer: 2,
+            explanation: "Clozapine causes severe agranulocytosis in ~1% of patients, mandating mandatory baseline and serial white blood cell counts."
+          },
+          {
+            q: "Why is Allopurinol contraindicated during an acute gouty flare?",
+            options: ["It induces severe leukopenia within 2 hours", "Rapid alteration of serum uric acid levels precipitates further crystal mobilization and prolongs the attack", "It inhibits endogenous cortisol release", "It increases renal reabsorption of uric acid"],
+            answer: 1,
+            explanation: "Allopurinol dissolves established tophi, shedding microcrystals into the synovial fluid and worsening acute neutrophil inflammation."
+          }
+        ]
+      },
+      {
+        day: 8,
+        title: "Antimicrobials 1: Penicillins, Cephalosporins & Protein Synthesis Inhibitors",
+        system: "Antimicrobial Agents",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 39 - 43 (pp. 317-356)",
+        kdt_ref: "KD Tripathi Section 12 (Ch 51 - 54)",
+        boss_name: "The Peptidoglycan Golem",
+        boss_hp: 100,
+        objectives: [
+          "Penicillins: Classification, Penicillin G vs extended spectrum (Amoxicillin, Piperacillin), Anaphylaxis management",
+          "Beta-lactamase inhibitors: Clavulanic acid, Sulbactam, Tazobactam mechanism of suicide inhibition",
+          "Cephalosporins: 1st to 5th generations, anti-pseudomonal coverage (Ceftazidime, Cefepime), and BBB penetration (Ceftriaxone)",
+          "Aminoglycosides (Gentamicin, Amikacin): Mechanism (30S), Ototoxicity (vestibular/cochlear), Nephrotoxicity, once-daily dosing rationale",
+          "Macrolides (Azithromycin, Clarithromycin) & Tetracyclines (Doxycycline): Spectrum and classic adverse effects",
+          "Chloramphenicol: Gray baby syndrome and bone marrow aplasia"
+        ],
+        pearls: [
+          "Buy AT 30, CELL at 50: Aminoglycosides & Tetracyclines bind 30S; Chloramphenicol, Erythromycin (Macrolides), Clindamycin, Linezolid bind 50S.",
+          "Aminoglycosides exhibit Concentration-Dependent Killing and Post-Antibiotic Effect (PAE), justifying once-daily high-dose dosing.",
+          "Vancomycin causes 'Red Man Syndrome' via direct non-IgE mast cell histamine release if infused too rapidly (prevented by slow IV infusion over >60 min).",
+          "Doxycycline is excreted primarily via bile/feces; it is the safest tetracycline in renal failure."
+        ],
+        boss_questions: [
+          {
+            q: "Which 3rd-generation cephalosporin is specifically notable for potent activity against Pseudomonas aeruginosa?",
+            options: ["Ceftriaxone", "Ceftazidime", "Cefotaxime", "Cefazolin"],
+            answer: 1,
+            explanation: "Ceftazidime and Cefoperazone possess anti-pseudomonal activity. Ceftriaxone lacks coverage against Pseudomonas."
+          },
+          {
+            q: "Aminoglycosides produce irreversible sensorineural hearing loss primarily through damage to:",
+            options: ["Tympanic membrane fibers", "Hair cells of the Organ of Corti", "Eustachian tube epithelium", "Auditory cortex neurons"],
+            answer: 1,
+            explanation: "Aminoglycosides accumulate in the endolymph and perilymph, generating reactive oxygen species that permanently destroy sensory hair cells in the cochlea."
+          },
+          {
+            q: "The rationale for combining Clavulanic Acid with Amoxicillin is that Clavulanic Acid:",
+            options: ["Inactivates bacterial beta-lactamase enzymes irreversibly", "Inhibits renal tubular excretion of Amoxicillin", "Directly binds to bacterial penicillin-binding protein 3", "Enhances GI absorption of Amoxicillin"],
+            answer: 0,
+            explanation: "Clavulanic acid is a suicide inhibitor of β-lactamase; it has minimal antimicrobial activity of its own but protects Amoxicillin from degradation."
+          },
+          {
+            q: "Why is Tetracycline contraindicated in children under 8 years of age?",
+            options: ["Causes irreversible cartilage erosion in weight-bearing joints", "Chelates calcium and permanently stains developing teeth enamel yellow-brown", "Triggers malignant hyperthermia upon ingestion", "Causes acute aplastic anemia in 50% of children"],
+            answer: 1,
+            explanation: "Tetracyclines chelate calcium orthophosphate in active growth centers of bones and teeth, causing hypoplasia and permanent discoloration."
+          },
+          {
+            q: "Gray Baby Syndrome caused by Chloramphenicol is due to deficient activity of:",
+            options: ["Hepatic UDP-Glucuronyl Transferase", "Renal carbonic anhydrase", "Plasma cholinesterase", "Erythrocyte G6PD"],
+            answer: 0,
+            explanation: "Neonates lack mature hepatic glucuronyl transferase and have low GFR, leading to toxic drug accumulation and cardiovascular collapse."
+          }
+        ]
+      },
+      {
+        day: 9,
+        title: "Antimicrobials 2: Fluoroquinolones, Anti-TB & Antifungals",
+        system: "Antimicrobial Agents",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 44 - 47 (pp. 357-392)",
+        kdt_ref: "KD Tripathi Section 12 (Ch 55 - 58)",
+        boss_name: "The Mycobacterial Sovereign",
+        boss_hp: 100,
+        objectives: [
+          "Fluoroquinolones (Ciprofloxacin, Levofloxacin): MOA (DNA gyrase / Topoisomerase IV), tendonitis/tendon rupture, and cartilage toxicity",
+          "First-line Anti-Tubercular Drugs (HRZES regimen): Mechanisms, bactericidal vs bacteriostatic, and toxicities",
+          "Isoniazid (INH): Hepatotoxicity, peripheral neuropathy and Pyridoxine protection",
+          "Rifampicin: RNA polymerase inhibition, red-orange discoloration of secretions, potent CYP450 induction",
+          "Pyrazinamide (hyperuricemia) & Ethambutol (retrobulbar neuritis)",
+          "Antifungals: Amphotericin B ('Ampho-terrible' nephrotoxicity & liposomal formulation) vs Azoles (Ergosterol synthesis inhibition)"
+        ],
+        pearls: [
+          "First-line TB drugs: <b>H</b> (Isoniazid), <b>R</b> (Rifampicin), <b>Z</b> (Pyrazinamide), <b>E</b> (Ethambutol), <b>S</b> (Streptomycin).",
+          "All 1st-line TB drugs are bactericidal EXCEPT Ethambutol (bacteriostatic).",
+          "All 1st-line TB drugs are hepatotoxic EXCEPT Ethambutol and Streptomycin.",
+          "Amphotericin B binds Ergosterol in fungal membrane forming pores; Azoles inhibit 14α-demethylase preventing ergosterol synthesis."
+        ],
+        boss_questions: [
+          {
+            q: "Which first-line anti-tubercular drug acts by inhibiting DNA-dependent RNA polymerase?",
+            options: ["Isoniazid", "Rifampicin", "Pyrazinamide", "Ethambutol"],
+            answer: 1,
+            explanation: "Rifampicin binds the beta subunit of bacterial DNA-dependent RNA polymerase, blocking transcription. It also turns bodily fluids red-orange."
+          },
+          {
+            q: "A patient on anti-TB therapy develops decreased visual acuity and red-green color blindness. Which drug is responsible?",
+            options: ["Isoniazid", "Rifampicin", "Pyrazinamide", "Ethambutol"],
+            answer: 3,
+            explanation: "Ethambutol causes retrobulbar optic neuritis; red-green color perception loss is the earliest clinical sign."
+          },
+          {
+            q: "Fluoroquinolones carry a black-box warning for which musculoskeletal adverse effect?",
+            options: ["Avascular necrosis of femoral head", "Tendinitis and Achilles tendon rupture", "Severe osteopetrosis", "Myasthenia gravis remission"],
+            answer: 1,
+            explanation: "Fluoroquinolones can cause tendinitis and tendon rupture (most commonly Achilles tendon) due to collagen degradation."
+          },
+          {
+            q: "Liposomal Amphotericin B is preferred over conventional Amphotericin B deoxycholate because it:",
+            options: ["Has 10x higher oral bioavailability", "Significantly reduces nephrotoxicity while retaining antifungal efficacy", "Does not bind fungal ergosterol", "Is effective against resistant bacteria"],
+            answer: 1,
+            explanation: "Liposomal encapsulation targets the drug to the reticuloendothelial system and limits renal tubular exposure, greatly lowering nephrotoxicity."
+          },
+          {
+            q: "Which anti-tubercular drug can precipitate an acute attack of gout by inhibiting uric acid secretion?",
+            options: ["Rifampicin", "Pyrazinamide", "Isoniazid", "Streptomycin"],
+            answer: 1,
+            explanation: "Pyrazinamide's active metabolite (pyrazinoic acid) competitively inhibits renal tubular uric acid excretion, causing hyperuricemia."
+          }
+        ]
+      },
+      {
+        day: 10,
+        title: "Chemotherapy, Antimalarials & Blood Pharmacology",
+        system: "Chemotherapy & Hematology",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 31 - 33, 48, 50 (pp. 243-264, 393-418)",
+        kdt_ref: "KD Tripathi Section 10 (Ch 44 - 46), Section 12 (Ch 59) & Section 14",
+        boss_name: "The Plasmodial Archon",
+        boss_hp: 100,
+        objectives: [
+          "Antimalarials: Artemisinin-based Combination Therapy (ACT), Chloroquine mechanism (heme polymerase) and resistance, Primaquine (radical cure of P. vivax & G6PD hemolysis)",
+          "Anticancer Principles: Cell cycle specific (CCS) vs non-specific (CCNS) agents",
+          "Methotrexate: DHFR inhibition & Leucovorin rescue; Cyclophosphamide: Acrolein hemorrhagic cystitis & Mesna",
+          "Anticoagulants: Unfractionated Heparin vs LMWH (Enoxaparin) vs Warfarin (PT/INR monitoring)",
+          "Direct Oral Anticoagulants (DOACs): Dabigatran (thrombin inhibitor) vs Apixaban/Rivaroxaban (Factor Xa inhibitors)",
+          "Fibrinolytics (Alteplase) and Antiplatelets (Clopidogrel, Aspirin)"
+        ],
+        pearls: [
+          "Primaquine: Only drug that kills hypnozoites (dormant liver stage) of P. vivax/ovale; MUST test for G6PD deficiency before administration.",
+          "Heparin: Antidote is Protamine Sulfate; monitor with aPTT.",
+          "Warfarin: Antidote is Vitamin K1 + FFP; monitor with PT/INR.",
+          "Cyclophosphamide urotoxicity: Prevented by aggressive hydration + MESNA (Sodium 2-mercaptoethanesulfonate)."
+        ],
+        boss_questions: [
+          {
+            q: "Which antimalarial drug is required to achieve 'radical cure' by eradicating hypnozoites in Vivax malaria?",
+            options: ["Chloroquine", "Primaquine", "Quinine", "Artesunate"],
+            answer: 1,
+            explanation: "Primaquine is an 8-aminoquinoline that kills dormant hepatic hypnozoites, preventing relapses of P. vivax and P. ovale."
+          },
+          {
+            q: "Mesna is co-administered with Cyclophosphamide and Ifosfamide specifically to prevent:",
+            options: ["Cardiomyopathy", "Acrolein-induced hemorrhagic cystitis", "Pulmonary fibrosis", "Severe peripheral neuropathy"],
+            answer: 1,
+            explanation: "Mesna binds the urotoxic metabolite Acrolein in the urinary bladder, forming a stable non-toxic conjugate and preventing hemorrhagic cystitis."
+          },
+          {
+            q: "Which anticoagulant is safe to use throughout all trimesters of pregnancy?",
+            options: ["Warfarin", "Low Molecular Weight Heparin (LMWH)", "Dabigatran", "Phenindione"],
+            answer: 1,
+            explanation: "LMWH (Enoxaparin) and UFH are large polar molecules that do not cross the placenta, unlike Warfarin which is teratogenic."
+          },
+          {
+            q: "The biological activity of Unfractionated Heparin is monitored clinically by:",
+            options: ["Prothrombin Time (PT / INR)", "Activated Partial Thromboplastin Time (aPTT)", "Bleeding Time (BT)", "Thrombin Time only"],
+            answer: 1,
+            explanation: "UFH potentiates Antithrombin III inhibition of factors IIa and Xa (intrinsic pathway), monitored via aPTT (target 1.5 - 2.5x control)."
+          },
+          {
+            q: "Leucovorin (Folinic acid) rescues normal host cells from High-Dose Methotrexate toxicity by:",
+            options: ["Directly displacing methotrexate from DHFR", "Providing active reduced folate downstream of the blocked DHFR step", "Promoting biliary excretion of methotrexate", "Inhibiting cancer cell thymidylate synthase"],
+            answer: 1,
+            explanation: "Leucovorin is 5-formyl tetrahydrofolate; it bypasses the inhibited Dihydrofolate Reductase enzyme to replenish normal cell folate pools."
+          }
+        ]
+      },
+      {
+        day: 11,
+        title: "Endocrine 1: Diabetes Mellitus & Corticosteroids",
+        system: "Endocrine System",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 34, 38 (pp. 265-280, 305-316)",
+        kdt_ref: "KD Tripathi Section 5 (Ch 19 - 22)",
+        boss_name: "The Glucocorticoid Tyrant",
+        boss_hp: 100,
+        objectives: [
+          "Insulin: Rapid-acting (Lispro, Aspart), Short-acting (Regular), Intermediate (NPH), and Long-acting basal analogs (Glargine, Degludec)",
+          "Metformin: First-line biguanide, AMPK activation, lack of hypoglycemia, risk of lactic acidosis",
+          "Sulfonylureas (Glimepiride) vs Meglitinides: K-ATP channel blockade",
+          "Modern Antidiabetics: SGLT2 inhibitors (Dapagliflozin), DPP-4 inhibitors (Sitagliptin), GLP-1 receptor agonists (Semaglutide)",
+          "Glucocorticoids: Anti-inflammatory & immunosuppressive MOA (lipocortin/annexin A1, NF-kB suppression)",
+          "Adverse effects of long-term steroids (Cushingoid state, osteoporosis, hyperglycemia, HPA axis suppression) and safe tapering rules"
+        ],
+        pearls: [
+          "Regular (Crystalline) Insulin is the ONLY insulin that can be given intravenously (used in DKA).",
+          "SGLT2 inhibitors (-gliflozins): Promote glucosuria by blocking SGLT2 in renal proximal tubule; proven CV and renal benefits.",
+          "Corticosteroid withdrawal: Prolonged use causes bilateral adrenocortical atrophy; abrupt stoppage triggers fatal Addisonian crisis."
+        ],
+        boss_questions: [
+          {
+            q: "Which insulin preparation is suitable for intravenous infusion in the management of Diabetic Ketoacidosis (DKA)?",
+            options: ["Insulin Glargine", "Regular (Soluble) Insulin", "NPH Insulin", "Insulin Degludec"],
+            answer: 1,
+            explanation: "Regular (crystalline/soluble) insulin is the only formulation approved for IV use; it has rapid onset and short clearance when infused."
+          },
+          {
+            q: "The primary molecular mechanism of action of Metformin is:",
+            options: ["Stimulating insulin release from pancreatic beta cells", "Activating AMP-activated protein kinase (AMPK) to reduce hepatic gluconeogenesis", "Inhibiting intestinal alpha-glucosidase", "Directly opening GLUT4 glucose channels in skeletal muscle"],
+            answer: 1,
+            explanation: "Metformin activates cellular AMPK, suppressing hepatic gluconeogenesis and increasing peripheral insulin sensitivity without provoking hypoglycemia."
+          },
+          {
+            q: "Which class of oral antidiabetic agents is proven to reduce heart failure hospitalizations and slow progression of chronic kidney disease?",
+            options: ["Sulfonylureas", "SGLT2 Inhibitors (e.g. Empagliflozin)", "Alpha-glucosidase inhibitors", "Meglitinides"],
+            answer: 1,
+            explanation: "SGLT2 inhibitors improve cardiorenal outcomes by promoting natriuresis, lowering intraglomerular pressure, and improving cardiac energetics."
+          },
+          {
+            q: "Prolonged high-dose glucocorticoid therapy suppresses endogenous cortisol secretion by:",
+            options: ["Direct destruction of adrenal cortical zona fasciculata cells", "Negative feedback inhibition on hypothalamic CRH and pituitary ACTH release", "Inducing hepatic clearance enzymes", "Upregulating adrenal mineralocorticoid receptors"],
+            answer: 1,
+            explanation: "Exogenous steroids inhibit CRH and ACTH release via negative feedback, causing disuse atrophy of the adrenal cortex."
+          },
+          {
+            q: "Glucocorticoids exert anti-inflammatory effects largely by inducing the synthesis of which protein that inhibits Phospholipase A2?",
+            options: ["Lipocortin-1 (Annexin A1)", "Cyclooxygenase-2", "Calcitonin gene-related peptide", "Interleukin-1 receptor antagonist"],
+            answer: 0,
+            explanation: "Glucocorticoids upregulate Lipocortin-1 (Annexin A1), which inhibits Phospholipase A2, thereby blocking arachidonic acid cascade."
+          }
+        ]
+      },
+      {
+        day: 12,
+        title: "Endocrine 2 & Respiratory: Thyroid, Sex Hormones & Asthma",
+        system: "Endocrine & Respiratory",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 35 - 37, 51 (pp. 281-304, 419-432)",
+        kdt_ref: "KD Tripathi Section 4 (Ch 17 - 18) & Section 5 (Ch 23 - 26)",
+        boss_name: "The Bronchial Chimera",
+        boss_hp: 100,
+        objectives: [
+          "Antithyroid Drugs: Carbimazole / Methimazole vs Propylthiouracil (PTU); mechanism (thyroperoxidase inhibition) & pregnancy choices",
+          "Thyroid Storm comprehensive pharmacological management",
+          "Oral Contraceptives: Combined Oral Contraceptive Pills (COCPs) mechanism, non-contraceptive benefits, and contraindications",
+          "Emergency Contraception: Levonorgestrel (within 72h) vs Ulipristal (within 120h)",
+          "Bronchial Asthma: Relievers (SABA: Salbutamol, Anticholinergic: Ipratropium) vs Controllers (Inhaled Corticosteroids: Budesonide, LABA: Formoterol, Leukotriene antagonists: Montelukast)",
+          "Oral Candidiasis prevention with Inhaled Corticosteroids (mouth rinsing)"
+        ],
+        pearls: [
+          "PTU is preferred in the 1st trimester of pregnancy because Methimazole is teratogenic (aplasia cutis and choanal atresia).",
+          "Lugol's Iodine inhibits thyroid hormone release immediately (Wolff-Chaikoff effect); used pre-operatively before thyroidectomy.",
+          "Combined OCPs: Inhibit ovulation by suppressing LH surge (progestin) and FSH (estrogen); contraindicated in women >35 who smoke."
+        ],
+        boss_questions: [
+          {
+            q: "Why is Propylthiouracil (PTU) preferred over Carbimazole in the first trimester of pregnancy?",
+            options: ["It has higher placental transfer", "Carbimazole is associated with aplasia cutis and congenital malformations", "PTU is an oral liquid preparation", "PTU does not cause maternal hepatotoxicity"],
+            answer: 1,
+            explanation: "Carbimazole/Methimazole causes aplasia cutis congenita and choanal atresia in early organogenesis, so PTU is chosen during the 1st trimester."
+          },
+          {
+            q: "The Wolff-Chaikoff effect refers to:",
+            options: ["Transient suppression of thyroid hormone synthesis and release by high pharmacological doses of iodide", "Permanent destruction of thyroid follicles by radioactive iodine-131", "Tachycardia induced by thyroxine replacement", "Goiter formation caused by Lithium therapy"],
+            answer: 0,
+            explanation: "Excess inorganic iodide acutely inhibits thyroid peroxidase and organic binding of iodine, rapidly decreasing hormone release."
+          },
+          {
+            q: "The primary contraceptive mechanism of Combined Oral Contraceptive Pills (COCP) is:",
+            options: ["Direct destruction of spermatozoa in the vagina", "Suppression of pituitary gonadotropins (LH and FSH) to prevent ovulation", "Mechanical occlusion of fallopian tubes", "Induction of early embryo resorption"],
+            answer: 1,
+            explanation: "Estrogen suppresses FSH (inhibiting follicular development), while progestin suppresses the midcycle LH surge (preventing ovulation) and thickens cervical mucus."
+          },
+          {
+            q: "A patient using Budesonide metered-dose inhaler for asthma should be instructed to do what immediately after each inhalation?",
+            options: ["Drink 500 mL of milk", "Rinse mouth thoroughly with water and spit it out to prevent oral candidiasis", "Take an oral antihistamine", "Hold breath for 5 minutes"],
+            answer: 1,
+            explanation: "Rinsing the mouth and using a spacer clears deposited steroid particles from the oropharynx, preventing local dysphonia and oral thrush (Candida albicans)."
+          },
+          {
+            q: "Montelukast improves asthma symptoms by acting as an antagonist at which receptor?",
+            options: ["Histamine H1 receptor", "Cysteinyl leukotriene receptor-1 (CysLT1)", "Beta-2 adrenergic receptor", "Muscarinic M3 receptor"],
+            answer: 1,
+            explanation: "Montelukast and Zafirlukast competitively block the CysLT1 receptor, preventing leukotriene-mediated bronchoconstriction, airway edema, and mucus secretion."
+          }
+        ]
+      },
+      {
+        day: 13,
+        title: "Gastrointestinal Tract (GIT) & Toxicology",
+        system: "GIT & Heavy Metal Toxicology",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Ch 52 - 54 (pp. 433-460)",
+        kdt_ref: "KD Tripathi Section 11 (Ch 47 - 50) & Section 13",
+        boss_name: "The Acidic Leviathan",
+        boss_hp: 100,
+        objectives: [
+          "Peptic Ulcer: Proton Pump Inhibitors (Omeprazole, Pantoprazole) irreversible H+/K+ ATPase inhibition vs H2 blockers (Ranitidine)",
+          "Triple Drug Regimen for Helicobacter pylori eradication (PPI + Clarithromycin + Amoxicillin / Metronidazole)",
+          "Antiemetics: 5-HT3 antagonists (Ondansetron), D2 antagonists (Metoclopramide, Domperidone), NK1 antagonists (Aprepitant)",
+          "Prokinetics: Metoclopramide mechanism and extrapyramidal adverse effects (acute dystonia)",
+          "Heavy Metal Poisoning & Chelating Agents: BAL / Dimercaprol (Arsenic, Mercury), Calcium disodium EDTA (Lead), D-Penicillamine (Copper / Wilson's), Desferrioxamine (Iron)"
+        ],
+        pearls: [
+          "PPIs are prodrugs: Activated in acidic parietal canaliculi to form sulfenamide which binds H+/K+ ATPase covalently.",
+          "Domperidone does not cross blood-brain barrier; unlike Metoclopramide, it does NOT cause extrapyramidal symptoms (EPS).",
+          "Acute Iron poisoning in children: Causes hemorrhagic gastroenteritis and shock; treated with IV Desferrioxamine (turns urine 'vin rose')."
+        ],
+        boss_questions: [
+          {
+            q: "Proton Pump Inhibitors (PPIs) inhibit gastric acid secretion by irreversibly blocking:",
+            options: ["H2 histamine receptors on parietal cells", "Gastrin receptors on ECL cells", "H+/K+ ATPase proton pump on the parietal cell apical membrane", "Muscarinic M3 receptors"],
+            answer: 2,
+            explanation: "PPIs form a covalent disulfide bond with the catalytic subunit of the H+/K+ ATPase enzyme, halting the final common pathway of acid secretion."
+          },
+          {
+            q: "Which antiemetic is a potent selective 5-HT3 receptor antagonist especially effective for chemotherapy-induced acute emesis?",
+            options: ["Ondansetron", "Metoclopramide", "Promethazine", "Hyoscine"],
+            answer: 0,
+            explanation: "Ondansetron blocks peripheral 5-HT3 receptors on vagal afferents in the gut and centrally in the CTZ, preventing acute chemotherapy-induced vomiting."
+          },
+          {
+            q: "Metoclopramide can produce acute dystonic reactions and parkinsonism in young patients because it:",
+            options: ["Inhibits peripheral acetylcholinesterase", "Blocks central Dopamine D2 receptors in the basal ganglia", "Stimulates serotonin 5-HT4 receptors in the brainstem", "Causes acute hypocalcemia"],
+            answer: 1,
+            explanation: "Metoclopramide readily crosses the blood-brain barrier; D2 receptor blockade in the striatum triggers extrapyramidal motor reactions."
+          },
+          {
+            q: "The specific chelating agent of choice for acute Iron poisoning is:",
+            options: ["D-Penicillamine", "Dimercaprol (BAL)", "Desferrioxamine (Deferoxamine)", "Calcium disodium EDTA"],
+            answer: 2,
+            explanation: "Desferrioxamine binds free ferric iron (Fe3+) with extremely high affinity, producing the harmless water-soluble chelate ferrioxamine excreted in urine."
+          },
+          {
+            q: "Which chelating agent is specifically indicated for Copper removal in Wilson's disease?",
+            options: ["D-Penicillamine", "Desferrioxamine", "Amyl nitrite", "Pralidoxime"],
+            answer: 0,
+            explanation: "D-Penicillamine chelates divalent copper ions to form soluble urinary chelates, stopping progressive hepatic and basal ganglia copper deposition."
+          }
+        ]
+      },
+      {
+        day: 14,
+        title: "Master High-Yield Consolidation & Exam Drills",
+        system: "Consolidated High-Yield Drills",
+        tier: "Must-Know",
+        shanbhag_ref: "Consolidated Shanbhag Tables & Appendix",
+        kdt_ref: "KD Tripathi Appendices & Drug Indexes",
+        boss_name: "The Grand Inquisitor",
+        boss_hp: 120,
+        objectives: [
+          "Rapid drill of Top 50 Drugs of Choice (DOC) for emergency and clinical conditions",
+          "Mastery of all 30 Specific Antidotes and Toxicological syndromes",
+          "Active recall of Top 50 'Give Reasons Why' questions",
+          "High-Yield Teratogenic Drugs Mnemonic (TERATO-DRUGS: Thalidomide, Epileptics, Retinoids, ACEi, Tetracycline, Warfarin)",
+          "Enzyme inducers vs inhibitors rapid drill"
+        ],
+        pearls: [
+          "Thalidomide: Phocomelia; Isotretinoin: Craniofacial and cardiac neural crest defects; ACE inhibitors: Renal dysgenesis; Diethylstilbestrol: Vaginal clear cell adenocarcinoma.",
+          "Red Man Syndrome: Vancomycin; Gray Baby Syndrome: Chloramphenicol; Jarisch-Herxheimer: Penicillin in syphilis.",
+          "Disulfiram-like reaction with alcohol: Metronidazole, Cefoperazone, Cefotetan, Chlorpropamide."
+        ],
+        boss_questions: [
+          {
+            q: "Which antimicrobial drug precipitates a disulfiram-like reaction when consumed with alcohol?",
+            options: ["Metronidazole", "Amoxicillin", "Azithromycin", "Gentamicin"],
+            answer: 0,
+            explanation: "Metronidazole inhibits acetaldehyde dehydrogenase, causing toxic accumulation of acetaldehyde with flushing, nausea, and tachycardia when ethanol is ingested."
+          },
+          {
+            q: "The Drug of Choice for secondary prophylaxis of Rheumatic Fever is:",
+            options: ["Oral Erythromycin monthly", "Benzathine Penicillin G (IM every 3-4 weeks)", "Oral Ciprofloxacin daily", "IV Ceftriaxone once yearly"],
+            answer: 1,
+            explanation: "Benzathine Penicillin G (1.2 million units IM every 3 to 4 weeks) maintains prolonged bactericidal blood levels against Group A Streptococci."
+          },
+          {
+            q: "Jarisch-Herxheimer reaction occurring shortly after initiating penicillin therapy for Syphilis is caused by:",
+            options: ["Type I IgE-mediated anaphylaxis to penicillin", "Sudden release of endotoxin-like pyrogens from massive spirochete lysis", "Direct nephrotoxicity of benzathine salts", "Acute hemolytic anemia"],
+            answer: 1,
+            explanation: "Dying treponemes release inflammatory lipoproteins and pyrogens, causing acute rigors, fever, hypotension, and exacerbation of syphilitic skin lesions."
+          },
+          {
+            q: "Which antiepileptic drug is classic for causing visual field constriction as a serious adverse effect?",
+            options: ["Vigabatrin", "Phenytoin", "Ethosuximide", "Carbamazepine"],
+            answer: 0,
+            explanation: "Vigabatrin (irreversible GABA transaminase inhibitor) causes irreversible concentric peripheral visual field defects in up to 30-40% of patients."
+          },
+          {
+            q: "Thalidomide teratogenicity characteristically manifests as:",
+            options: ["Phocomelia (seal-like limb hypoplasia)", "Cleft palate only", "Spina bifida occulta", "Agenesis of corpus callosum"],
+            answer: 0,
+            explanation: "Thalidomide taken during early pregnancy causes severe bilateral reduction deformities of long bones known as phocomelia."
+          }
+        ]
+      },
+      {
+        day: 15,
+        title: "Mock University Examination & Classification Sprint",
+        system: "Full-Length Examination Simulator",
+        tier: "Must-Know",
+        shanbhag_ref: "Shanbhag Model Question Papers",
+        kdt_ref: "KD Tripathi Complete Review",
+        boss_name: "The University Examiner",
+        boss_hp: 150,
+        objectives: [
+          "Simulate 3-Hour University Pharmacology Paper under timed exam conditions",
+          "Rapid redraw drill of 15 Master Classification Trees on blank paper without looking",
+          "Spotter and Viva drill: 10 drug vials / dosage forms and clinical indications",
+          "Final review of the 🔴 Red-flagged active recall cards in the dashboard",
+          "Rest, sleep hygiene, and psychological priming for the real exam"
+        ],
+        pearls: [
+          "In university theory exams, clean classification trees with neat branches earn instant maximum marks before the examiner reads your paragraphs.",
+          "Always structure LAQ answers: 1) Definition & Classification, 2) Mechanism of Action, 3) Pharmacokinetics, 4) Therapeutic Uses, 5) Adverse Effects, 6) Contraindications.",
+          "Confidence rule: Master the 40 prototype drugs, and you can logically deduce the entire remaining syllabus."
+        ],
+        boss_questions: [
+          {
+            q: "Which of the following is the hallmark mechanism of action of Heparin?",
+            options: ["Direct inhibition of thrombin active site", "Binding Antithrombin III and accelerating its inhibition of thrombin and factor Xa by 1,000-fold", "Inhibiting Vitamin K epoxide reductase", "Activating tissue plasminogen activator"],
+            answer: 1,
+            explanation: "Heparin binds Antithrombin III via a specific pentasaccharide sequence, inducing a conformational change that accelerates ATIII inactivation of factor Xa and thrombin."
+          },
+          {
+            q: "A 55-year-old hypertensive diabetic patient is started on an antihypertensive drug. Six weeks later, serum potassium is 5.8 mEq/L and serum creatinine has risen by 15%. The drug is most likely:",
+            options: ["Hydrochlorothiazide", "Ramipril", "Amlodipine", "Atenolol"],
+            answer: 1,
+            explanation: "ACE inhibitors decrease aldosterone (causing hyperkalemia) and dilate efferent arterioles (causing an acceptable small rise in serum creatinine)."
+          },
+          {
+            q: "Which antimicrobial inhibits bacterial protein synthesis by binding to the 50S ribosomal subunit and preventing transpeptidation?",
+            options: ["Chloramphenicol", "Gentamicin", "Tetracycline", "Streptomycin"],
+            answer: 0,
+            explanation: "Chloramphenicol binds the 50S subunit and specifically inhibits peptidyltransferase (transpeptidation step)."
+          },
+          {
+            q: "In an unconscious patient with suspected opioid overdose, miosis may be ABSENT if the ingested opioid was:",
+            options: ["Morphine", "Codeine", "Pethidine (Meperidine)", "Methadone"],
+            answer: 2,
+            explanation: "Pethidine has significant atropine-like anticholinergic activity, which counteracts pupillary miosis and may cause normal or dilated pupils."
+          },
+          {
+            q: "Which drug is specifically used to manage Methotrexate-induced severe nephrotoxicity and delayed clearance by enzymatic cleavage?",
+            options: ["Glucarpidase (Carboxypeptidase G2)", "Mesna", "Dexrazoxane", "Amifostine"],
+            answer: 0,
+            explanation: "Glucarpidase enzymatically hydrolyzes extracellular methotrexate into inactive DAMPA, rapidly lowering toxic plasma concentrations in acute renal failure."
+          }
+        ]
+      }
+    ];
+
+    // --- FLASHCARDS DATA (47 High-Yield Cards) ---
+    const FLASHCARDS = [
+      {
+        id: "c1",
+        type: "why",
+        tag: "Pharma::CNS::Opioids",
+        front: "Why is Morphine strictly contraindicated in <b>Head Injury</b>?",
+        back: "1. <b>CO2 retention & Raised ICP:</b> Depresses respiratory center → CO2 retention → cerebral vasodilation → increased intracranial pressure (ICP) risking brain herniation.<br>2. <b>Obscures pupillary signs:</b> Causes pinpoint pupils (miosis via Edinger-Westphal nucleus), masking pupillary asymmetry indicating tentorial herniation.<br>3. <b>Induces vomiting:</b> Stimulates CTZ, further raising ICP.<br>4. <b>Interferes with GCS:</b> Depresses sensorium."
+      },
+      {
+        id: "c2",
+        type: "why",
+        tag: "Pharma::ANS::Anticholinergic",
+        front: "Why is Atropine used as <b>pre-anesthetic medication</b>?",
+        back: "1. <b>Prevents reflex vagal bradycardia:</b> Blocks vagus during intubation, surgical visceral handling, or halothane/succinylcholine.<br>2. <b>Dries secretions:</b> Reduces copious salivary and respiratory secretions, preventing laryngospasm and aspiration pneumonitis."
+      },
+      {
+        id: "c3",
+        type: "why",
+        tag: "Pharma::ANS::Adrenergic",
+        front: "Why is Adrenaline combined with Lignocaine for local anesthesia?",
+        back: "1. <b>Vasoconstriction (α1 effect):</b> Slows systemic absorption of lignocaine.<br>2. <b>Prolongs duration:</b> Keeps anesthetic concentrated around nerve trunk.<br>3. <b>Reduces systemic toxicity:</b> Lowers peak blood levels.<br>4. <b>Provides bloodless field:</b> Reduces local bleeding.<br><i>Contraindicated in end-arteries (fingers, toes, penis, pinna) to prevent gangrene.</i>"
+      },
+      {
+        id: "c4",
+        type: "why",
+        tag: "Pharma::ANS::Toxicology",
+        front: "Why is Pralidoxime ineffective 24-48 hours after Organophosphate poisoning?",
+        back: "Because of <b>chemical aging</b> of the phosphorylated acetylcholinesterase enzyme. Dealkylation makes the covalent organophosphate-enzyme bond irreversible and impervious to oxime nucleophilic attack."
+      },
+      {
+        id: "c5",
+        type: "why",
+        tag: "Pharma::ANS::Adrenergic",
+        front: "Why must Beta-blockers NEVER be given without prior Alpha-blockade in <b>Pheochromocytoma</b>?",
+        back: "Blocking vasodilator β2 receptors while leaving vasoconstrictor α1 receptors unopposed by massive circulating catecholamines causes a <b>paradoxical catastrophic hypertensive crisis</b>. Always establish α-blockade (Phenoxybenzamine) first."
+      },
+      {
+        id: "c6",
+        type: "why",
+        tag: "Pharma::CVS::Antihypertensives",
+        front: "Why do ACE Inhibitors cause a persistent dry, hacking cough?",
+        back: "ACE is identical to <b>Kininase II</b>, the enzyme that degrades <b>Bradykinin</b> and Substance P in pulmonary tissue. Inhibition causes local accumulation of bradykinin, stimulating bronchial sensory C-fibers. (ARBs like Losartan do not inhibit kininase II and do not cause cough)."
+      },
+      {
+        id: "c7",
+        type: "why",
+        tag: "Pharma::CVS::Antianginal",
+        front: "Why are Nitrate-free intervals (8-12 hours daily) mandatory in chronic angina therapy?",
+        back: "To prevent <b>nitrate tolerance</b> caused by depletion of intracellular sulfhydryl (-SH) groups required to convert nitrates to nitric oxide (NO), as well as neurohormonal reflex activation and reactive oxygen species generation."
+      },
+      {
+        id: "c8",
+        type: "why",
+        tag: "Pharma::CVS::Interactions",
+        front: "Why is Sildenafil strictly contraindicated in patients taking Nitrates?",
+        back: "Nitrates stimulate soluble guanylyl cyclase (increasing cGMP). Sildenafil inhibits PDE-5 (blocking cGMP degradation). Massive synergism produces unchecked cGMP pooling, leading to <b>fatal refractory hypotension and cardiac arrest</b>."
+      },
+      {
+        id: "c9",
+        type: "why",
+        tag: "Pharma::CVS::HeartFailure",
+        front: "Why does Hypokalemia dramatically aggravate <b>Digoxin toxicity</b>?",
+        back: "Potassium and Digoxin compete for the same binding site on myocardial membrane <b>Na+/K+ ATPase</b>. In hypokalemia, Digoxin binds avidly with unopposed high affinity, triggering severe ventricular arrhythmias even at normal therapeutic drug levels."
+      },
+      {
+        id: "c10",
+        type: "why",
+        tag: "Pharma::CNS::Sedatives",
+        front: "Why are Benzodiazepines clinically far safer than Barbiturates in overdose?",
+        back: "BZDs increase the <b>frequency</b> of GABA-A chloride channel opening and require endogenous GABA (ceiling effect). Barbiturates increase the <b>duration</b> and at high doses directly open chloride channels even without GABA (GABA-mimetic), directly depressing medullary centers without a ceiling."
+      },
+      {
+        id: "c11",
+        type: "why",
+        tag: "Pharma::CNS::NSAIDs",
+        front: "Why is Aspirin contraindicated in children recovering from viral fever?",
+        back: "Triggers <b>Reye's Syndrome</b>: acute encephalopathy, cerebral edema, and microvesicular fatty infiltration of the liver with high mortality. Paracetamol or Ibuprofen must be used instead."
+      },
+      {
+        id: "c12",
+        type: "why",
+        tag: "Pharma::Autacoids::Gout",
+        front: "Why is Allopurinol NEVER initiated during an acute attack of Gout?",
+        back: "Rapid reduction of serum uric acid causes dissolution and shedding of existing articular urate tophi crystals into the synovial fluid, triggering an intense influx of neutrophils that dramatically worsens and prolongs the acute flare."
+      },
+      {
+        id: "c13",
+        type: "why",
+        tag: "Pharma::Endocrine::Steroids",
+        front: "Why must Corticosteroid therapy be tapered gradually rather than stopped abruptly?",
+        back: "Prolonged exogenous glucocorticoids suppress hypothalamic CRH and pituitary ACTH via negative feedback, causing <b>disuse atrophy of the adrenal cortex</b>. Abrupt cessation leaves no endogenous cortisol, precipitating acute fatal <b>Addisonian crisis</b> (hypotension, shock, hypoglycemia)."
+      },
+      {
+        id: "c14",
+        type: "why",
+        tag: "Pharma::Antimicrobials::BetaLactams",
+        front: "Why is Clavulanic Acid combined with Amoxicillin?",
+        back: "Clavulanic acid is a <b>suicide inhibitor of bacterial β-lactamase</b>. It binds irreversibly to the enzyme, protecting Amoxicillin from enzymatic degradation and restoring its bactericidal activity against penicillinase-producing organisms."
+      },
+      {
+        id: "c15",
+        type: "why",
+        tag: "Pharma::Antimicrobials::Aminoglycosides",
+        front: "Why are Aminoglycosides (Gentamicin) ineffective against strict Anaerobic bacteria?",
+        back: "Penetration of aminoglycosides across the bacterial inner cytoplasmic membrane requires an <b>oxygen-dependent electron transport system (proton-motive force)</b>. Strict anaerobes lack this system."
+      },
+      {
+        id: "c16",
+        type: "why",
+        tag: "Pharma::Antimicrobials::Tetracyclines",
+        front: "Why are Tetracyclines contraindicated in pregnancy and children under 8?",
+        back: "Tetracyclines form insoluble <b>calcium-tetracycline orthophosphate chelates</b> in growing bones and teeth, causing permanent yellow-brown dental discoloration, enamel hypoplasia, and reversible suppression of skeletal growth."
+      },
+      {
+        id: "c17",
+        type: "why",
+        tag: "Pharma::Antimicrobials::Chloramphenicol",
+        front: "Why does Chloramphenicol cause <b>Gray Baby Syndrome</b>?",
+        back: "Neonates have immature <b>hepatic UDP-glucuronyl transferase</b> and low GFR. Toxic drug accumulation poisons mitochondrial respiration, causing vomiting, hypothermia, ashen-gray cyanosis, and cardiovascular collapse."
+      },
+      {
+        id: "c18",
+        type: "why",
+        tag: "Pharma::Antimicrobials::AntiTB",
+        front: "Why is Pyridoxine (Vitamin B6) co-prescribed with Isoniazid (INH)?",
+        back: "INH combines with pyridoxal phosphate forming an inactive hydrazone complex and promotes urinary excretion of B6. Supplemental Vitamin B6 prevents peripheral neuropathy and CNS excitability."
+      },
+      {
+        id: "c19",
+        type: "why",
+        tag: "Pharma::Chemotherapy::Anticancer",
+        front: "Why is Leucovorin (Folinic Acid) given after High-Dose Methotrexate?",
+        back: "Methotrexate inhibits Dihydrofolate Reductase (DHFR). Leucovorin is active reduced 5-formyl-THF that <b>bypasses the blocked DHFR step</b>, entering normal host cells (bone marrow, GI mucosa) to rescue them from fatal toxicity."
+      },
+      {
+        id: "c20",
+        type: "why",
+        tag: "Pharma::Endocrine::Antidiabetics",
+        front: "Why is Metformin withheld before and after IV Iodinated Radiocontrast?",
+        back: "Contrast media can cause acute renal failure. Because Metformin is cleared unchanged by the kidneys, contrast nephropathy causes systemic drug accumulation and precipitates fatal <b>Lactic Acidosis</b>."
+      },
+      // Drug of Choice Cards
+      {
+        id: "c21",
+        type: "doc",
+        tag: "Pharma::DOC::Emergencies",
+        front: "Drug of Choice for <b>Anaphylactic Shock</b>?",
+        back: "<b>Adrenaline 1:1000 (0.5 mL IM)</b> into anterolateral thigh.<br>Actions: α1 (vasoconstriction/BP), β1 (cardiac output), β2 (bronchodilation, blocks mast cell release)."
+      },
+      {
+        id: "c22",
+        type: "doc",
+        tag: "Pharma::DOC::CNS",
+        front: "Drug of Choice for <b>Status Epilepticus</b>?",
+        back: "<b>IV Lorazepam (0.1 mg/kg)</b> or IV Diazepam.<br>Followed immediately by IV Fosphenytoin infusion."
+      },
+      {
+        id: "c23",
+        type: "doc",
+        tag: "Pharma::DOC::CVS",
+        front: "Drug of Choice for <b>PSVT (Paroxysmal Supraventricular Tachycardia)</b>?",
+        back: "<b>IV Adenosine (rapid bolus 6 mg, followed by 12 mg if needed + saline flush)</b>.<br>Ultra-short half life (<10s); acts on A1 receptors in AV node."
+      },
+      {
+        id: "c24",
+        type: "doc",
+        tag: "Pharma::DOC::Obstetrics",
+        front: "Drug of Choice for <b>Hypertension in Pregnancy (Pre-eclampsia)</b>?",
+        back: "<b>Labetalol (oral/IV)</b>.<br>Alternatives: Methyldopa, Nifedipine, Hydralazine.<br><i>ACEi / ARBs are strictly contraindicated!</i>"
+      },
+      {
+        id: "c25",
+        type: "doc",
+        tag: "Pharma::DOC::Obstetrics",
+        front: "Drug of Choice for <b>Eclampsia (Convulsions)</b>?",
+        back: "<b>Magnesium Sulfate (MgSO4)</b> via Pritchard or Zuspan regimen.<br>Keep bedside antidote: 10% Calcium Gluconate."
+      },
+      {
+        id: "c26",
+        type: "doc",
+        tag: "Pharma::DOC::Antimicrobials",
+        front: "Drug of Choice for <b>MRSA (Methicillin-Resistant S. aureus)</b>?",
+        back: "<b>Vancomycin (IV)</b>.<br>Alternatives: Linezolid, Daptomycin, Teicoplanin."
+      },
+      {
+        id: "c27",
+        type: "doc",
+        tag: "Pharma::DOC::Antimicrobials",
+        front: "Drug of Choice for <b>Pseudomonas aeruginosa</b> serious infection?",
+        back: "<b>Ceftazidime / Piperacillin-Tazobactam / Meropenem / Cefepime</b>."
+      },
+      {
+        id: "c28",
+        type: "doc",
+        tag: "Pharma::DOC::Antimicrobials",
+        front: "Drug of Choice for <b>Clostridioides difficile Colitis</b>?",
+        back: "<b>Oral Vancomycin</b> or Oral Fidaxomicin.<br>(Oral route ensures high intraluminal concentration; Metronidazole is second-line)."
+      },
+      {
+        id: "c29",
+        type: "doc",
+        tag: "Pharma::DOC::Antimicrobials",
+        front: "Drug of Choice for <b>Syphilis (Treponema pallidum)</b>?",
+        back: "<b>Benzathine Penicillin G (IM)</b>.<br>Watch out for Jarisch-Herxheimer reaction."
+      },
+      {
+        id: "c30",
+        type: "doc",
+        tag: "Pharma::DOC::CNS",
+        front: "Drug of Choice for <b>Absence Seizures (Petit Mal)</b>?",
+        back: "<b>Ethosuximide</b> (or Sodium Valproate).<br>MOA: Blocks T-type Ca2+ channels in thalamic relay neurons."
+      },
+      {
+        id: "c31",
+        type: "doc",
+        tag: "Pharma::DOC::CNS",
+        front: "Drug of Choice for <b>Trigeminal Neuralgia</b>?",
+        back: "<b>Carbamazepine</b>.<br>MOA: Blocks voltage-gated Na+ channels."
+      },
+      {
+        id: "c32",
+        type: "doc",
+        tag: "Pharma::DOC::Antimalarials",
+        front: "Drug of Choice for <b>Severe / Cerebral Malaria</b>?",
+        back: "<b>IV Artesunate</b> (preferred over IV Quinine due to rapid clearance and lack of hypoglycemia/cardiotoxicity)."
+      },
+      {
+        id: "c33",
+        type: "doc",
+        tag: "Pharma::DOC::Antimalarials",
+        front: "Drug of Choice for <b>Radical Cure of Vivax / Ovale Malaria (Hepatic Hypnozoites)</b>?",
+        back: "<b>Primaquine</b> (14-day course).<br><i>Must test for G6PD deficiency before starting to prevent hemolytic crisis!</i>"
+      },
+      {
+        id: "c34",
+        type: "doc",
+        tag: "Pharma::DOC::Endocrine",
+        front: "Drug of Choice for <b>Diabetic Ketoacidosis (DKA)</b>?",
+        back: "<b>Regular (Crystalline/Soluble) Insulin IV infusion</b> + aggressive IV Normal Saline hydration + Potassium monitoring."
+      },
+      {
+        id: "c35",
+        type: "doc",
+        tag: "Pharma::DOC::GIT",
+        front: "Drug of Choice for <b>Chemotherapy-Induced Acute Nausea & Vomiting</b>?",
+        back: "<b>Ondansetron (5-HT3 antagonist) + IV Dexamethasone</b>.<br>Add Aprepitant (NK1 antagonist) for highly emetogenic regimens (Cisplatin)."
+      },
+      // Antidotes Cards
+      {
+        id: "c36",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Paracetamol (Acetaminophen) Overdose</b>?",
+        back: "<b>N-Acetylcysteine (NAC)</b> (IV or Oral).<br>MOA: Replenishes hepatic glutathione to neutralize toxic metabolite NAPQI."
+      },
+      {
+        id: "c37",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Opioid Toxicity (Morphine, Heroin)</b>?",
+        back: "<b>Naloxone (IV)</b>.<br>Pure competitive μ-opioid receptor antagonist."
+      },
+      {
+        id: "c38",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Benzodiazepine Overdose</b>?",
+        back: "<b>Flumazenil (IV)</b>.<br>Competitive antagonist at the BZD binding site on GABA-A receptor."
+      },
+      {
+        id: "c39",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Organophosphate Poisoning</b>?",
+        back: "<b>Atropine (titrated IV until secretions dry) + Pralidoxime (2-PAM)</b>.<br>Pralidoxime reactivates AChE before chemical aging."
+      },
+      {
+        id: "c40",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Hematology",
+        front: "Antidote for <b>Unfractionated Heparin</b>?",
+        back: "<b>Protamine Sulfate (IV)</b>.<br>Strongly basic polycation that forms an inactive salt complex with acidic heparin."
+      },
+      {
+        id: "c41",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Hematology",
+        front: "Antidote for <b>Warfarin Bleeding / Overdose</b>?",
+        back: "<b>Vitamin K1 (Phytonadione) + Fresh Frozen Plasma (FFP) or 4-Factor PCC</b>.<br>Restores factors II, VII, IX, X."
+      },
+      {
+        id: "c42",
+        type: "antidote",
+        tag: "Pharma::Antidotes::CVS",
+        front: "Antidote for <b>Beta-Blocker Toxicity</b>?",
+        back: "<b>IV Glucagon (1st line)</b>.<br>MOA: Stimulates adenylate cyclase via non-adrenergic glucagon receptors, increasing cAMP and contractility."
+      },
+      {
+        id: "c43",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Acute Iron Poisoning</b>?",
+        back: "<b>Desferrioxamine (Deferoxamine)</b>.<br>Chelates Fe3+ into stable ferrioxamine complex excreted in urine ('vin rose' colored urine)."
+      },
+      {
+        id: "c44",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Copper Toxicity & Wilson's Disease</b>?",
+        back: "<b>D-Penicillamine / Trientine</b>.<br>Chelates copper into soluble urinary complexes; give with Pyridoxine (B6)."
+      },
+      {
+        id: "c45",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Chemotherapy",
+        front: "Antidote for <b>Cyclophosphamide / Ifosfamide Bladder Toxicity</b>?",
+        back: "<b>MESNA (Sodium 2-mercaptoethanesulfonate)</b>.<br>Detoxifies the urotoxic metabolite <b>Acrolein</b> in bladder to prevent hemorrhagic cystitis."
+      },
+      {
+        id: "c46",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Malignant Hyperthermia & Neuroleptic Malignant Syndrome (NMS)</b>?",
+        back: "<b>Dantrolene Sodium (IV)</b>.<br>MOA: Blocks Ryanodine receptor (RyR1) Ca2+ release channels in the sarcoplasmic reticulum of skeletal muscle."
+      },
+      {
+        id: "c47",
+        type: "antidote",
+        tag: "Pharma::Antidotes::Toxicology",
+        front: "Antidote for <b>Methanol / Ethylene Glycol Poisoning</b>?",
+        back: "<b>Fomepizole</b> (or IV Ethanol 10%).<br>MOA: Competitive inhibitor of Alcohol Dehydrogenase, halting formation of formic/oxalic acid."
+      }
+    ];
+
+    // --- CLASSIFICATION TREES DATA ---
+    const CLASSIFICATIONS = [
+      {
+        title: "Beta-Adrenoceptor Antagonists (Beta Blockers)",
+        badge: "CVS / ANS Core",
+        tree: `BETA-ADRENOCEPTOR ANTAGONISTS
+├── NON-SELECTIVE (β1 + β2)
+│   ├── Without ISA: Propranolol, Timolol, Sotalol
+│   └── With ISA: Pindolol
+├── CARDIOSELECTIVE (β1)
+│   └── Metoprolol, Atenolol, Bisoprolol, Esmolol, Nebivolol (releases NO)
+└── ALPHA + BETA BLOCKERS
+    └── Labetalol (IV in HTN crisis), Carvedilol (in Heart Failure)`
+      },
+      {
+        title: "Cephalosporins (By Generation)",
+        badge: "Antimicrobial Core",
+        tree: `CEPHALOSPORINS
+├── 1st GEN (Gram+ heavy): Cefazolin, Cephalexin, Cefadroxil
+├── 2nd GEN (Better Gram-): Cefuroxime, Cefaclor, Cefoxitin
+├── 3rd GEN (Crosses BBB!): Ceftriaxone, Cefotaxime, Ceftazidime (Pseudomonas)
+├── 4th GEN (Pseudomonal): Cefepime, Cefpirome
+└── 5th GEN (Anti-MRSA!): Ceftaroline, Ceftobiprole`
+      },
+      {
+        title: "Antiepileptic Drugs",
+        badge: "CNS Core",
+        tree: `ANTIEPILEPTIC DRUGS
+├── Na+ Channel Blockers: Phenytoin, Carbamazepine, Oxcarbazepine
+├── GABA Enhancers: Phenobarbitone, Diazepam, Vigabatrin, Tiagabine
+├── T-Type Ca2+ Blockers: Ethosuximide (Absence DOC)
+├── Glutamate Blockers: Topiramate, Lamotrigine
+└── Broad Spectrum: Sodium Valproate, Levetiracetam`
+      },
+      {
+        title: "Oral Antidiabetic Agents (Hypoglycemics)",
+        badge: "Endocrine Core",
+        tree: `ANTIDIABETIC DRUGS
+├── BIGUANIDES (AMPK Activator): Metformin (First-line)
+├── SULFONYLUREAS (K-ATP Blockade): Glimepiride, Gliclazide, Glipizide
+├── SGLT-2 INHIBITORS (Glucosuria): Dapagliflozin, Empagliflozin
+├── DPP-4 INHIBITORS (Incretin): Sitagliptin, Linagliptin
+└── GLP-1 AGONISTS (Injectable): Liraglutide, Semaglutide`
+      },
+      {
+        title: "Diuretics (By Tubular Site of Action)",
+        badge: "Renal / CVS Core",
+        tree: `DIURETICS
+├── LOOP (Thick Ascending Limb): Furosemide, Torsemide (High Ceiling)
+├── THIAZIDES (Distal Convoluted Tubule): Hydrochlorothiazide, Chlorthalidone
+├── K+-SPARING (Late Distal & Collecting): Spironolactone, Eplerenone, Amiloride
+├── OSMOTIC (Whole Tubule): Mannitol
+└── CARBONIC ANHYDRASE INH (Proximal Tubule): Acetazolamide`
+      },
+      {
+        title: "Anti-Asthma Drugs",
+        badge: "Respiratory Core",
+        tree: `ANTI-ASTHMA DRUGS
+├── BRONCHODILATORS (Relievers)
+│   ├── β2 Sympathomimetics: SABA (Salbutamol) / LABA (Salmeterol, Formoterol)
+│   ├── Anticholinergics: Ipratropium, Tiotropium
+│   └── Methylxanthines: Theophylline
+└── ANTI-INFLAMMATORY (Controllers)
+    ├── Inhaled Corticosteroids: Budesonide, Fluticasone
+    ├── Leukotriene Antagonists: Montelukast, Zafirlukast
+    └── Mast Cell Stabilizers: Sodium Cromoglycate`
+      }
+    ];
+
+    // --- 2. STATE INITIALIZATION ---
+    let state = {
+      currentDay: 1,
+      triageMode: 'pass', // 'pass' | 'first_class' | 'distinction'
+      xp: 0,
+      streak: 1,
+      completedObjectives: {}, // { "day-1-0": true }
+      cardRatings: {}, // { "c1": "green" }
+      bossesDefeated: {}, // { 1: true }
+      activeCardIndex: 0,
+      cardFilter: 'all',
+      isCardFlipped: false,
+      pomoSeconds: 25 * 60,
+      pomoRunning: false,
+      pomoTimerId: null,
+      matrixCategory: 'all'
+    };
+
+    // Load from localStorage if available
+    function loadState() {
+      try {
+        const saved = localStorage.getItem('pharma_pulse_state');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+        }
+      } catch (e) {
+        console.warn("Could not load state:", e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('pharma_pulse_state', JSON.stringify({
+          currentDay: state.currentDay,
+          triageMode: state.triageMode,
+          xp: state.xp,
+          streak: state.streak,
+          completedObjectives: state.completedObjectives,
+          cardRatings: state.cardRatings,
+          bossesDefeated: state.bossesDefeated
+        }));
+      } catch (e) {
+        console.warn("Could not save state:", e);
+      }
+    }
+
+    // --- 3. AUDIO SYNTHESIZER (NO EXTERNAL AUDIO FILES) ---
+    function playChime(type = 'success') {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'success') {
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        } else if (type === 'boss_hit') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(220, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.2);
+        }
+      } catch (e) {
+        // audio context not allowed without interaction
+      }
+    }
+
+    // --- 4. GAMIFICATION HELPERS ---
+    function addXP(amount, reason = "") {
+      state.xp += amount;
+      updateHeaderStats();
+      saveState();
+      
+      // Floating XP indicator or toast if desired
+      if (amount >= 100 && window.confetti) {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.8 }
+        });
+      }
+    }
+
+    function getRank(xp) {
+      if (xp >= 3000) return { title: "Lvl 5 • Professor of Pharmacology", class: "bg-amber-500/20 text-amber-300 border-amber-500/30" };
+      if (xp >= 1800) return { title: "Lvl 4 • Chief Pharmacologist", class: "bg-purple-500/20 text-purple-300 border-purple-500/30" };
+      if (xp >= 1000) return { title: "Lvl 3 • Senior Resident", class: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" };
+      if (xp >= 400)  return { title: "Lvl 2 • Junior Resident", class: "bg-blue-500/20 text-blue-300 border-blue-500/30" };
+      return { title: "Lvl 1 • Intern", class: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30" };
+    }
+
+    function updateHeaderStats() {
+      document.getElementById('xpCount').textContent = state.xp;
+      document.getElementById('streakCount').textContent = state.streak;
+      const rank = getRank(state.xp);
+      const rankBadge = document.getElementById('rankBadge');
+      rankBadge.textContent = rank.title;
+      rankBadge.className = `text-xs px-2 py-0.5 rounded-full font-semibold border ${rank.class}`;
+
+      // Calculate Readiness Score (%)
+      let totalObjCount = 0;
+      let doneObjCount = 0;
+      DAYS_DATA.forEach(d => {
+        d.objectives.forEach((_, idx) => {
+          totalObjCount++;
+          if (state.completedObjectives[`day-${d.day}-${idx}`]) doneObjCount++;
+        });
+      });
+
+      let masteredCards = Object.values(state.cardRatings).filter(r => r === 'green').length;
+      let bossesCount = Object.keys(state.bossesDefeated).length;
+
+      // Formula: 50% objectives + 30% cards + 20% bosses
+      let objPct = (doneObjCount / (totalObjCount || 1)) * 50;
+      let cardPct = (masteredCards / FLASHCARDS.length) * 30;
+      let bossPct = (bossesCount / DAYS_DATA.length) * 20;
+
+      let totalPct = Math.min(100, Math.round(objPct + cardPct + bossPct));
+      
+      const bar = document.getElementById('readinessBar');
+      const score = document.getElementById('readinessScore');
+      const status = document.getElementById('readinessStatus');
+      
+      bar.style.width = `${totalPct}%`;
+      score.textContent = `${totalPct}%`;
+
+      if (totalPct >= 75) {
+        status.textContent = "🛡️ Safe Distinction Zone Reached!";
+        status.className = "text-[11px] text-emerald-400 font-bold";
+      } else if (totalPct >= 50) {
+        status.textContent = "🎯 Solid Pass / First-Class trajectory!";
+        status.className = "text-[11px] text-indigo-400 font-semibold";
+      } else if (totalPct >= 25) {
+        status.textContent = "⚡ Gaining steady clinical momentum";
+        status.className = "text-[11px] text-amber-400";
+      } else {
+        status.textContent = "Preparing for takeoff...";
+        status.className = "text-[11px] text-slate-400 italic";
+      }
+    }
+
+    // --- 5. TRIAGE MODE (SMART PLAY 80/20) ---
+    function setTriageMode(mode) {
+      state.triageMode = mode;
+      saveState();
+
+      const btnPass = document.getElementById('btnTriagePass');
+      const btnStd = document.getElementById('btnTriageStandard');
+      const btnDist = document.getElementById('btnTriageDistinction');
+
+      const activeClass = "bg-indigo-600 text-white shadow-md shadow-indigo-600/30";
+      const inactiveClass = "text-slate-400 hover:text-slate-200";
+
+      btnPass.className = `px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${mode === 'pass' ? activeClass : inactiveClass}`;
+      btnStd.className = `px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${mode === 'first_class' ? activeClass : inactiveClass}`;
+      btnDist.className = `px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${mode === 'distinction' ? activeClass : inactiveClass}`;
+
+      renderDayPickerPills();
+      renderTimeline();
+    }
+
+    // --- 6. RENDER DAY VIEW ---
+    function renderDayView() {
+      const dayData = DAYS_DATA.find(d => d.day === state.currentDay) || DAYS_DATA[0];
+
+      document.getElementById('currentDayBadge').textContent = `DAY ${dayData.day} of 15`;
+      document.getElementById('currentSystemBadge').textContent = dayData.system;
+      document.getElementById('currentDayTitle').textContent = dayData.title;
+      document.getElementById('refShanbhag').textContent = dayData.shanbhag_ref;
+      document.getElementById('refKDT').textContent = dayData.kdt_ref;
+      document.getElementById('bossName').textContent = dayData.boss_name;
+
+      // Boss defeated badge
+      const isBossDefeated = !!state.bossesDefeated[dayData.day];
+      const bossBadge = document.getElementById('bossStatusBadge');
+      const bossBtn = document.getElementById('btnStartBoss');
+      if (isBossDefeated) {
+        bossBadge.classList.remove('hidden');
+        bossBtn.textContent = "⚔️ Replay Boss Fight";
+      } else {
+        bossBadge.classList.add('hidden');
+        bossBtn.textContent = "⚔️ Enter Boss Arena (5 Questions)";
+      }
+
+      // Objectives Checklist
+      const objContainer = document.getElementById('objectivesList');
+      objContainer.innerHTML = '';
+      let completedInDay = 0;
+
+      dayData.objectives.forEach((obj, idx) => {
+        const objKey = `day-${dayData.day}-${idx}`;
+        const isDone = !!state.completedObjectives[objKey];
+        if (isDone) completedInDay++;
+
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-xl border transition-all flex items-start gap-3 cursor-pointer ${isDone ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200' : 'bg-slate-800/60 border-slate-700/60 text-slate-300 hover:bg-slate-800'}`;
+        div.onclick = () => toggleObjective(dayData.day, idx);
+
+        div.innerHTML = `
+          <input type="checkbox" ${isDone ? 'checked' : ''} class="mt-1 rounded text-emerald-500 focus:ring-0 bg-slate-700 border-slate-600 pointer-events-none">
+          <span class="text-xs sm:text-sm font-medium ${isDone ? 'line-through opacity-80' : ''}">${obj}</span>
+        `;
+        objContainer.appendChild(div);
+      });
+
+      document.getElementById('objectiveProgress').textContent = `${completedInDay} / ${dayData.objectives.length} Complete`;
+
+      // High-Yield Pearls
+      const pearlsContainer = document.getElementById('pearlsList');
+      pearlsContainer.innerHTML = '';
+      dayData.pearls.forEach(pearl => {
+        const p = document.createElement('div');
+        p.className = "flex items-start gap-2 bg-amber-900/10 p-2.5 rounded-xl border border-amber-500/20";
+        p.innerHTML = `<span class="text-amber-400 font-bold shrink-0">⚡</span><span>${pearl}</span>`;
+        pearlsContainer.appendChild(p);
+      });
+
+      renderDayPickerPills();
+    }
+
+    function toggleObjective(day, idx) {
+      const key = `day-${day}-${idx}`;
+      if (state.completedObjectives[key]) {
+        delete state.completedObjectives[key];
+      } else {
+        state.completedObjectives[key] = true;
+        addXP(20, "Objective completed");
+        playChime('success');
+      }
+      saveState();
+      renderDayView();
+      updateHeaderStats();
+    }
+
+    function renderDayPickerPills() {
+      const container = document.getElementById('dayPickerPills');
+      container.innerHTML = '';
+
+      DAYS_DATA.forEach(d => {
+        // Triage filter
+        let isHighPriority = d.tier === "Must-Know" || d.day <= 10;
+        if (state.triageMode === 'pass' && !isHighPriority && d.day > 10 && d.day < 14) {
+          // dimmed in 80/20 pass mode
+        }
+
+        const isCurrent = d.day === state.currentDay;
+        const isDefeated = !!state.bossesDefeated[d.day];
+
+        const btn = document.createElement('button');
+        btn.onclick = () => {
+          state.currentDay = d.day;
+          saveState();
+          renderDayView();
+        };
+
+        btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0 ${isCurrent ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}`;
+        btn.innerHTML = `
+          <span>D${d.day}</span>
+          ${isDefeated ? '<span class="text-[10px] text-amber-300">⭐</span>' : ''}
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function jumpNextDay() {
+      if (state.currentDay < 15) {
+        state.currentDay++;
+        saveState();
+        renderDayView();
+      }
+    }
+
+    function jumpPreviousDay() {
+      if (state.currentDay > 1) {
+        state.currentDay--;
+        saveState();
+        renderDayView();
+      }
+    }
+
+    // --- 7. ACTIVE RECALL CARDS LOGIC ---
+    function getFilteredCards() {
+      let cards = [...FLASHCARDS];
+      if (state.cardFilter === 'red') {
+        cards = cards.filter(c => state.cardRatings[c.id] === 'red');
+      } else if (state.cardFilter === 'green') {
+        cards = cards.filter(c => state.cardRatings[c.id] === 'green');
+      } else if (state.cardFilter === 'why') {
+        cards = cards.filter(c => c.type === 'why');
+      } else if (state.cardFilter === 'doc') {
+        cards = cards.filter(c => c.type === 'doc');
+      } else if (state.cardFilter === 'antidote') {
+        cards = cards.filter(c => c.type === 'antidote');
+      }
+      return cards;
+    }
+
+    function renderCurrentCard() {
+      const cards = getFilteredCards();
+      const total = cards.length;
+
+      document.getElementById('countAll').textContent = FLASHCARDS.length;
+      document.getElementById('countRed').textContent = FLASHCARDS.filter(c => state.cardRatings[c.id] === 'red').length;
+      document.getElementById('countGreen').textContent = FLASHCARDS.filter(c => state.cardRatings[c.id] === 'green').length;
+
+      if (total === 0) {
+        document.getElementById('currentCardIndex').textContent = '0';
+        document.getElementById('totalCardsCount').textContent = '0';
+        document.getElementById('cardFrontText').textContent = "No cards found in this filter.";
+        document.getElementById('cardBackText').textContent = "";
+        document.getElementById('cardBack').classList.add('hidden');
+        return;
+      }
+
+      if (state.activeCardIndex >= total) state.activeCardIndex = 0;
+      if (state.activeCardIndex < 0) state.activeCardIndex = total - 1;
+
+      const card = cards[state.activeCardIndex];
+      document.getElementById('currentCardIndex').textContent = state.activeCardIndex + 1;
+      document.getElementById('totalCardsCount').textContent = total;
+      document.getElementById('currentCardTag').textContent = card.tag;
+      document.getElementById('cardFrontText').innerHTML = card.front;
+      document.getElementById('cardBackText').innerHTML = card.back;
+
+      // Reset flip state
+      state.isCardFlipped = false;
+      document.getElementById('cardBack').classList.add('hidden');
+      document.getElementById('flipPrompt').textContent = "Click anywhere to flip and see answer (or Spacebar)";
+    }
+
+    function flipCurrentCard() {
+      const back = document.getElementById('cardBack');
+      state.isCardFlipped = !state.isCardFlipped;
+      if (state.isCardFlipped) {
+        back.classList.remove('hidden');
+        document.getElementById('flipPrompt').textContent = "Rate your recall below to advance ⬇";
+      } else {
+        back.classList.add('hidden');
+        document.getElementById('flipPrompt').textContent = "Click anywhere to flip and see answer";
+      }
+    }
+
+    function rateCurrentCard(rating) {
+      const cards = getFilteredCards();
+      if (!cards.length) return;
+      const card = cards[state.activeCardIndex];
+
+      state.cardRatings[card.id] = rating;
+      if (rating === 'green') {
+        addXP(15, "Card mastered");
+        playChime('success');
+      }
+
+      saveState();
+      updateHeaderStats();
+      nextCard();
+    }
+
+    function nextCard() {
+      const cards = getFilteredCards();
+      if (!cards.length) return;
+      state.activeCardIndex = (state.activeCardIndex + 1) % cards.length;
+      renderCurrentCard();
+    }
+
+    function prevCard() {
+      const cards = getFilteredCards();
+      if (!cards.length) return;
+      state.activeCardIndex = (state.activeCardIndex - 1 + cards.length) % cards.length;
+      renderCurrentCard();
+    }
+
+    function filterCards(type) {
+      state.cardFilter = type;
+      state.activeCardIndex = 0;
+      
+      const filterBtns = ['All', 'Red', 'Green', 'Why', 'Doc', 'Antidote'];
+      filterBtns.forEach(b => {
+        const el = document.getElementById(`btnFilter${b}`);
+        if (el) {
+          if (b.toLowerCase() === type) {
+            el.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium text-xs";
+          } else {
+            el.className = "px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs";
+          }
+        }
+      });
+
+      renderCurrentCard();
+    }
+
+    // --- 8. SEARCHABLE MATRIX (DOC & ANTIDOTES) ---
+    function toggleMatrixCategory(cat) {
+      state.matrixCategory = cat;
+      const btnAll = document.getElementById('btnMatrixAll');
+      const btnDoc = document.getElementById('btnMatrixDoc');
+      const btnAnti = document.getElementById('btnMatrixAntidote');
+
+      const active = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium text-xs";
+      const inactive = "px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs";
+
+      btnAll.className = cat === 'all' ? active : inactive;
+      btnDoc.className = cat === 'doc' ? active : inactive;
+      btnAnti.className = cat === 'antidote' ? active : inactive;
+
+      renderMatrixTables();
+    }
+
+    function renderMatrixTables() {
+      const query = (document.getElementById('matrixSearchInput').value || '').toLowerCase().trim();
+      const container = document.getElementById('matrixResultsContainer');
+      container.innerHTML = '';
+
+      // Collect DOC cards and Antidote cards
+      let docs = FLASHCARDS.filter(c => c.type === 'doc');
+      let antidotes = FLASHCARDS.filter(c => c.type === 'antidote');
+
+      if (query) {
+        docs = docs.filter(c => c.front.toLowerCase().includes(query) || c.back.toLowerCase().includes(query));
+        antidotes = antidotes.filter(c => c.front.toLowerCase().includes(query) || c.back.toLowerCase().includes(query));
+      }
+
+      if (state.matrixCategory === 'all' || state.matrixCategory === 'doc') {
+        const docCard = document.createElement('div');
+        docCard.className = "bg-slate-800/70 border border-slate-700 rounded-3xl p-6 shadow-xl space-y-4";
+        docCard.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+            <h3 class="font-extrabold text-white text-lg flex items-center gap-2">
+              <span>🎯</span> High-Yield Drugs of Choice (${docs.length})
+            </h3>
+            <span class="text-xs text-indigo-400 font-medium">Exam Standard</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            ${docs.map(d => `
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/60 hover:border-indigo-500/40 transition space-y-1">
+                <div class="text-xs text-indigo-300 font-semibold">${d.front.replace(/<[^>]*>/g, '')}</div>
+                <div class="text-xs text-slate-200">${d.back}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(docCard);
+      }
+
+      if (state.matrixCategory === 'all' || state.matrixCategory === 'antidote') {
+        const antiCard = document.createElement('div');
+        antiCard.className = "bg-slate-800/70 border border-slate-700 rounded-3xl p-6 shadow-xl space-y-4";
+        antiCard.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+            <h3 class="font-extrabold text-white text-lg flex items-center gap-2">
+              <span>🧪</span> Specific Antidotes & Toxicology (${antidotes.length})
+            </h3>
+            <span class="text-xs text-emerald-400 font-medium">Viva & MCQ Favorite</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            ${antidotes.map(a => `
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/60 hover:border-emerald-500/40 transition space-y-1">
+                <div class="text-xs text-rose-300 font-semibold">${a.front.replace(/<[^>]*>/g, '')}</div>
+                <div class="text-xs text-slate-200">${a.back}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(antiCard);
+      }
+    }
+
+    // --- 9. CLASSIFICATION TREES ---
+    function renderClassifications() {
+      const container = document.getElementById('classificationsContainer');
+      container.innerHTML = '';
+
+      CLASSIFICATIONS.forEach(c => {
+        const div = document.createElement('div');
+        div.className = "bg-slate-800/70 border border-slate-700 rounded-3xl p-5 shadow-lg space-y-3";
+        div.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+            <h4 class="font-bold text-white text-sm">${c.title}</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">${c.badge}</span>
+          </div>
+          <pre class="bg-slate-950 p-3.5 rounded-xl text-[11px] font-mono text-emerald-300/90 overflow-x-auto whitespace-pre leading-relaxed border border-slate-800">${c.tree}</pre>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // --- 10. 15-DAY MASTER TIMELINE GRID ---
+    function renderTimeline() {
+      const grid = document.getElementById('timelineGrid');
+      grid.innerHTML = '';
+
+      DAYS_DATA.forEach(d => {
+        const isCurrent = d.day === state.currentDay;
+        const isDefeated = !!state.bossesDefeated[d.day];
+        
+        let completedInDay = 0;
+        d.objectives.forEach((_, idx) => {
+          if (state.completedObjectives[`day-${d.day}-${idx}`]) completedInDay++;
+        });
+
+        const pct = Math.round((completedInDay / d.objectives.length) * 100);
+
+        const card = document.createElement('div');
+        card.onclick = () => {
+          state.currentDay = d.day;
+          saveState();
+          switchTab('today');
+          renderDayView();
+        };
+
+        card.className = `p-5 rounded-3xl border transition cursor-pointer relative overflow-hidden flex flex-col justify-between ${isCurrent ? 'bg-indigo-950/40 border-indigo-500 shadow-lg shadow-indigo-500/20' : 'bg-slate-800/60 border-slate-700/60 hover:bg-slate-800'}`;
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-indigo-400">DAY ${d.day}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">${d.system}</span>
+            </div>
+            <h4 class="font-extrabold text-white text-sm leading-snug">${d.title}</h4>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs">
+            <div class="text-slate-400 font-mono text-[11px]">${completedInDay}/${d.objectives.length} Tasks (${pct}%)</div>
+            <div>${isDefeated ? '⭐ <span class="text-amber-300 font-semibold text-[11px]">Boss Defeated</span>' : '<span class="text-slate-500 text-[11px]">Pending</span>'}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // --- 11. BOSS BATTLE ENGINE ---
+    let bossState = {
+      day: 1,
+      currentQ: 0,
+      hp: 100,
+      maxHp: 100,
+      questions: []
+    };
+
+    function startBossBattle() {
+      const dayData = DAYS_DATA.find(d => d.day === state.currentDay) || DAYS_DATA[0];
+      bossState.day = dayData.day;
+      bossState.currentQ = 0;
+      bossState.maxHp = dayData.boss_hp || 100;
+      bossState.hp = bossState.maxHp;
+      bossState.questions = dayData.boss_questions || [];
+
+      document.getElementById('modalBossName').textContent = dayData.boss_name;
+      document.getElementById('bossModal').classList.remove('hidden');
+      document.getElementById('bossVictoryArea').classList.add('hidden');
+      document.getElementById('bossQuestionArea').classList.remove('hidden');
+
+      renderBossQuestion();
+    }
+
+    function renderBossQuestion() {
+      const q = bossState.questions[bossState.currentQ];
+      if (!q) return;
+
+      document.getElementById('bossQIndex').textContent = `Question ${bossState.currentQ + 1} of ${bossState.questions.length}`;
+      document.getElementById('bossQuestionText').textContent = q.q;
+      document.getElementById('bossHpText').textContent = `${bossState.hp} / ${bossState.maxHp} HP`;
+      document.getElementById('bossHpBar').style.width = `${(bossState.hp / bossState.maxHp) * 100}%`;
+
+      const explBox = document.getElementById('bossExplanationBox');
+      explBox.classList.add('hidden');
+
+      const optionsList = document.getElementById('bossOptionsList');
+      optionsList.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.onclick = () => handleBossAnswer(idx);
+        btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-xs sm:text-sm font-medium text-slate-200 transition";
+        btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+        optionsList.appendChild(btn);
+      });
+    }
+
+    function handleBossAnswer(chosenIdx) {
+      const q = bossState.questions[bossState.currentQ];
+      const explBox = document.getElementById('bossExplanationBox');
+      explBox.classList.remove('hidden');
+
+      const isCorrect = chosenIdx === q.answer;
+      if (isCorrect) {
+        playChime('boss_hit');
+        bossState.hp = Math.max(0, bossState.hp - Math.ceil(bossState.maxHp / bossState.questions.length));
+        document.getElementById('bossHpText').textContent = `${bossState.hp} / ${bossState.maxHp} HP`;
+        document.getElementById('bossHpBar').style.width = `${(bossState.hp / bossState.maxHp) * 100}%`;
+
+        explBox.className = "p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-200 leading-relaxed";
+        explBox.innerHTML = `<strong>🎯 Correct! (+40 XP):</strong> ${q.explanation}`;
+        addXP(40, "Boss hit");
+      } else {
+        explBox.className = "p-3 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-200 leading-relaxed";
+        explBox.innerHTML = `<strong>❌ Not quite:</strong> Correct answer was <b>${q.options[q.answer]}</b>.<br>${q.explanation}`;
+      }
+
+      // Replace option buttons with Next Question button
+      const optionsList = document.getElementById('bossOptionsList');
+      optionsList.innerHTML = `
+        <button onclick="advanceBossQuestion()" class="w-full mt-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition shadow-lg">
+          ${bossState.currentQ < bossState.questions.length - 1 ? 'Next Question ▶' : 'Finish Battle ⚔️'}
+        </button>
+      `;
+    }
+
+    function advanceBossQuestion() {
+      bossState.currentQ++;
+      if (bossState.currentQ >= bossState.questions.length || bossState.hp <= 0) {
+        // Victory!
+        state.bossesDefeated[bossState.day] = true;
+        addXP(200, "Boss Defeated");
+        saveState();
+        updateHeaderStats();
+        renderDayView();
+
+        document.getElementById('bossQuestionArea').classList.add('hidden');
+        document.getElementById('bossVictoryArea').classList.remove('hidden');
+        if (window.confetti) {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+      } else {
+        renderBossQuestion();
+      }
+    }
+
+    function closeBossModal() {
+      document.getElementById('bossModal').classList.add('hidden');
+    }
+
+    // --- 12. MARKDOWN EDITOR FOR RAPID NOTES CUSTOMIZATION ---
+    function openMarkdownEditor() {
+      const dayData = DAYS_DATA.find(d => d.day === state.currentDay);
+      const dayKey = `custom_day_${state.currentDay}`;
+      const savedCustom = localStorage.getItem(dayKey);
+
+      let initialContent = savedCustom;
+      if (!initialContent) {
+        initialContent = `# Day ${dayData.day}: ${dayData.title}\n\n` +
+          `### References\n- Shanbhag: ${dayData.shanbhag_ref}\n- KDT: ${dayData.kdt_ref}\n\n` +
+          `### Core Objectives\n` +
+          dayData.objectives.map(o => `- [ ] ${o}`).join('\n') +
+          `\n\n### High-Yield Pearls\n` +
+          dayData.pearls.map(p => `> ⚡ ${p}`).join('\n>\n');
+      }
+
+      document.getElementById('mdEditorTextarea').value = initialContent;
+      document.getElementById('mdEditorModal').classList.remove('hidden');
+    }
+
+    function closeMarkdownEditor() {
+      document.getElementById('mdEditorModal').classList.add('hidden');
+    }
+
+    async function saveMarkdownContent() {
+      const text = document.getElementById('mdEditorTextarea').value;
+      const dayKey = `custom_day_${state.currentDay}`;
+      localStorage.setItem(dayKey, text);
+
+      // Attempt to sync to local server API if running
+      try {
+        await fetch('/api/save-day', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dayId: `day-${String(state.currentDay).padStart(2, '0')}`,
+            content: text
+          })
+        });
+      } catch (e) {
+        // standalone mode, local storage is enough
+      }
+
+      closeMarkdownEditor();
+      playChime('success');
+      alert(`Notes for Day ${state.currentDay} saved successfully!`);
+    }
+
+    // --- 13. ANKI CSV EXPORTER ---
+    function openAnkiExporter() {
+      document.getElementById('ankiExportModal').classList.remove('hidden');
+    }
+
+    function closeAnkiExporter() {
+      document.getElementById('ankiExportModal').classList.add('hidden');
+    }
+
+    function triggerAnkiDownload() {
+      let csv = "#separator:Comma\n#html:true\n#tags column:3\n";
+      FLASHCARDS.forEach(c => {
+        const f = `"${c.front.replace(/"/g, '""')}"`;
+        const b = `"${c.back.replace(/"/g, '""')}"`;
+        const t = `"${c.tag.replace(/"/g, '""')}"`;
+        csv += `${f},${b},${t}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "pharma_high_yield_anki_deck.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      addXP(50, "Anki export");
+      closeAnkiExporter();
+    }
+
+    // --- 14. POMODORO TIMER ---
+    function togglePomodoro() {
+      const btn = document.getElementById('btnPomoToggle');
+      if (state.pomoRunning) {
+        clearInterval(state.pomoTimerId);
+        state.pomoRunning = false;
+        btn.textContent = '▶';
+      } else {
+        state.pomoRunning = true;
+        btn.textContent = '⏸';
+        state.pomoTimerId = setInterval(() => {
+          if (state.pomoSeconds > 0) {
+            state.pomoSeconds--;
+            updatePomoDisplay();
+          } else {
+            clearInterval(state.pomoTimerId);
+            state.pomoRunning = false;
+            btn.textContent = '▶';
+            playChime('success');
+            addXP(100, "Pomodoro complete");
+            alert("⏰ 25-Minute Focus Block Complete! Take a 5-minute breather.");
+            state.pomoSeconds = 25 * 60;
+            updatePomoDisplay();
+          }
+        }, 1000);
+      }
+    }
+
+    function resetPomodoro() {
+      clearInterval(state.pomoTimerId);
+      state.pomoRunning = false;
+      document.getElementById('btnPomoToggle').textContent = '▶';
+      state.pomoSeconds = 25 * 60;
+      updatePomoDisplay();
+    }
+
+    function updatePomoDisplay() {
+      const m = Math.floor(state.pomoSeconds / 60);
+      const s = state.pomoSeconds % 60;
+      document.getElementById('pomoTimer').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    // --- 15. ZEN FOCUS MODE ---
+    let isZenMode = false;
+    function toggleFocusMode() {
+      isZenMode = !isZenMode;
+      const header = document.querySelector('header');
+      const progress = document.querySelector('.bg-slate-800\\/60');
+      if (isZenMode) {
+        header.classList.add('hidden');
+        progress.classList.add('hidden');
+      } else {
+        header.classList.remove('hidden');
+        progress.classList.remove('hidden');
+      }
+    }
+
+    // --- 16. TAB NAVIGATION ---
+    function switchTab(tabId) {
+      const tabs = ['today', 'cards', 'matrix', 'classifications', 'timeline'];
+      tabs.forEach(t => {
+        const section = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tabId) {
+          section.classList.remove('hidden');
+          btn.className = "px-4 py-2.5 font-medium border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 whitespace-nowrap";
+        } else {
+          section.classList.add('hidden');
+          btn.className = "px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap";
+        }
+      });
+
+      if (tabId === 'cards') renderCurrentCard();
+      if (tabId === 'matrix') renderMatrixTables();
+      if (tabId === 'classifications') renderClassifications();
+      if (tabId === 'timeline') renderTimeline();
+    }
+
+    // --- 17. KEYBOARD SHORTCUTS ---
+    window.addEventListener('keydown', (e) => {
+      // Don't intercept typing in inputs/textareas
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flipCurrentCard();
+      } else if (e.key === '1') {
+        rateCurrentCard('red');
+      } else if (e.key === '2') {
+        rateCurrentCard('yellow');
+      } else if (e.key === '3') {
+        rateCurrentCard('green');
+      } else if (e.code === 'ArrowRight') {
+        nextCard();
+      } else if (e.code === 'ArrowLeft') {
+        prevCard();
+      }
+    });
+
+    // --- 18. APP BOOTSTRAP ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      setTriageMode(state.triageMode || 'pass');
+      updateHeaderStats();
+      renderDayView();
+      renderCurrentCard();
+      renderMatrixTables();
+      renderClassifications();
+      renderTimeline();
+    });
+  </script>
+</body>
+</html>
+

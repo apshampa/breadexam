@@ -1,0 +1,19 @@
+{
+  "name": "pharma-pulse",
+  "version": "1.0.0",
+  "description": "15-Day Strategic Medical Pharmacology Exam Preparation App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "pharmacology",
+    "mbbs",
+    "exam-prep",
+    "anki",
+    "flashcards"
+  ],
+  "author": "Antigravity Pair Programmer",
+  "license": "MIT"
+}
+
