@@ -151,7 +151,7 @@
         <span>🧪</span> Drugs of Choice & Antidotes
       </button>
       <button onclick="switchTab('classifications')" id="tabBtnClassifications" class="px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
-        <span>🌳</span> Classification Trees
+        <span>🌳</span> Classifications & Atlas <span id="badgeAtlasCount" class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-emerald-300 border border-slate-700">73</span>
       </button>
       <button onclick="switchTab('timeline')" id="tabBtnTimeline" class="px-4 py-2.5 font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
         <span>🗺️</span> 15-Day Map
@@ -235,6 +235,29 @@
 
           </div>
 
+          <!-- Community Classification Diagrams for Today -->
+          <div class="bg-gradient-to-br from-indigo-950/30 to-slate-850 border border-indigo-500/30 rounded-3xl p-6 relative">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📷</span>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Today's High-Yield Classification Charts</h3>
+              </div>
+              <span id="todayAtlasCountBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">0 Charts</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">
+              Community charts from <strong class="text-indigo-300">"Drugs Classification and Shizz"</strong>. 40%+ of your exam paper asks for these exact classifications.
+            </p>
+            <div id="todayAtlasThumbGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <!-- Injected via JS -->
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
+              <span class="text-[11px] text-slate-500">Click any chart to enter Anki-style Interactive Occlusion mode</span>
+              <button onclick="switchTab('classifications')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1">
+                Explore Full Atlas (73) →
+              </button>
+            </div>
+          </div>
+
           <!-- High-Yield Pearls -->
           <div class="bg-amber-950/20 border border-amber-600/30 rounded-3xl p-6 relative">
             <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2 mb-3">
@@ -276,9 +299,12 @@
                 <div class="font-bold text-indigo-300">📥 Export Anki</div>
                 <div class="text-[10px] text-slate-400">Download .csv deck</div>
               </button>
-              <button onclick="switchTab('cards')" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs transition">
-                <div class="font-bold text-emerald-300">⚡ Flash Drill</div>
-                <div class="text-[10px] text-slate-400">Active recall cards</div>
+              <button onclick="startTodayDeck()" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs transition">
+                <div class="font-bold text-emerald-300 flex items-center justify-between">
+                  <span>⚡ Today's Cards</span>
+                  <span id="quickTodayCardCount" class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-mono">5</span>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Day <span id="quickTodayDayNum">1</span> active recall</div>
               </button>
             </div>
           </div>
@@ -302,13 +328,47 @@
       
       <!-- Card Toolbar -->
       <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-800/50 p-4 rounded-2xl border border-slate-800">
-        <div class="flex items-center gap-2 overflow-x-auto text-xs">
-          <button onclick="filterCards('all')" id="btnFilterAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium">All (<span id="countAll">0</span>)</button>
-          <button onclick="filterCards('red')" id="btnFilterRed" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 font-medium">🔴 Needs Review (<span id="countRed">0</span>)</button>
-          <button onclick="filterCards('green')" id="btnFilterGreen" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 font-medium">🟢 Mastered (<span id="countGreen">0</span>)</button>
-          <button onclick="filterCards('why')" id="btnFilterWhy" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Explain Why</button>
-          <button onclick="filterCards('doc')" id="btnFilterDoc" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Drug of Choice</button>
-          <button onclick="filterCards('antidote')" id="btnFilterAntidote" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Antidotes</button>
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <button onclick="filterCards('today')" id="btnFilterToday" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/30">
+            <span>📅</span> Today's Deck (Day <span id="labelFilterTodayDay">1</span>: <span id="countTodayCards">0</span>)
+          </button>
+          <button onclick="filterCards('all')" id="btnFilterAll" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">
+            📚 Cumulative All (<span id="countAll">0</span>)
+          </button>
+          <button onclick="filterCards('red')" id="btnFilterRed" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 font-medium">
+            🔴 Needs Review (<span id="countRed">0</span>)
+          </button>
+          <button onclick="filterCards('green')" id="btnFilterGreen" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 font-medium">
+            🟢 Mastered (<span id="countGreen">0</span>)
+          </button>
+
+          <!-- Day Selector Dropdown -->
+          <div class="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1">
+            <span class="text-slate-400 text-[11px]">Filter Day:</span>
+            <select id="selectCardDay" onchange="filterCardsByDay(this.value)" class="bg-transparent text-slate-200 text-xs focus:outline-none cursor-pointer">
+              <option value="today" class="bg-slate-900 text-white">📅 Today's Mission</option>
+              <option value="all" class="bg-slate-900 text-white">📚 All 15 Days</option>
+              <option value="1" class="bg-slate-900 text-white">Day 1: General Principles</option>
+              <option value="2" class="bg-slate-900 text-white">Day 2: ANS Cholinergic</option>
+              <option value="3" class="bg-slate-900 text-white">Day 3: ANS Adrenergic</option>
+              <option value="4" class="bg-slate-900 text-white">Day 4: CVS Hypertension</option>
+              <option value="5" class="bg-slate-900 text-white">Day 5: CVS Heart Failure</option>
+              <option value="6" class="bg-slate-900 text-white">Day 6: CNS Sedatives & Epilepsy</option>
+              <option value="7" class="bg-slate-900 text-white">Day 7: CNS Opioids & NSAIDs</option>
+              <option value="8" class="bg-slate-900 text-white">Day 8: Antimicrobials 1 (Cell Wall)</option>
+              <option value="9" class="bg-slate-900 text-white">Day 9: Antimicrobials 2 (Anti-TB)</option>
+              <option value="10" class="bg-slate-900 text-white">Day 10: Chemo, Malaria & Blood</option>
+              <option value="11" class="bg-slate-900 text-white">Day 11: Endocrine 1 (Diabetes)</option>
+              <option value="12" class="bg-slate-900 text-white">Day 12: Endocrine 2 & Asthma</option>
+              <option value="13" class="bg-slate-900 text-white">Day 13: GIT & Toxicology</option>
+              <option value="14" class="bg-slate-900 text-white">Day 14: Consolidation Drills</option>
+              <option value="15" class="bg-slate-900 text-white">Day 15: Mock Exam Simulator</option>
+            </select>
+          </div>
+
+          <button onclick="filterCards('why')" id="btnFilterWhy" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 font-medium text-[11px]">Explain Why</button>
+          <button onclick="filterCards('doc')" id="btnFilterDoc" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 font-medium text-[11px]">Drug of Choice</button>
+          <button onclick="filterCards('antidote')" id="btnFilterAntidote" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 font-medium text-[11px]">Antidotes</button>
         </div>
         
         <div class="flex items-center gap-2">
@@ -412,13 +472,57 @@
 
     <!-- TAB 4: HIGH-YIELD CLASSIFICATION TREES -->
     <section id="tabClassifications" class="hidden space-y-6">
-      <div class="bg-slate-800/40 border border-slate-800 p-4 rounded-2xl text-xs text-slate-300 flex items-center justify-between">
-        <div>
-          <strong class="text-white">Exam Strategy Tip:</strong> Drawing these clean classification trees on your answer sheet gets full marks before examiners even read paragraphs. Practice redrawing each tree from memory.
+      <!-- Top Control Bar -->
+      <div class="bg-slate-800/60 border border-slate-700/80 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- View Toggle (Visual Atlas vs ASCII Trees) -->
+        <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-700 text-xs w-full md:w-auto">
+          <button onclick="setAtlasSubView('visual')" id="btnSubViewVisual" class="px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-md">
+            <span>📷</span> Visual Atlas (73 Community Charts)
+          </button>
+          <button onclick="setAtlasSubView('trees')" id="btnSubViewTrees" class="px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
+            <span>✍️</span> Quick-Draw Flowcharts (6 Core)
+          </button>
         </div>
+
+        <!-- Search Bar -->
+        <div class="relative w-full md:w-80" id="atlasSearchContainer">
+          <input type="text" id="atlasSearchInput" oninput="filterAtlas()" placeholder="Search classifications (e.g. 'ANS', 'Cephalosporin')..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+          <span class="absolute right-3 top-2 text-slate-500 text-xs">🔍</span>
+        </div>
+
       </div>
-      <div id="classificationsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Populated via JS -->
+
+      <!-- System Filters for Visual Atlas -->
+      <div id="atlasFilterPillsContainer" class="flex items-center gap-1.5 overflow-x-auto pb-2 text-xs scrollbar-thin">
+        <button onclick="filterAtlasBySystem('all')" id="atlasFilterAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold whitespace-nowrap shadow-sm">All (73)</button>
+        <button onclick="filterAtlasBySystem('today')" id="atlasFilterToday" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold whitespace-nowrap">📅 Today's Charts</button>
+        <button onclick="filterAtlasBySystem('ANS')" id="atlasFilterANS" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">ANS (6)</button>
+        <button onclick="filterAtlasBySystem('CVS')" id="atlasFilterCVS" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">CVS & Renal (7)</button>
+        <button onclick="filterAtlasBySystem('CNS')" id="atlasFilterCNS" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">CNS & PNS (13)</button>
+        <button onclick="filterAtlasBySystem('AMA')" id="atlasFilterAMA" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Antimicrobials (11)</button>
+        <button onclick="filterAtlasBySystem('Hormones')" id="atlasFilterHormones" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Endocrine (12)</button>
+        <button onclick="filterAtlasBySystem('Autacoids')" id="atlasFilterAutacoids" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Autacoids & NSAIDs (7)</button>
+        <button onclick="filterAtlasBySystem('Blood')" id="atlasFilterBlood" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Blood & Cancer (7)</button>
+        <button onclick="filterAtlasBySystem('GIT')" id="atlasFilterGIT" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">GIT & Resp (6)</button>
+        <button onclick="filterAtlasBySystem('Misc')" id="atlasFilterMisc" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">Misc & Gen (4)</button>
+      </div>
+
+      <!-- VISUAL ATLAS GRID (Primary View) -->
+      <div id="visualAtlasGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- ASCII TREES CONTAINER (Alternative View) -->
+      <div id="asciiTreesView" class="hidden space-y-4">
+        <div class="bg-slate-800/40 border border-slate-800 p-4 rounded-2xl text-xs text-slate-300 flex items-center justify-between">
+          <div>
+            <strong class="text-white">Exam Sheet Strategy:</strong> Drawing these clean flowcharts on your answer sheet gets guaranteed full marks. Practice reproducing them on blank paper.
+          </div>
+        </div>
+        <div id="classificationsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Populated via JS -->
+        </div>
       </div>
     </section>
 
@@ -494,6 +598,80 @@
     </div>
   </div>
 
+  <!-- MODAL: CLASSIFICATION DIAGRAM LIGHTBOX & INTERACTIVE OCCLUSION ARENA -->
+  <div id="atlasModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-slate-900 border border-indigo-500/40 rounded-3xl max-w-5xl w-full h-[95vh] flex flex-col shadow-2xl relative overflow-hidden">
+      
+      <!-- Top Modal Bar -->
+      <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-900/80">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 id="atlasModalTitle" class="font-bold text-white text-base">ANS Classification Chart</h3>
+            <span id="atlasModalBadge" class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Day 2-3 • ANS</span>
+          </div>
+          <div id="atlasModalSubtitle" class="text-xs text-slate-400 mt-0.5">Deck: Pharmac Uni::01: ANS • 10 Interactive Occlusion Cards</div>
+        </div>
+
+        <!-- Mode & Occlusion Controls -->
+        <div class="flex items-center gap-2 text-xs">
+          <!-- Occlusion Mode Toggle -->
+          <button onclick="toggleOcclusionMode()" id="btnToggleOcclusion" class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1.5 transition">
+            <span>⚡</span> <span id="labelOcclusionToggle">Occlusion Mode: ON</span>
+          </button>
+          
+          <button onclick="revealAllOcclusionBoxes()" id="btnRevealAll" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-medium">
+            👁️ Reveal All
+          </button>
+          <button onclick="hideAllOcclusionBoxes()" id="btnHideAll" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-medium">
+            🔒 Hide All
+          </button>
+
+          <!-- Zoom Controls -->
+          <div class="hidden sm:flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-lg border border-slate-700">
+            <button onclick="zoomAtlasImage(-0.2)" class="text-slate-400 hover:text-white font-bold px-1.5">-</button>
+            <span id="atlasZoomLabel" class="text-[10px] text-slate-300 font-mono w-10 text-center">100%</span>
+            <button onclick="zoomAtlasImage(0.2)" class="text-slate-400 hover:text-white font-bold px-1.5">+</button>
+            <button onclick="resetAtlasZoom()" class="text-[10px] text-indigo-400 hover:text-indigo-300 pl-1">↺</button>
+          </div>
+
+          <button onclick="closeAtlasModal()" class="text-slate-400 hover:text-white text-xl p-1 ml-2">✕</button>
+        </div>
+      </div>
+
+      <!-- Occlusion Progress Bar Banner -->
+      <div id="occlusionStatusBanner" class="bg-slate-800/80 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2 text-slate-300">
+          <span>🎯 Click any yellow box to test your recall:</span>
+          <span id="occlusionBoxesCount" class="font-bold text-amber-400">0 / 0 Revealed</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] text-slate-400">💡 Tip: Recall the drug name aloud before clicking!</span>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Area (Scrollable & Zoomable) -->
+      <div id="atlasCanvasContainer" class="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-950/90 relative select-none">
+        <div id="atlasStage" class="relative inline-block transition-transform duration-200 origin-center max-w-full">
+          <img id="atlasModalImg" src="" alt="Classification Chart" class="max-h-[70vh] w-auto h-auto block rounded-xl shadow-2xl border border-slate-800">
+          <!-- Dynamic Occlusion Overlay Container -->
+          <div id="atlasOcclusionOverlay" class="absolute inset-0 pointer-events-none"></div>
+        </div>
+      </div>
+
+      <!-- Footer Bar with Prev / Next Navigation -->
+      <div class="p-3 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between text-xs">
+        <button onclick="navAtlasModal(-1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center gap-1.5 transition">
+          ◀ Previous Chart
+        </button>
+        <span id="atlasModalNavIndex" class="text-slate-400 font-mono text-xs">Chart 1 of 73</span>
+        <button onclick="navAtlasModal(1)" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition">
+          Next Chart ▶
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- MODAL: MARKDOWN EDITOR -->
   <div id="mdEditorModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative space-y-4 max-h-[90vh] flex flex-col">
@@ -534,27 +712,53 @@
         <button onclick="closeAnkiExporter()" class="text-slate-500 hover:text-white text-xl">✕</button>
       </div>
 
-      <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
-        <p>
-          You are about to download <strong class="text-white">pharma_high_yield_anki_deck.csv</strong> containing all 47+ pre-formatted high-yield exam cards with tags and HTML formatting.
-        </p>
-        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
-          <div class="font-bold text-indigo-300 mb-1">Import Steps:</div>
-          <ol class="list-decimal list-inside space-y-1 text-slate-400">
-            <li>Open Anki Desktop $\rightarrow$ File $\rightarrow$ Import.</li>
-            <li>Select the downloaded CSV.</li>
-            <li>Check <strong>"Allow HTML in fields"</strong>.</li>
-            <li>Click <strong>Import</strong>!</li>
-          </ol>
+      <div class="text-xs text-slate-300 space-y-4 leading-relaxed">
+        
+        <!-- Deck 1: High Yield Reasoning CSV -->
+        <div class="bg-slate-800/90 p-4 rounded-2xl border border-indigo-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-indigo-300 flex items-center gap-1.5">
+              <span>⚡</span> 1. High-Yield Reasoning Deck (.CSV)
+            </div>
+            <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-mono">82 Cards • Day 1-15</span>
+          </div>
+          <p class="text-slate-400 text-[11px]">
+            Contains all "Give Reasons Why", Drugs of Choice, and Antidote cards formatted with Day tags and HTML styling.
+          </p>
+          <div class="flex items-center justify-end pt-1">
+            <button onclick="triggerAnkiDownload()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
+              <span>📥</span> Download CSV Deck
+            </button>
+          </div>
         </div>
+
+        <!-- Deck 2: Community Classification APKG -->
+        <div class="bg-slate-800/90 p-4 rounded-2xl border border-emerald-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-emerald-300 flex items-center gap-1.5">
+              <span>🖼️</span> 2. Community Classification Deck (.APKG)
+            </div>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-mono">673 Cards • 14 Sub-Decks</span>
+          </div>
+          <p class="text-slate-400 text-[11px]">
+            The complete <strong>"Drugs Classification and Shizz.apkg"</strong> with Image Occlusion Enhanced cards covering every major system.
+          </p>
+          <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700 text-[11px] text-slate-300 space-y-1">
+            <div class="font-semibold text-amber-300">💡 15-Day Strategy Warning:</div>
+            <div>Don't study all 673 cards at once! Double-click to import, then use <strong>Filtered Decks (F)</strong> for today's system (e.g. <code class="text-emerald-300">deck:"Pharmac Uni::01: ANS"</code> on Days 2-3).</div>
+          </div>
+          <div class="flex items-center justify-end pt-1">
+            <a href="anki/Drugs_Classification_and_Shizz.apkg" download class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/30">
+              <span>📥</span> Download .APKG Deck (8.9 MB)
+            </a>
+          </div>
+        </div>
+
       </div>
 
-      <div class="pt-2 flex items-center justify-end gap-2">
+      <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-800">
         <button onclick="closeAnkiExporter()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
           Close
-        </button>
-        <button onclick="triggerAnkiDownload()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
-          <span>📥</span> Download .CSV Now
         </button>
       </div>
     </div>
@@ -1394,338 +1598,666 @@
 
     // --- FLASHCARDS DATA (47 High-Yield Cards) ---
     const FLASHCARDS = [
-      {
-        id: "c1",
-        type: "why",
-        tag: "Pharma::CNS::Opioids",
-        front: "Why is Morphine strictly contraindicated in <b>Head Injury</b>?",
-        back: "1. <b>CO2 retention & Raised ICP:</b> Depresses respiratory center → CO2 retention → cerebral vasodilation → increased intracranial pressure (ICP) risking brain herniation.<br>2. <b>Obscures pupillary signs:</b> Causes pinpoint pupils (miosis via Edinger-Westphal nucleus), masking pupillary asymmetry indicating tentorial herniation.<br>3. <b>Induces vomiting:</b> Stimulates CTZ, further raising ICP.<br>4. <b>Interferes with GCS:</b> Depresses sensorium."
-      },
-      {
-        id: "c2",
-        type: "why",
-        tag: "Pharma::ANS::Anticholinergic",
-        front: "Why is Atropine used as <b>pre-anesthetic medication</b>?",
-        back: "1. <b>Prevents reflex vagal bradycardia:</b> Blocks vagus during intubation, surgical visceral handling, or halothane/succinylcholine.<br>2. <b>Dries secretions:</b> Reduces copious salivary and respiratory secretions, preventing laryngospasm and aspiration pneumonitis."
-      },
-      {
-        id: "c3",
-        type: "why",
-        tag: "Pharma::ANS::Adrenergic",
-        front: "Why is Adrenaline combined with Lignocaine for local anesthesia?",
-        back: "1. <b>Vasoconstriction (α1 effect):</b> Slows systemic absorption of lignocaine.<br>2. <b>Prolongs duration:</b> Keeps anesthetic concentrated around nerve trunk.<br>3. <b>Reduces systemic toxicity:</b> Lowers peak blood levels.<br>4. <b>Provides bloodless field:</b> Reduces local bleeding.<br><i>Contraindicated in end-arteries (fingers, toes, penis, pinna) to prevent gangrene.</i>"
-      },
-      {
-        id: "c4",
-        type: "why",
-        tag: "Pharma::ANS::Toxicology",
-        front: "Why is Pralidoxime ineffective 24-48 hours after Organophosphate poisoning?",
-        back: "Because of <b>chemical aging</b> of the phosphorylated acetylcholinesterase enzyme. Dealkylation makes the covalent organophosphate-enzyme bond irreversible and impervious to oxime nucleophilic attack."
-      },
-      {
-        id: "c5",
-        type: "why",
-        tag: "Pharma::ANS::Adrenergic",
-        front: "Why must Beta-blockers NEVER be given without prior Alpha-blockade in <b>Pheochromocytoma</b>?",
-        back: "Blocking vasodilator β2 receptors while leaving vasoconstrictor α1 receptors unopposed by massive circulating catecholamines causes a <b>paradoxical catastrophic hypertensive crisis</b>. Always establish α-blockade (Phenoxybenzamine) first."
-      },
-      {
-        id: "c6",
-        type: "why",
-        tag: "Pharma::CVS::Antihypertensives",
-        front: "Why do ACE Inhibitors cause a persistent dry, hacking cough?",
-        back: "ACE is identical to <b>Kininase II</b>, the enzyme that degrades <b>Bradykinin</b> and Substance P in pulmonary tissue. Inhibition causes local accumulation of bradykinin, stimulating bronchial sensory C-fibers. (ARBs like Losartan do not inhibit kininase II and do not cause cough)."
-      },
-      {
-        id: "c7",
-        type: "why",
-        tag: "Pharma::CVS::Antianginal",
-        front: "Why are Nitrate-free intervals (8-12 hours daily) mandatory in chronic angina therapy?",
-        back: "To prevent <b>nitrate tolerance</b> caused by depletion of intracellular sulfhydryl (-SH) groups required to convert nitrates to nitric oxide (NO), as well as neurohormonal reflex activation and reactive oxygen species generation."
-      },
-      {
-        id: "c8",
-        type: "why",
-        tag: "Pharma::CVS::Interactions",
-        front: "Why is Sildenafil strictly contraindicated in patients taking Nitrates?",
-        back: "Nitrates stimulate soluble guanylyl cyclase (increasing cGMP). Sildenafil inhibits PDE-5 (blocking cGMP degradation). Massive synergism produces unchecked cGMP pooling, leading to <b>fatal refractory hypotension and cardiac arrest</b>."
-      },
-      {
-        id: "c9",
-        type: "why",
-        tag: "Pharma::CVS::HeartFailure",
-        front: "Why does Hypokalemia dramatically aggravate <b>Digoxin toxicity</b>?",
-        back: "Potassium and Digoxin compete for the same binding site on myocardial membrane <b>Na+/K+ ATPase</b>. In hypokalemia, Digoxin binds avidly with unopposed high affinity, triggering severe ventricular arrhythmias even at normal therapeutic drug levels."
-      },
-      {
-        id: "c10",
-        type: "why",
-        tag: "Pharma::CNS::Sedatives",
-        front: "Why are Benzodiazepines clinically far safer than Barbiturates in overdose?",
-        back: "BZDs increase the <b>frequency</b> of GABA-A chloride channel opening and require endogenous GABA (ceiling effect). Barbiturates increase the <b>duration</b> and at high doses directly open chloride channels even without GABA (GABA-mimetic), directly depressing medullary centers without a ceiling."
-      },
-      {
-        id: "c11",
-        type: "why",
-        tag: "Pharma::CNS::NSAIDs",
-        front: "Why is Aspirin contraindicated in children recovering from viral fever?",
-        back: "Triggers <b>Reye's Syndrome</b>: acute encephalopathy, cerebral edema, and microvesicular fatty infiltration of the liver with high mortality. Paracetamol or Ibuprofen must be used instead."
-      },
-      {
-        id: "c12",
-        type: "why",
-        tag: "Pharma::Autacoids::Gout",
-        front: "Why is Allopurinol NEVER initiated during an acute attack of Gout?",
-        back: "Rapid reduction of serum uric acid causes dissolution and shedding of existing articular urate tophi crystals into the synovial fluid, triggering an intense influx of neutrophils that dramatically worsens and prolongs the acute flare."
-      },
-      {
-        id: "c13",
-        type: "why",
-        tag: "Pharma::Endocrine::Steroids",
-        front: "Why must Corticosteroid therapy be tapered gradually rather than stopped abruptly?",
-        back: "Prolonged exogenous glucocorticoids suppress hypothalamic CRH and pituitary ACTH via negative feedback, causing <b>disuse atrophy of the adrenal cortex</b>. Abrupt cessation leaves no endogenous cortisol, precipitating acute fatal <b>Addisonian crisis</b> (hypotension, shock, hypoglycemia)."
-      },
-      {
-        id: "c14",
-        type: "why",
-        tag: "Pharma::Antimicrobials::BetaLactams",
-        front: "Why is Clavulanic Acid combined with Amoxicillin?",
-        back: "Clavulanic acid is a <b>suicide inhibitor of bacterial β-lactamase</b>. It binds irreversibly to the enzyme, protecting Amoxicillin from enzymatic degradation and restoring its bactericidal activity against penicillinase-producing organisms."
-      },
-      {
-        id: "c15",
-        type: "why",
-        tag: "Pharma::Antimicrobials::Aminoglycosides",
-        front: "Why are Aminoglycosides (Gentamicin) ineffective against strict Anaerobic bacteria?",
-        back: "Penetration of aminoglycosides across the bacterial inner cytoplasmic membrane requires an <b>oxygen-dependent electron transport system (proton-motive force)</b>. Strict anaerobes lack this system."
-      },
-      {
-        id: "c16",
-        type: "why",
-        tag: "Pharma::Antimicrobials::Tetracyclines",
-        front: "Why are Tetracyclines contraindicated in pregnancy and children under 8?",
-        back: "Tetracyclines form insoluble <b>calcium-tetracycline orthophosphate chelates</b> in growing bones and teeth, causing permanent yellow-brown dental discoloration, enamel hypoplasia, and reversible suppression of skeletal growth."
-      },
-      {
-        id: "c17",
-        type: "why",
-        tag: "Pharma::Antimicrobials::Chloramphenicol",
-        front: "Why does Chloramphenicol cause <b>Gray Baby Syndrome</b>?",
-        back: "Neonates have immature <b>hepatic UDP-glucuronyl transferase</b> and low GFR. Toxic drug accumulation poisons mitochondrial respiration, causing vomiting, hypothermia, ashen-gray cyanosis, and cardiovascular collapse."
-      },
-      {
-        id: "c18",
-        type: "why",
-        tag: "Pharma::Antimicrobials::AntiTB",
-        front: "Why is Pyridoxine (Vitamin B6) co-prescribed with Isoniazid (INH)?",
-        back: "INH combines with pyridoxal phosphate forming an inactive hydrazone complex and promotes urinary excretion of B6. Supplemental Vitamin B6 prevents peripheral neuropathy and CNS excitability."
-      },
-      {
-        id: "c19",
-        type: "why",
-        tag: "Pharma::Chemotherapy::Anticancer",
-        front: "Why is Leucovorin (Folinic Acid) given after High-Dose Methotrexate?",
-        back: "Methotrexate inhibits Dihydrofolate Reductase (DHFR). Leucovorin is active reduced 5-formyl-THF that <b>bypasses the blocked DHFR step</b>, entering normal host cells (bone marrow, GI mucosa) to rescue them from fatal toxicity."
-      },
-      {
-        id: "c20",
-        type: "why",
-        tag: "Pharma::Endocrine::Antidiabetics",
-        front: "Why is Metformin withheld before and after IV Iodinated Radiocontrast?",
-        back: "Contrast media can cause acute renal failure. Because Metformin is cleared unchanged by the kidneys, contrast nephropathy causes systemic drug accumulation and precipitates fatal <b>Lactic Acidosis</b>."
-      },
-      // Drug of Choice Cards
-      {
-        id: "c21",
-        type: "doc",
-        tag: "Pharma::DOC::Emergencies",
-        front: "Drug of Choice for <b>Anaphylactic Shock</b>?",
-        back: "<b>Adrenaline 1:1000 (0.5 mL IM)</b> into anterolateral thigh.<br>Actions: α1 (vasoconstriction/BP), β1 (cardiac output), β2 (bronchodilation, blocks mast cell release)."
-      },
-      {
-        id: "c22",
-        type: "doc",
-        tag: "Pharma::DOC::CNS",
-        front: "Drug of Choice for <b>Status Epilepticus</b>?",
-        back: "<b>IV Lorazepam (0.1 mg/kg)</b> or IV Diazepam.<br>Followed immediately by IV Fosphenytoin infusion."
-      },
-      {
-        id: "c23",
-        type: "doc",
-        tag: "Pharma::DOC::CVS",
-        front: "Drug of Choice for <b>PSVT (Paroxysmal Supraventricular Tachycardia)</b>?",
-        back: "<b>IV Adenosine (rapid bolus 6 mg, followed by 12 mg if needed + saline flush)</b>.<br>Ultra-short half life (<10s); acts on A1 receptors in AV node."
-      },
-      {
-        id: "c24",
-        type: "doc",
-        tag: "Pharma::DOC::Obstetrics",
-        front: "Drug of Choice for <b>Hypertension in Pregnancy (Pre-eclampsia)</b>?",
-        back: "<b>Labetalol (oral/IV)</b>.<br>Alternatives: Methyldopa, Nifedipine, Hydralazine.<br><i>ACEi / ARBs are strictly contraindicated!</i>"
-      },
-      {
-        id: "c25",
-        type: "doc",
-        tag: "Pharma::DOC::Obstetrics",
-        front: "Drug of Choice for <b>Eclampsia (Convulsions)</b>?",
-        back: "<b>Magnesium Sulfate (MgSO4)</b> via Pritchard or Zuspan regimen.<br>Keep bedside antidote: 10% Calcium Gluconate."
-      },
-      {
-        id: "c26",
-        type: "doc",
-        tag: "Pharma::DOC::Antimicrobials",
-        front: "Drug of Choice for <b>MRSA (Methicillin-Resistant S. aureus)</b>?",
-        back: "<b>Vancomycin (IV)</b>.<br>Alternatives: Linezolid, Daptomycin, Teicoplanin."
-      },
-      {
-        id: "c27",
-        type: "doc",
-        tag: "Pharma::DOC::Antimicrobials",
-        front: "Drug of Choice for <b>Pseudomonas aeruginosa</b> serious infection?",
-        back: "<b>Ceftazidime / Piperacillin-Tazobactam / Meropenem / Cefepime</b>."
-      },
-      {
-        id: "c28",
-        type: "doc",
-        tag: "Pharma::DOC::Antimicrobials",
-        front: "Drug of Choice for <b>Clostridioides difficile Colitis</b>?",
-        back: "<b>Oral Vancomycin</b> or Oral Fidaxomicin.<br>(Oral route ensures high intraluminal concentration; Metronidazole is second-line)."
-      },
-      {
-        id: "c29",
-        type: "doc",
-        tag: "Pharma::DOC::Antimicrobials",
-        front: "Drug of Choice for <b>Syphilis (Treponema pallidum)</b>?",
-        back: "<b>Benzathine Penicillin G (IM)</b>.<br>Watch out for Jarisch-Herxheimer reaction."
-      },
-      {
-        id: "c30",
-        type: "doc",
-        tag: "Pharma::DOC::CNS",
-        front: "Drug of Choice for <b>Absence Seizures (Petit Mal)</b>?",
-        back: "<b>Ethosuximide</b> (or Sodium Valproate).<br>MOA: Blocks T-type Ca2+ channels in thalamic relay neurons."
-      },
-      {
-        id: "c31",
-        type: "doc",
-        tag: "Pharma::DOC::CNS",
-        front: "Drug of Choice for <b>Trigeminal Neuralgia</b>?",
-        back: "<b>Carbamazepine</b>.<br>MOA: Blocks voltage-gated Na+ channels."
-      },
-      {
-        id: "c32",
-        type: "doc",
-        tag: "Pharma::DOC::Antimalarials",
-        front: "Drug of Choice for <b>Severe / Cerebral Malaria</b>?",
-        back: "<b>IV Artesunate</b> (preferred over IV Quinine due to rapid clearance and lack of hypoglycemia/cardiotoxicity)."
-      },
-      {
-        id: "c33",
-        type: "doc",
-        tag: "Pharma::DOC::Antimalarials",
-        front: "Drug of Choice for <b>Radical Cure of Vivax / Ovale Malaria (Hepatic Hypnozoites)</b>?",
-        back: "<b>Primaquine</b> (14-day course).<br><i>Must test for G6PD deficiency before starting to prevent hemolytic crisis!</i>"
-      },
-      {
-        id: "c34",
-        type: "doc",
-        tag: "Pharma::DOC::Endocrine",
-        front: "Drug of Choice for <b>Diabetic Ketoacidosis (DKA)</b>?",
-        back: "<b>Regular (Crystalline/Soluble) Insulin IV infusion</b> + aggressive IV Normal Saline hydration + Potassium monitoring."
-      },
-      {
-        id: "c35",
-        type: "doc",
-        tag: "Pharma::DOC::GIT",
-        front: "Drug of Choice for <b>Chemotherapy-Induced Acute Nausea & Vomiting</b>?",
-        back: "<b>Ondansetron (5-HT3 antagonist) + IV Dexamethasone</b>.<br>Add Aprepitant (NK1 antagonist) for highly emetogenic regimens (Cisplatin)."
-      },
-      // Antidotes Cards
-      {
-        id: "c36",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Paracetamol (Acetaminophen) Overdose</b>?",
-        back: "<b>N-Acetylcysteine (NAC)</b> (IV or Oral).<br>MOA: Replenishes hepatic glutathione to neutralize toxic metabolite NAPQI."
-      },
-      {
-        id: "c37",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Opioid Toxicity (Morphine, Heroin)</b>?",
-        back: "<b>Naloxone (IV)</b>.<br>Pure competitive μ-opioid receptor antagonist."
-      },
-      {
-        id: "c38",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Benzodiazepine Overdose</b>?",
-        back: "<b>Flumazenil (IV)</b>.<br>Competitive antagonist at the BZD binding site on GABA-A receptor."
-      },
-      {
-        id: "c39",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Organophosphate Poisoning</b>?",
-        back: "<b>Atropine (titrated IV until secretions dry) + Pralidoxime (2-PAM)</b>.<br>Pralidoxime reactivates AChE before chemical aging."
-      },
-      {
-        id: "c40",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Hematology",
-        front: "Antidote for <b>Unfractionated Heparin</b>?",
-        back: "<b>Protamine Sulfate (IV)</b>.<br>Strongly basic polycation that forms an inactive salt complex with acidic heparin."
-      },
-      {
-        id: "c41",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Hematology",
-        front: "Antidote for <b>Warfarin Bleeding / Overdose</b>?",
-        back: "<b>Vitamin K1 (Phytonadione) + Fresh Frozen Plasma (FFP) or 4-Factor PCC</b>.<br>Restores factors II, VII, IX, X."
-      },
-      {
-        id: "c42",
-        type: "antidote",
-        tag: "Pharma::Antidotes::CVS",
-        front: "Antidote for <b>Beta-Blocker Toxicity</b>?",
-        back: "<b>IV Glucagon (1st line)</b>.<br>MOA: Stimulates adenylate cyclase via non-adrenergic glucagon receptors, increasing cAMP and contractility."
-      },
-      {
-        id: "c43",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Acute Iron Poisoning</b>?",
-        back: "<b>Desferrioxamine (Deferoxamine)</b>.<br>Chelates Fe3+ into stable ferrioxamine complex excreted in urine ('vin rose' colored urine)."
-      },
-      {
-        id: "c44",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Copper Toxicity & Wilson's Disease</b>?",
-        back: "<b>D-Penicillamine / Trientine</b>.<br>Chelates copper into soluble urinary complexes; give with Pyridoxine (B6)."
-      },
-      {
-        id: "c45",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Chemotherapy",
-        front: "Antidote for <b>Cyclophosphamide / Ifosfamide Bladder Toxicity</b>?",
-        back: "<b>MESNA (Sodium 2-mercaptoethanesulfonate)</b>.<br>Detoxifies the urotoxic metabolite <b>Acrolein</b> in bladder to prevent hemorrhagic cystitis."
-      },
-      {
-        id: "c46",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Malignant Hyperthermia & Neuroleptic Malignant Syndrome (NMS)</b>?",
-        back: "<b>Dantrolene Sodium (IV)</b>.<br>MOA: Blocks Ryanodine receptor (RyR1) Ca2+ release channels in the sarcoplasmic reticulum of skeletal muscle."
-      },
-      {
-        id: "c47",
-        type: "antidote",
-        tag: "Pharma::Antidotes::Toxicology",
-        front: "Antidote for <b>Methanol / Ethylene Glycol Poisoning</b>?",
-        back: "<b>Fomepizole</b> (or IV Ethanol 10%).<br>MOA: Competitive inhibitor of Alcohol Dehydrogenase, halting formation of formic/oxalic acid."
-      }
-    ];
+  {
+    "id": "d1_c1",
+    "day": 1,
+    "type": "why",
+    "tag": "Pharma::General::Kinetics",
+    "front": "What is <b>First-Pass Metabolism</b> and how does it determine Bioavailability?",
+    "back": "First-pass metabolism is the hepatic/gut degradation of a drug absorbed from the GIT before it reaches systemic circulation. High first-pass (e.g., Propranolol, Nitroglycerin, Morphine) drastically lowers oral <b>Bioavailability (F)</b>. Sublingual, IV, or transdermal bypasses this."
+  },
+  {
+    "id": "d1_c2",
+    "day": 1,
+    "type": "why",
+    "tag": "Pharma::General::Kinetics",
+    "front": "Why do <b>Zero-Order Elimination Kinetics</b> carry a high risk of unexpected toxicity?",
+    "back": "In zero-order kinetics (Phenytoin, Ethanol, high-dose Aspirin), metabolic clearance mechanisms become <b>saturated</b>. A constant *amount* (not constant fraction) of drug is cleared per hour, meaning even a small dose escalation can cause a steep, exponential spike in plasma concentration."
+  },
+  {
+    "id": "d1_c3",
+    "day": 1,
+    "type": "why",
+    "tag": "Pharma::General::Interactions",
+    "front": "What is the high-yield mnemonic for <b>Microsomal Enzyme Inducers vs Inhibitors</b>?",
+    "back": "<b>Inducers (G-P-R-S Cell Phone):</b> Griseofulvin, Phenytoin, Rifampicin, Smoking, Carbamazepine, Phenobarbitone.<br><b>Inhibitors (VK Cannot Cause EI):</b> Valproate, Ketoconazole, Ciprofloxacin, Cimetidine, Erythromycin, Isoniazid."
+  },
+  {
+    "id": "d1_c4",
+    "day": 1,
+    "type": "why",
+    "tag": "Pharma::General::Receptors",
+    "front": "Which major signaling pathway is activated by <b>Gq-protein coupled receptors</b>?",
+    "back": "Gq activates <b>Phospholipase C (PLC)</b> → cleaves PIP2 into <b>IP3 and DAG</b>. IP3 mobilizes intracellular Calcium from the sarcoplasmic reticulum; DAG activates Protein Kinase C (PKC). Receptors: <b>HAVe 1 M&M</b> (H1, α1, V1, M1, M3)."
+  },
+  {
+    "id": "d1_c5",
+    "day": 1,
+    "type": "why",
+    "tag": "Pharma::General::Dynamics",
+    "front": "What is the <b>Therapeutic Index (TI)</b> and why is it crucial for clinical safety?",
+    "back": "<b>TI = LD50 / ED50</b> (Median Lethal Dose / Median Effective Dose). Drugs with narrow TI (Lithium, Digoxin, Warfarin, Theophylline, Phenytoin) require routine therapeutic drug monitoring (TDM) because toxic dose is barely above therapeutic dose."
+  },
+  {
+    "id": "d2_c1",
+    "day": 2,
+    "type": "why",
+    "tag": "Pharma::ANS::Anticholinergic",
+    "front": "Why is <b>Atropine</b> used as pre-anesthetic medication before inhalational anesthesia?",
+    "back": "1. <b>Prevents reflex vagal cardiac arrest:</b> Blocks excessive vagal tone during intubation, halothane, or surgical traction.<br>2. <b>Dries respiratory secretions:</b> Minimizes salivary and bronchial fluids to prevent laryngospasm and aspiration pneumonitis."
+  },
+  {
+    "id": "d2_c2",
+    "day": 2,
+    "type": "why",
+    "tag": "Pharma::ANS::Toxicology",
+    "front": "Why is <b>Pralidoxime (2-PAM)</b> ineffective if given 24-48 hours after Organophosphate poisoning?",
+    "back": "Because of <b>chemical aging</b> of phosphorylated acetylcholinesterase. Dealkylation makes the organophosphate-enzyme covalent bond permanent and impervious to nucleophilic regeneration by oximes. Pralidoxime must be started early!"
+  },
+  {
+    "id": "d2_c3",
+    "day": 2,
+    "type": "why",
+    "tag": "Pharma::ANS::Cholinergic",
+    "front": "Why is <b>Physostigmine</b> preferred over Neostigmine for Atropine (Belladonna) poisoning?",
+    "back": "Physostigmine is a non-polar <b>tertiary amine</b> that crosses the blood-brain barrier to reverse central anticholinergic delirium and coma. Neostigmine is a quaternary amine and cannot cross into the CNS."
+  },
+  {
+    "id": "d2_c4",
+    "day": 2,
+    "type": "doc",
+    "tag": "Pharma::DOC::ANS",
+    "front": "Drug of Choice for <b>Organophosphate Poisoning</b>?",
+    "back": "<b>IV Atropine (titrated until secretions dry and pupils dilate) + Pralidoxime (2-PAM)</b>.<br>Atropine blocks muscarinic toxicity; Pralidoxime reactivates AChE."
+  },
+  {
+    "id": "d2_c5",
+    "day": 2,
+    "type": "doc",
+    "tag": "Pharma::DOC::ANS",
+    "front": "Drug of Choice for <b>Myasthenia Gravis</b> chronic maintenance?",
+    "back": "<b>Oral Pyridostigmine</b>.<br>Longer duration of action (3–6 hours) than Neostigmine with smoother motor control and fewer muscarinic side effects."
+  },
+  {
+    "id": "d2_c6",
+    "day": 2,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::ANS",
+    "front": "Antidote for <b>Atropine / Datura / Belladonna Poisoning</b>?",
+    "back": "<b>Physostigmine (slow IV)</b>.<br>Reverses both peripheral and central anticholinergic toxicity."
+  },
+  {
+    "id": "d3_c1",
+    "day": 3,
+    "type": "why",
+    "tag": "Pharma::ANS::Adrenergic",
+    "front": "Why is <b>Adrenaline</b> combined with Lignocaine for local anesthesia?",
+    "back": "1. <b>Local vasoconstriction (α1 effect):</b> Slows systemic absorption of lignocaine.<br>2. <b>Prolongs anesthesia duration:</b> Concentrates drug at nerve bundle.<br>3. <b>Decreases systemic toxicity:</b> Prevents high blood peaks.<br>4. <b>Bloodless surgical field:</b> Reduces operative bleeding.<br><i>Contraindicated in end-arteries (fingers, toes, penis, pinna) to prevent gangrene.</i>"
+  },
+  {
+    "id": "d3_c2",
+    "day": 3,
+    "type": "why",
+    "tag": "Pharma::ANS::Adrenergic",
+    "front": "Why must Beta-blockers NEVER be given without prior Alpha-blockade in <b>Pheochromocytoma</b>?",
+    "back": "Blocking vasodilator β2 receptors while leaving vasoconstrictor α1 receptors unopposed by massive circulating tumor catecholamines triggers a <b>paradoxical, fatal hypertensive crisis</b>. Always establish α-blockade (Phenoxybenzamine) first."
+  },
+  {
+    "id": "d3_c3",
+    "day": 3,
+    "type": "why",
+    "tag": "Pharma::ANS::Adrenergic",
+    "front": "What is <b>Dale's Vasomotor Reversal</b> and why is it seen with Adrenaline but not Noradrenaline?",
+    "back": "Adrenaline stimulates both α1 (vasoconstriction) and β2 (vasodilation). Normally α1 dominates. After α-blockade, only β2 is stimulated, causing BP to paradoxically <b>drop</b>. Noradrenaline lacks β2 action, so it cannot cause vasomotor reversal."
+  },
+  {
+    "id": "d3_c4",
+    "day": 3,
+    "type": "doc",
+    "tag": "Pharma::DOC::Emergencies",
+    "front": "Drug of Choice for <b>Anaphylactic Shock</b>?",
+    "back": "<b>Adrenaline 1:1000 (0.5 mL IM)</b> in anterolateral thigh.<br>α1 restores BP, β1 increases cardiac contractility, β2 bronchodilates and inhibits mast cell histamine degranulation."
+  },
+  {
+    "id": "d3_c5",
+    "day": 3,
+    "type": "doc",
+    "tag": "Pharma::DOC::Ophthalmology",
+    "front": "Drug of Choice for <b>Chronic Open-Angle Glaucoma</b>?",
+    "back": "<b>Topical Prostaglandin F2α analogs (Latanoprost, Bimatoprost)</b>.<br>Increases uveoscleral outflow; once daily evening dose."
+  },
+  {
+    "id": "d4_c1",
+    "day": 4,
+    "type": "why",
+    "tag": "Pharma::CVS::Antihypertensives",
+    "front": "Why do <b>ACE Inhibitors</b> (Enalapril, Ramipril) cause a dry hacking cough?",
+    "back": "ACE is identical to <b>Kininase II</b>, the enzyme that degrades <b>Bradykinin</b> and Substance P in the lungs. ACE inhibition causes local bradykinin buildup, sensitizing sensory bronchial C-fibers. ARBs (Losartan) don't inhibit kininase II and avoid this cough."
+  },
+  {
+    "id": "d4_c2",
+    "day": 4,
+    "type": "why",
+    "tag": "Pharma::CVS::Antianginal",
+    "front": "Why are <b>Nitrate-Free Intervals</b> (8–12 hours daily) mandatory in chronic angina?",
+    "back": "To prevent <b>nitrate tolerance</b> caused by depletion of intracellular sulfhydryl (-SH) stores needed to bioactivate nitrates into nitric oxide (NO), alongside neurohormonal vasoconstrictor reflexes."
+  },
+  {
+    "id": "d4_c3",
+    "day": 4,
+    "type": "why",
+    "tag": "Pharma::CVS::Interactions",
+    "front": "Why is <b>Sildenafil</b> strictly contraindicated with Nitroglycerin?",
+    "back": "Nitrates stimulate soluble guanylyl cyclase (producing cGMP). Sildenafil blocks PDE-5 (stopping cGMP breakdown). Massive synergistic accumulation of cGMP causes uncontrollable vascular smooth muscle relaxation, triggering <b>fatal refractory shock and cardiac arrest</b>."
+  },
+  {
+    "id": "d4_c4",
+    "day": 4,
+    "type": "why",
+    "tag": "Pharma::CVS::Antihypertensives",
+    "front": "Why are ACE Inhibitors contraindicated in <b>Bilateral Renal Artery Stenosis</b>?",
+    "back": "In bilateral renal stenosis, glomerular filtration rate (GFR) is critically maintained by Angiotensin II-mediated vasoconstriction of the <b>efferent arteriole</b>. ACEi dilate efferent arterioles, causing GFR to collapse into acute renal failure."
+  },
+  {
+    "id": "d4_c5",
+    "day": 4,
+    "type": "doc",
+    "tag": "Pharma::DOC::Obstetrics",
+    "front": "Drug of Choice for <b>Hypertension in Pregnancy (Pre-eclampsia)</b>?",
+    "back": "<b>Labetalol (oral/IV)</b>.<br>Alternatives: Methyldopa, Hydralazine, Nifedipine.<br><i>ACE inhibitors and ARBs are strictly contraindicated (teratogenic / oligohydramnios).</i>"
+  },
+  {
+    "id": "d5_c1",
+    "day": 5,
+    "type": "why",
+    "tag": "Pharma::CVS::HeartFailure",
+    "front": "Why does <b>Hypokalemia</b> dramatically trigger Digoxin toxicity?",
+    "back": "Potassium and Digoxin compete for the same extracellular phosphorylation site on the myocardial <b>Na+/K+ ATPase pump</b>. In hypokalemia (e.g., from loop diuretics), Digoxin binds unopposed with extremely high affinity, precipitating dangerous cardiac arrhythmias."
+  },
+  {
+    "id": "d5_c2",
+    "day": 5,
+    "type": "why",
+    "tag": "Pharma::Renal::Diuretics",
+    "front": "How do <b>Loop Diuretics vs Thiazides</b> differ in Calcium handling?",
+    "back": "<b>Loop diuretics (Furosemide) Lose Calcium:</b> Inhibit Na-K-2Cl symporter, dissipating positive lumen potential and causing hypercalciuria (useful in acute hypercalcemia).<br><b>Thiazides Take Calcium:</b> Increase distal Ca2+ reabsorption, causing hypercalcemia (useful in recurrent calcium renal stones)."
+  },
+  {
+    "id": "d5_c3",
+    "day": 5,
+    "type": "doc",
+    "tag": "Pharma::DOC::CVS",
+    "front": "Drug of Choice for <b>Paroxysmal Supraventricular Tachycardia (PSVT)</b>?",
+    "back": "<b>IV Adenosine (rapid bolus 6 mg, followed by 12 mg if needed + saline push)</b>.<br>Ultra-short half life (<10s); stimulates A1 receptors in AV node causing hyperpolarization and transient AV block."
+  },
+  {
+    "id": "d5_c4",
+    "day": 5,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::CVS",
+    "front": "Antidote for <b>Severe Digoxin Toxicity</b>?",
+    "back": "<b>Digoxin-specific Fab fragments (DigiFab)</b>.<br>Also give Potassium if hypokalemic, and IV Phenytoin/Lignocaine for ventricular tachyarrhythmias."
+  },
+  {
+    "id": "d5_c5",
+    "day": 5,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::CVS",
+    "front": "First-line Antidote for <b>Beta-Blocker Overdose</b>?",
+    "back": "<b>IV Glucagon</b>.<br>Stimulates myocardial adenylate cyclase via non-adrenergic glucagon receptors, raising cAMP and cardiac contractility independently of beta receptors."
+  },
+  {
+    "id": "d6_c1",
+    "day": 6,
+    "type": "why",
+    "tag": "Pharma::CNS::Sedatives",
+    "front": "Why are <b>Benzodiazepines</b> clinically far safer than Barbiturates in overdose?",
+    "back": "BZDs increase the <b>frequency</b> of GABA-A chloride channel opening and require endogenous GABA (ceiling effect). Barbiturates increase the <b>duration</b> and at high doses directly open chloride channels even without GABA (GABA-mimetic), directly depressing medullary centers without a ceiling."
+  },
+  {
+    "id": "d6_c2",
+    "day": 6,
+    "type": "why",
+    "tag": "Pharma::CNS::Antiepileptics",
+    "front": "Why does <b>Phenytoin</b> require therapeutic drug monitoring at routine doses?",
+    "back": "Phenytoin metabolism saturates within normal therapeutic concentrations (10–20 mcg/mL). Metabolism switches from first-order to <b>zero-order kinetics</b>, where a tiny dose increase produces a disproportionately huge jump in blood levels and cerebellar toxicity."
+  },
+  {
+    "id": "d6_c3",
+    "day": 6,
+    "type": "doc",
+    "tag": "Pharma::DOC::CNS",
+    "front": "Drug of Choice for emergency termination of <b>Status Epilepticus</b>?",
+    "back": "<b>IV Lorazepam (0.1 mg/kg)</b> or IV Diazepam.<br>Followed immediately by IV Fosphenytoin to prevent recurrence."
+  },
+  {
+    "id": "d6_c4",
+    "day": 6,
+    "type": "doc",
+    "tag": "Pharma::DOC::CNS",
+    "front": "Drug of Choice for <b>Absence Seizures (Petit Mal)</b>?",
+    "back": "<b>Ethosuximide</b> (or Sodium Valproate).<br>MOA: Blocks low-threshold T-type Ca2+ currents in thalamic pacemaker neurons."
+  },
+  {
+    "id": "d6_c5",
+    "day": 6,
+    "type": "doc",
+    "tag": "Pharma::DOC::CNS",
+    "front": "Drug of Choice for <b>Trigeminal Neuralgia</b>?",
+    "back": "<b>Carbamazepine</b>.<br>MOA: Use-dependent blockade of voltage-gated Na+ channels."
+  },
+  {
+    "id": "d6_c6",
+    "day": 6,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::CNS",
+    "front": "Antidote for <b>Benzodiazepine Overdose</b>?",
+    "back": "<b>Flumazenil (IV)</b>.<br>Competitive antagonist at the BZD binding pocket on GABA-A receptor. Caution: can trigger seizures in chronic dependent users."
+  },
+  {
+    "id": "d7_c1",
+    "day": 7,
+    "type": "why",
+    "tag": "Pharma::CNS::Opioids",
+    "front": "Why is <b>Morphine</b> strictly contraindicated in <b>Head Injury</b>?",
+    "back": "1. <b>CO2 retention & Raised ICP:</b> Depresses respiratory center → CO2 retention → cerebral vasodilation → increased ICP risking brain herniation.<br>2. <b>Obscures pupillary signs:</b> Causes pinpoint pupils (miosis via Edinger-Westphal), masking tentorial herniation signs.<br>3. <b>Induces vomiting:</b> Stimulates CTZ, further raising ICP.<br>4. <b>Interferes with GCS:</b> Blunts conscious level assessment."
+  },
+  {
+    "id": "d7_c2",
+    "day": 7,
+    "type": "why",
+    "tag": "Pharma::CNS::NSAIDs",
+    "front": "Why is <b>Aspirin</b> contraindicated in children recovering from viral fever (influenza/chickenpox)?",
+    "back": "Triggers <b>Reye's Syndrome</b>: acute non-inflammatory encephalopathy with severe microvesicular fatty liver failure and high mortality. Use Paracetamol or Ibuprofen instead."
+  },
+  {
+    "id": "d7_c3",
+    "day": 7,
+    "type": "why",
+    "tag": "Pharma::Autacoids::Gout",
+    "front": "Why is <b>Allopurinol</b> NEVER started during an Acute Attack of Gout?",
+    "back": "Rapid drop in serum uric acid mobilizes and dissolves existing articular urate tophi. Microcrystals shed into the synovial fluid, triggering an intense neutrophil influx that <b>dramatically worsens and prolongs the acute gout flare</b>."
+  },
+  {
+    "id": "d7_c4",
+    "day": 7,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Toxicology",
+    "front": "Antidote for <b>Paracetamol (Acetaminophen) Overdose</b>?",
+    "back": "<b>N-Acetylcysteine (NAC)</b>.<br>Replenishes hepatic glutathione reserves to detoxify the electrophilic metabolite <b>NAPQI</b> before it destroys hepatocytes."
+  },
+  {
+    "id": "d7_c5",
+    "day": 7,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Opioids",
+    "front": "Antidote for <b>Acute Opioid Overdose (Morphine, Heroin)</b>?",
+    "back": "<b>IV Naloxone</b>.<br>Pure competitive opioid receptor antagonist that rapidly reverses coma, respiratory depression, and miosis."
+  },
+  {
+    "id": "d7_c6",
+    "day": 7,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::CNS",
+    "front": "Antidote for <b>Neuroleptic Malignant Syndrome (NMS) & Malignant Hyperthermia</b>?",
+    "back": "<b>Dantrolene Sodium (IV)</b>.<br>Directly blocks Ryanodine receptor (RyR1) Ca2+ release channels in the sarcoplasmic reticulum of skeletal muscle."
+  },
+  {
+    "id": "d8_c1",
+    "day": 8,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::BetaLactams",
+    "front": "Why is <b>Clavulanic Acid</b> combined with Amoxicillin (Augmentin)?",
+    "back": "Clavulanic acid is a <b>suicide inhibitor of bacterial beta-lactamase</b>. It binds irreversibly to the enzyme, sacrificing itself to shield Amoxicillin from degradation and restoring activity against penicillinase-producing bacteria."
+  },
+  {
+    "id": "d8_c2",
+    "day": 8,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::Aminoglycosides",
+    "front": "Why are <b>Aminoglycosides</b> (Gentamicin) ineffective against strict Anaerobes?",
+    "back": "Transport of aminoglycosides across the inner bacterial cytoplasmic membrane requires an <b>oxygen-dependent electron transport chain (proton-motive force)</b>. Strict anaerobes lack this system."
+  },
+  {
+    "id": "d8_c3",
+    "day": 8,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::Tetracyclines",
+    "front": "Why are <b>Tetracyclines</b> contraindicated in pregnancy and children under 8?",
+    "back": "Tetracyclines chelate calcium orthophosphate in active growing bones and teeth, causing <b>permanent yellow-brown enamel staining, hypoplasia</b>, and reversible growth retardation."
+  },
+  {
+    "id": "d8_c4",
+    "day": 8,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::Chloramphenicol",
+    "front": "Why does <b>Chloramphenicol</b> cause Gray Baby Syndrome in neonates?",
+    "back": "Neonates lack mature <b>hepatic UDP-glucuronyl transferase</b> and have low GFR. Toxic chloramphenicol accumulation blocks mitochondrial electron transport, producing hypothermia, ashen-gray cyanosis, and shock."
+  },
+  {
+    "id": "d8_c5",
+    "day": 8,
+    "type": "doc",
+    "tag": "Pharma::DOC::Antimicrobials",
+    "front": "Drug of Choice for <b>MRSA (Methicillin-Resistant S. aureus)</b>?",
+    "back": "<b>Vancomycin (IV)</b>.<br>Alternatives: Linezolid, Daptomycin, Teicoplanin."
+  },
+  {
+    "id": "d8_c6",
+    "day": 8,
+    "type": "doc",
+    "tag": "Pharma::DOC::Antimicrobials",
+    "front": "Drug of Choice for <b>Pseudomonas aeruginosa</b> serious infection?",
+    "back": "<b>Ceftazidime / Piperacillin-Tazobactam / Meropenem / Cefepime</b>."
+  },
+  {
+    "id": "d8_c7",
+    "day": 8,
+    "type": "doc",
+    "tag": "Pharma::DOC::Antimicrobials",
+    "front": "Drug of Choice for <b>Syphilis (Treponema pallidum)</b>?",
+    "back": "<b>Benzathine Penicillin G (IM)</b>.<br>Watch for Jarisch-Herxheimer reaction."
+  },
+  {
+    "id": "d9_c1",
+    "day": 9,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::AntiTB",
+    "front": "Why is <b>Pyridoxine (Vitamin B6)</b> routinely co-prescribed with Isoniazid (INH)?",
+    "back": "INH reacts with pyridoxal phosphate forming an inactive hydrazone complex and accelerates renal excretion of B6. Supplemental Vitamin B6 prevents painful peripheral sensory neuropathy and convulsions."
+  },
+  {
+    "id": "d9_c2",
+    "day": 9,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::AntiTB",
+    "front": "Why must <b>Ethambutol</b> be stopped if a patient notes red-green color confusion?",
+    "back": "Ethambutol causes dose-dependent <b>retrobulbar optic neuritis</b>. Loss of red-green color discrimination is the earliest warning sign. Early stoppage usually reverses the damage before permanent optic atrophy occurs."
+  },
+  {
+    "id": "d9_c3",
+    "day": 9,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::Fluoroquinolones",
+    "front": "What is the black-box musculoskeletal warning associated with <b>Fluoroquinolones</b>?",
+    "back": "<b>Tendinitis and Achilles Tendon Rupture</b> due to oxidative damage and inhibition of tenocyte collagen synthesis. Avoid in athletes, elderly, and those on corticosteroids."
+  },
+  {
+    "id": "d9_c4",
+    "day": 9,
+    "type": "why",
+    "tag": "Pharma::Antimicrobials::Antifungals",
+    "front": "Why is <b>Liposomal Amphotericin B</b> preferred over conventional deoxycholate?",
+    "back": "Liposomal encapsulation sequesters the drug away from renal tubular epithelial cells, dramatically reducing <b>nephrotoxicity</b> and infusion reactions while retaining high antifungal efficacy."
+  },
+  {
+    "id": "d9_c5",
+    "day": 9,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Toxicology",
+    "front": "Antidote for <b>Methanol / Ethylene Glycol Poisoning</b>?",
+    "back": "<b>Fomepizole (or 10% IV Ethanol)</b>.<br>Competitive inhibitor of Alcohol Dehydrogenase, halting production of toxic formic acid (blindness) and oxalic acid (renal failure)."
+  },
+  {
+    "id": "d10_c1",
+    "day": 10,
+    "type": "why",
+    "tag": "Pharma::Chemo::Anticancer",
+    "front": "Why is <b>Leucovorin (Folinic Acid)</b> given after High-Dose Methotrexate?",
+    "back": "Methotrexate inhibits Dihydrofolate Reductase (DHFR). Leucovorin provides active reduced folate that <b>bypasses the blocked DHFR step</b>, rescuing normal host bone marrow and GI epithelium from fatal cytotoxicity."
+  },
+  {
+    "id": "d10_c2",
+    "day": 10,
+    "type": "doc",
+    "tag": "Pharma::DOC::Malaria",
+    "front": "Drug of Choice for <b>Radical Cure of Vivax Malaria (Hypnozoites)</b>?",
+    "back": "<b>Primaquine</b> (14 days).<br><i>Must perform G6PD testing before administration to prevent acute massive intravascular hemolysis!</i>"
+  },
+  {
+    "id": "d10_c3",
+    "day": 10,
+    "type": "doc",
+    "tag": "Pharma::DOC::Malaria",
+    "front": "Drug of Choice for <b>Severe / Cerebral Falciparum Malaria</b>?",
+    "back": "<b>IV Artesunate</b>.<br>Clears parasitemia much faster than Quinine without inducing hypoglycemia or cardiac arrhythmias."
+  },
+  {
+    "id": "d10_c4",
+    "day": 10,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Hematology",
+    "front": "Antidote for <b>Unfractionated Heparin Overdose</b>?",
+    "back": "<b>Protamine Sulfate (IV)</b>.<br>Strongly basic polycationic peptide that forms a stable, inactive salt complex with acidic heparin molecules."
+  },
+  {
+    "id": "d10_c5",
+    "day": 10,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Hematology",
+    "front": "Antidote for <b>Warfarin Bleeding / Overdose</b>?",
+    "back": "<b>Vitamin K1 (Phytonadione) + Fresh Frozen Plasma (FFP) or 4-Factor PCC</b>.<br>Restores factors II, VII, IX, and X."
+  },
+  {
+    "id": "d10_c6",
+    "day": 10,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Chemo",
+    "front": "Antidote for <b>Cyclophosphamide-induced Hemorrhagic Cystitis</b>?",
+    "back": "<b>MESNA (Sodium 2-mercaptoethanesulfonate)</b>.<br>Binds and neutralizes the toxic urothelial metabolite <b>Acrolein</b> in the bladder."
+  },
+  {
+    "id": "d11_c1",
+    "day": 11,
+    "type": "why",
+    "tag": "Pharma::Endocrine::Steroids",
+    "front": "Why must <b>Corticosteroids</b> never be abruptly stopped after prolonged use?",
+    "back": "Exogenous steroids cause negative feedback suppression of hypothalamic CRH and pituitary ACTH, inducing <b>disuse atrophy of the adrenal cortex</b>. Abrupt stoppage causes fatal <b>Addisonian crisis</b> (vascular collapse, shock, hypoglycemia). Taper slowly!"
+  },
+  {
+    "id": "d11_c2",
+    "day": 11,
+    "type": "why",
+    "tag": "Pharma::Endocrine::Antidiabetics",
+    "front": "Why is <b>Metformin</b> withheld before and after IV Iodinated Radiocontrast?",
+    "back": "Contrast media can cause acute renal dysfunction. Because Metformin is eliminated unchanged by renal tubules, contrast nephropathy causes systemic drug pooling and triggers potentially fatal <b>Lactic Acidosis</b>."
+  },
+  {
+    "id": "d11_c3",
+    "day": 11,
+    "type": "doc",
+    "tag": "Pharma::DOC::Endocrine",
+    "front": "Drug of Choice for <b>Diabetic Ketoacidosis (DKA)</b>?",
+    "back": "<b>Regular (Soluble/Crystalline) Insulin IV infusion</b> + aggressive IV Normal Saline hydration + Potassium replacement."
+  },
+  {
+    "id": "d11_c4",
+    "day": 11,
+    "type": "why",
+    "tag": "Pharma::Endocrine::Antidiabetics",
+    "front": "What is the primary cellular mechanism of action of <b>Metformin</b>?",
+    "back": "Activates <b>AMP-activated protein kinase (AMPK)</b>, which reduces hepatic gluconeogenesis and improves peripheral insulin sensitivity without causing hypoglycemia."
+  },
+  {
+    "id": "d11_c5",
+    "day": 11,
+    "type": "why",
+    "tag": "Pharma::Endocrine::Antidiabetics",
+    "front": "What is the unique cardiorenal advantage of <b>SGLT-2 Inhibitors</b> (-gliflozins)?",
+    "back": "By blocking proximal renal glucose reabsorption, they cause glucosuria, osmotic diuresis, lower intraglomerular pressure, reduce heart failure hospitalizations, and slow CKD progression."
+  },
+  {
+    "id": "d12_c1",
+    "day": 12,
+    "type": "why",
+    "tag": "Pharma::Endocrine::Thyroid",
+    "front": "Why is <b>Propylthiouracil (PTU)</b> preferred over Carbimazole in the 1st trimester of pregnancy?",
+    "back": "Carbimazole and Methimazole are associated with teratogenic malformations (<b>aplasia cutis congenita</b> and choanal atresia) during organogenesis. PTU is less teratogenic in early pregnancy."
+  },
+  {
+    "id": "d12_c2",
+    "day": 12,
+    "type": "why",
+    "tag": "Pharma::Endocrine::Thyroid",
+    "front": "What is the <b>Wolff-Chaikoff Effect</b> of excess Iodide?",
+    "back": "High pharmacological concentrations of inorganic iodide acutely suppress thyroid hormone synthesis and release by inhibiting thyroid peroxidase. Used pre-op before thyroidectomy to reduce vascularity."
+  },
+  {
+    "id": "d12_c3",
+    "day": 12,
+    "type": "why",
+    "tag": "Pharma::Respiratory::Asthma",
+    "front": "Why must patients rinse their mouth after using <b>Inhaled Corticosteroids (Budesonide)</b>?",
+    "back": "To clear deposited steroid particles from the oropharyngeal mucosa, preventing local immunosuppression that causes <b>Oral Candidiasis (thrush)</b> and vocal cord dysphonia."
+  },
+  {
+    "id": "d12_c4",
+    "day": 12,
+    "type": "why",
+    "tag": "Pharma::Endocrine::OCPs",
+    "front": "What is the primary contraceptive mechanism of <b>Combined Oral Contraceptive Pills (COCPs)</b>?",
+    "back": "Progestin suppresses the mid-cycle <b>LH surge</b> (preventing ovulation) and thickens cervical mucus; Estrogen suppresses <b>FSH</b> (preventing folliculogenesis)."
+  },
+  {
+    "id": "d12_c5",
+    "day": 12,
+    "type": "why",
+    "tag": "Pharma::Respiratory::Asthma",
+    "front": "How does <b>Montelukast</b> work in chronic asthma?",
+    "back": "Competitive antagonist at the <b>Cysteinyl Leukotriene receptor 1 (CysLT1)</b>, blocking LTD4-mediated airway bronchoconstriction, vascular permeability, and mucus hypersecretion."
+  },
+  {
+    "id": "d13_c1",
+    "day": 13,
+    "type": "why",
+    "tag": "Pharma::GIT::PepticUlcer",
+    "front": "How do <b>Proton Pump Inhibitors (PPIs)</b> achieve prolonged acid suppression despite a short half-life?",
+    "back": "PPIs are prodrugs converted in acidic parietal canaliculi into reactive sulfenamides that form **irreversible covalent disulfide bonds** with the catalytic H+/K+ ATPase pump. Acid secretion recovers only after new pump proteins are synthesized (24–48h)."
+  },
+  {
+    "id": "d13_c2",
+    "day": 13,
+    "type": "why",
+    "tag": "Pharma::GIT::Antiemetics",
+    "front": "Why does <b>Domperidone</b> cause fewer Extrapyramidal Side Effects (EPS) than Metoclopramide?",
+    "back": "Domperidone does not cross the blood-brain barrier (BBB) and only acts on the CTZ outside the BBB, whereas Metoclopramide crosses the BBB and blocks striatal D2 receptors, provoking acute dystonia."
+  },
+  {
+    "id": "d13_c3",
+    "day": 13,
+    "type": "doc",
+    "tag": "Pharma::DOC::GIT",
+    "front": "Drug of Choice for <b>Chemotherapy-Induced Acute Nausea & Vomiting</b>?",
+    "back": "<b>Ondansetron (5-HT3 antagonist) + IV Dexamethasone</b>.<br>Add Aprepitant (NK1 antagonist) for highly emetogenic regimens like Cisplatin."
+  },
+  {
+    "id": "d13_c4",
+    "day": 13,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Toxicology",
+    "front": "Antidote for <b>Acute Iron Poisoning</b>?",
+    "back": "<b>Desferrioxamine (Deferoxamine)</b>.<br>Chelates Fe3+ into stable water-soluble ferrioxamine excreted in urine, turning it characteristic 'vin rose' color."
+  },
+  {
+    "id": "d13_c5",
+    "day": 13,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Toxicology",
+    "front": "Antidote for <b>Copper Toxicity & Wilson's Disease</b>?",
+    "back": "<b>D-Penicillamine / Trientine</b>.<br>Chelates copper into soluble urinary complexes; give with Pyridoxine (B6) to prevent penicillamine-induced deficiency."
+  },
+  {
+    "id": "d13_c6",
+    "day": 13,
+    "type": "antidote",
+    "tag": "Pharma::Antidotes::Toxicology",
+    "front": "Chelating agent of choice for <b>Lead Poisoning (Plumbism)</b>?",
+    "back": "<b>Calcium Disodium EDTA + Dimercaprol (BAL)</b>.<br>BAL crosses BBB for lead encephalopathy; EDTA clears systemic lead without causing hypocalcemia."
+  },
+  {
+    "id": "d14_c1",
+    "day": 14,
+    "type": "why",
+    "tag": "Pharma::Consolidation::Interactions",
+    "front": "Which antimicrobial precipitates a <b>Disulfiram-like reaction</b> when consumed with Alcohol?",
+    "back": "<b>Metronidazole</b> (also Cefoperazone, Cefotetan).<br>Inhibits hepatic aldehyde dehydrogenase, causing toxic accumulation of acetaldehyde leading to severe nausea, flushing, tachycardia, and vomiting."
+  },
+  {
+    "id": "d14_c2",
+    "day": 14,
+    "type": "why",
+    "tag": "Pharma::Consolidation::Reactions",
+    "front": "What causes the <b>Jarisch-Herxheimer Reaction</b> during syphilis treatment?",
+    "back": "Sudden release of pyrogenic endotoxins and inflammatory cytokines from dying <i>Treponema pallidum</i> spirochetes upon initiating Penicillin therapy."
+  },
+  {
+    "id": "d14_c3",
+    "day": 14,
+    "type": "why",
+    "tag": "Pharma::Consolidation::Toxicology",
+    "front": "What is the classic teratogenic deformity caused by <b>Thalidomide</b>?",
+    "back": "<b>Phocomelia</b> (seal-like hypoplasia of long bones of limbs) due to inhibition of angiogenesis during embryonic limb bud development."
+  },
+  {
+    "id": "d14_c4",
+    "day": 14,
+    "type": "why",
+    "tag": "Pharma::Consolidation::AdverseEffects",
+    "front": "Which antiepileptic drug causes irreversible concentric visual field constriction?",
+    "back": "<b>Vigabatrin</b>.<br>GABA transaminase suicide inhibitor causing retinal cone/rod damage."
+  },
+  {
+    "id": "d14_c5",
+    "day": 14,
+    "type": "doc",
+    "tag": "Pharma::DOC::Consolidation",
+    "front": "Drug of Choice for <b>Secondary Prophylaxis of Rheumatic Fever</b>?",
+    "back": "<b>Benzathine Penicillin G (1.2 million units IM every 3–4 weeks)</b>."
+  },
+  {
+    "id": "d15_c1",
+    "day": 15,
+    "type": "why",
+    "tag": "Pharma::Mock::Hematology",
+    "front": "What is the precise molecular action of <b>Unfractionated Heparin</b>?",
+    "back": "Binds <b>Antithrombin III (AT-III)</b> via a unique pentasaccharide sequence, accelerating AT-III inactivation of thrombin (IIa) and Factor Xa by over 1,000-fold."
+  },
+  {
+    "id": "d15_c2",
+    "day": 15,
+    "type": "why",
+    "tag": "Pharma::Mock::CVS",
+    "front": "Why does an ACE inhibitor raise both serum potassium and serum creatinine mildly?",
+    "back": "Decreases Aldosterone → produces hyperkalemia. Dilates renal efferent arterioles → lowers intraglomerular hydrostatic pressure, causing a slight acceptable bump in creatinine."
+  },
+  {
+    "id": "d15_c3",
+    "day": 15,
+    "type": "why",
+    "tag": "Pharma::Mock::Opioids",
+    "front": "Why is <b>Pethidine (Meperidine)</b> unique among opioids regarding pupillary size?",
+    "back": "Pethidine possesses intrinsic <b>atropine-like anticholinergic activity</b>, which counteracts μ-mediated miosis; overdose may show normal or even dilated pupils."
+  },
+  {
+    "id": "d15_c4",
+    "day": 15,
+    "type": "antidote",
+    "tag": "Pharma::Mock::Chemo",
+    "front": "What enzyme is used as an emergency antidote for <b>Methotrexate-induced Acute Renal Failure</b>?",
+    "back": "<b>Glucarpidase (Carboxypeptidase G2)</b>.<br>Enzymatically hydrolyzes extracellular circulating methotrexate into inactive DAMPA, bypassing blocked renal clearance."
+  },
+  {
+    "id": "d15_c5",
+    "day": 15,
+    "type": "doc",
+    "tag": "Pharma::Mock::Endocrine",
+    "front": "Drug of Choice for <b>Thyroid Storm / Crisis</b>?",
+    "back": "<b>Propylthiouracil (PTU) + Lugol's Iodine + Propranolol + IV Hydrocortisone</b>."
+  }
+];
+
+    // --- COMMUNITY CLASSIFICATION ATLAS DATA (73 CHARTS) ---
+    const ATLAS_DATA = [{"file":"000_Pharmac_Uni_01_ANS.jpg","deck":"Pharmac Uni::01: ANS","days":[2,3],"label":"Autonomic Nervous System","topic":"Autonomic Nervous System (Cholinergic & Adrenergic)","title":"Autonomic Nervous System Diagram #000","cardCount":10,"w":919,"h":525,"rects":[[78.2,114,174.5,25.5],[459,111.9,172.3,29.8],[376,184.2,102.1,23.4],[614.3,180,102.1,27.7],[39.9,188.5,127.7,25.5],[176,184.2,106.4,27.7],[295.2,248,138.3,25.5],[448.4,250.2,80.9,23.4],[546.2,252.3,102.1,21.3],[661.1,248,161.7,27.7],[48.4,218.3,110.6,78.7],[186.7,218.3,89.4,61.7],[301.6,284.2,129.8,185.1],[454.8,282.1,68.1,21.3],[542,282.1,106.4,89.4],[665.4,277.8,155.3,178.7]]},{"file":"001_Pharmac_Uni_01_ANS.jpg","deck":"Pharmac Uni::01: ANS","days":[2,3],"label":"Autonomic Nervous System","topic":"Autonomic Nervous System (Cholinergic & Adrenergic)","title":"Autonomic Nervous System Diagram #001","cardCount":5,"w":932,"h":524,"rects":[[36.1,99.6,152.1,25],[200.6,93.4,216.7,31.3],[431.9,95.4,181.3,25],[44.4,135,129.2,56.3],[200.6,130.9,204.2,95.8],[302.7,295.4,247.9,18.8],[461.1,170.4,112.5,25],[592.3,166.3,129.2,27.1],[740.2,172.5,141.7,18.8],[209,345.4,218.8,20.8],[456.9,339.2,141.7,31.3],[213.1,370.4,212.5,116.7],[465.2,374.6,133.3,72.9],[465.2,197.5,112.5,72.9],[594.4,197.5,127.1,72.9],[744.4,201.7,131.3,72.9]]},{"file":"002_Pharmac_Uni_01_ANS.jpg","deck":"Pharmac Uni::01: ANS","days":[2,3],"label":"Autonomic Nervous System","topic":"Autonomic Nervous System (Cholinergic & Adrenergic)","title":"Autonomic Nervous System Diagram #002","cardCount":8,"w":786,"h":491,"rects":[[44.7,90.7,139.2,27.5],[107.5,290.7,154.9,27.5],[217.3,94.6,141.2,17.6],[280,286.8,182.4,35.3],[389.8,92.7,141.2,23.5],[485.9,292.7,141.2,25.5],[564.3,86.8,145.1,31.4],[50.6,122.1,135.3,141.2],[221.2,122.1,96.1,139.2],[389.8,124,145.1,80.4],[568.2,126,117.6,78.4],[115.3,324,127.5,74.5],[291.8,326,166.7,113.7],[493.7,322.1,125.5,82.4]]},{"file":"003_Pharmac_Uni_01_ANS.jpg","deck":"Pharmac Uni::01: ANS","days":[2,3],"label":"Autonomic Nervous System","topic":"Autonomic Nervous System (Cholinergic & Adrenergic)","title":"Autonomic Nervous System Diagram #003","cardCount":5,"w":706,"h":443,"rects":[[103.5,68.9,178.6,28.6],[453.5,61.8,235.7,55.4],[103.5,118.9,153.6,26.8],[287.5,165.3,121.4,21.4],[428.5,165.3,114.3,23.2],[550,167.1,110.7,17.9],[21.4,234.4,119.6,19.6],[164.2,230.8,112.5,28.6],[292.8,232.6,121.4,23.2],[94.6,313,233.9,25],[21.4,259.4,116.1,42.9],[166,259.4,108.9,28.6],[292.8,263,121.4,25],[96.4,355.8,219.6,53.6],[435.7,200.5,98.2,94.6],[560.7,198.7,100,17.9],[103.5,152.2,141.1,19.6]]},{"file":"004_Pharmac_Uni_01_ANS.jpg","deck":"Pharmac Uni::01: ANS","days":[2,3],"label":"Autonomic Nervous System","topic":"Autonomic Nervous System (Cholinergic & Adrenergic)","title":"Autonomic Nervous System Diagram #004","cardCount":10,"w":727.0000000000001,"h":559,"rects":[[140.4,70.6,171.1,26.7],[509.3,68.4,157.8,33.3],[89.3,152.9,93.3,24.4],[229.3,150.6,102.2,26.7],[378.2,155.1,117.8,40],[91.5,186.2,86.7,62.2],[229.3,188.4,95.6,20],[382.6,204,104.4,33.3],[524.9,108.4,120,148.9],[89.3,355.1,155.6,24.4],[264.9,350.6,180,31.1],[467.1,352.9,177.8,28.9],[96,381.7,144.4,111.1],[276,386.2,162.2,111.1],[467.1,386.2,168.9,126.7]]},{"file":"005_Pharmac_Uni_01_ANS.jpg","deck":"Pharmac Uni::01: ANS","days":[2,3],"label":"Autonomic Nervous System","topic":"Autonomic Nervous System (Cholinergic & Adrenergic)","title":"Autonomic Nervous System Diagram #005","cardCount":6,"w":840,"h":245,"rects":[[45.1,87.8,117.2,51.7],[189.9,91.2,117.2,44.8],[334.7,91.2,117.2,48.3],[481.3,91.2,170.7,46.6],[684.7,91.2,120.7,27.6],[50.2,144.7,105.2,75.9],[193.3,148.1,112.1,60.3],[338.2,144.7,110.3,69],[486.4,144.7,158.6,43.1],[686.4,130.9,122.4,58.6]]},{"file":"006_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #006","cardCount":5,"w":881,"h":181,"rects":[[37.5,76.1,187.5,39.3],[251.7,69,183.9,28.6],[466,70.8,176.8,26.8],[669.6,72.6,178.6,25],[37.5,126.1,180.4,37.5],[257.1,104.7,162.5,55.4],[467.8,104.7,123.2,39.3],[671.4,101.1,178.6,48.2]]},{"file":"007_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #007","cardCount":5,"w":869,"h":363,"rects":[[16.7,99.5,187.5,19.6],[231,99.5,187.5,16.1],[439.9,97.7,175,16.1],[648.9,97.7,175,55.4],[20.3,133.4,175,87.5],[231,122.7,162.5,91.1],[445.3,128.1,176.8,87.5],[652.4,163.8,169.6,167.9]]},{"file":"008_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #008","cardCount":4,"w":760,"h":369,"rects":[[57.9,106.4,221.5,43.1],[322.6,107.9,166.2,26.2],[530.3,104.8,161.5,30.8],[54.9,157.2,226.2,158.5],[331.8,138.7,146.2,103.1],[533.3,140.2,152.3,103.1]]},{"file":"009_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #009","cardCount":7,"w":935,"h":456,"rects":[[297.1,65.2,126.9,23.1],[708.6,63.2,165.4,30.8],[37.4,122.8,163.5,34.6],[175.9,305.5,155.8,25],[277.8,124.8,157.7,30.8],[508.6,128.6,163.5,44.2],[402.8,324.8,167.3,25],[47.1,163.2,146.2,86.5],[283.6,161.3,144.2,92.3],[512.4,174.8,155.8,123.1],[177.8,338.2,155.8,90.4],[404.7,355.5,165.4,69.2]]},{"file":"010_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #010","cardCount":3,"w":783,"h":341,"rects":[[66.7,84.4,231.7,19],[393.7,81.2,304.8,30.2],[73.1,108.2,219,157.1],[398.5,117.7,290.5,125.4]]},{"file":"011_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #011","cardCount":13,"w":865,"h":548,"rects":[[20.9,252,171.1,57.8],[147.6,78.7,148.9,37.8],[318.7,76.4,142.2,42.2],[483.1,183.1,237.8,51.1],[216.5,260.9,142.2,48.9],[380.9,258.7,186.7,42.2],[589.8,256.4,133.3,44.4],[23.1,385.3,95.6,42.2],[140.9,383.1,115.6,46.7],[278.7,383.1,115.6,37.8],[409.8,385.3,104.4,44.4],[527.6,380.9,135.6,48.9],[674.3,387.6,160,42.2],[216.5,309.8,142.2,44.4],[380.9,300.9,191.1,48.9],[598.7,305.3,117.8,31.1],[25.4,438.7,97.8,26.7],[143.1,438.7,106.7,84.4],[289.8,438.7,97.8,35.6],[420.9,434.2,93.3,53.3],[529.8,436.4,126.7,73.3],[683.1,440.9,151.1,53.3],[154.3,125.3,131.1,104.4],[320.9,125.3,113.3,64.4]]},{"file":"012_Pharmac_Uni_02_Autacoids.jpg","deck":"Pharmac Uni::02: Autacoids","days":[7],"label":"Autacoids & NSAIDs","topic":"Autacoids, NSAIDs & Histamine","title":"Autacoids & NSAIDs Diagram #012","cardCount":12,"w":850,"h":534,"rects":[[200.4,56.1,219.1,48.9],[453.5,56.1,200,19.1],[457.8,85.9,185.1,38.3],[177,162.5,197.9,29.8],[532.3,162.5,219.1,34],[32.3,236.9,102.1,108.5],[155.7,239,104.3,25.5],[272.7,236.9,166,36.2],[453.5,234.8,104.3,38.3],[572.7,234.8,117,31.9],[706.7,241.2,119.1,31.9],[566.3,279.5,112.8,61.7],[706.7,275.2,100,23.4],[342.9,464.6,127.7,48.9],[513.1,468.8,106.4,38.3],[336.5,436.9,134,21.3],[504.6,434.8,170.2,27.7],[177,371,119.1,21.3],[374.8,368.8,231.9,27.7],[181.2,392.2,123.4,66]]},{"file":"013_Pharmac_Uni_03_Cough.jpg","deck":"Pharmac Uni::03: Cough","days":[12],"label":"Cough & Respiratory","topic":"Respiratory & Anti-Asthma / Antitussives","title":"Cough & Respiratory Diagram #013","cardCount":11,"w":897,"h":525,"rects":[[73.2,67.2,112.8,38.3],[307.3,67.2,134,40.4],[562.6,205.5,134,59.6],[683.9,65.1,129.8,42.6],[683.9,114,134,66],[77.5,128.9,97.9,97.9],[75.3,422.5,134,72.3],[243.4,418.3,161.7,76.6],[445.6,424.6,168.1,70.2],[656.2,445.9,146.8,23.4],[222.1,209.8,144.7,127.7],[405.1,209.8,131.9,83],[215.8,160.8,117,42.6],[405.1,167.2,123.4,27.7],[77.5,392.7,114.9,25.5],[241.3,392.7,136.2,21.3],[447.7,392.7,153.2,23.4],[649.8,397,168.1,36.2]]},{"file":"014_Pharmac_Uni_03_Cough.jpg","deck":"Pharmac Uni::03: Cough","days":[12],"label":"Cough & Respiratory","topic":"Respiratory & Anti-Asthma / Antitussives","title":"Cough & Respiratory Diagram #014","cardCount":11,"w":920,"h":524,"rects":[[48.1,207.9,135.4,25],[114.7,62.1,108.3,39.6],[248.1,60,160.4,39.6],[514.7,62.1,162.5,37.5],[735.6,62.1,158.3,37.5],[427.2,166.3,191.7,29.2],[639.7,160,162.5,35.4],[39.7,330.9,179.2,25],[239.7,326.7,162.5,27.1],[423.1,326.7,156.3,29.2],[114.7,124.6,112.5,45.8],[252.2,126.7,158.3,43.8],[435.6,199.6,183.3,64.6],[648.1,201.7,137.5,152.1],[783.5,124.6,114.6,27.1],[35.6,362.1,145.8,104.2],[246,357.9,152.1,160.4],[427.2,362.1,127.1,41.7]]},{"file":"015_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #015","cardCount":10,"w":839,"h":524,"rects":[[133.9,64.9,216.7,29.2],[413.1,64.9,312.5,29.2],[138.1,100.3,206.3,35.4],[419.3,98.2,304.2,87.5],[56.8,254.5,141.7,22.9],[225.6,252.4,137.5,35.4],[390.2,248.2,168.8,43.8],[577.7,250.3,202.1,43.8],[344.3,402.4,241.7,25],[613.1,398.2,168.8,29.2],[63.1,285.7,137.5,77.1],[227.7,298.2,137.5,70.8],[394.3,298.2,156.3,75],[344.3,433.6,237.5,68.8],[623.5,435.7,154.2,37.5]]},{"file":"016_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #016","cardCount":7,"w":820,"h":388,"rects":[[289.4,42.6,280,48.3],[24.4,237.6,185,96.7],[237.8,239.2,178.3,91.7],[451.1,237.6,148.3,83.3],[642.8,234.2,150,61.7],[289.4,10.9,281.7,23.3],[26.1,187.6,173.3,40],[234.4,185.9,186.7,43.3],[451.1,187.6,153.3,40],[641.1,190.9,150,36.7]]},{"file":"017_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #017","cardCount":8,"w":885,"h":254.99999999999997,"rects":[[34.4,117.7,169.1,98.2],[239.8,117.7,145.5,98.2],[419.8,117.7,234.5,90.9],[683.5,119.5,160,98.2],[34.4,79.5,169.1,32.7],[236.2,81.4,150.9,30.9],[418,81.4,249.1,30.9],[687.1,86.8,163.6,27.3]]},{"file":"018_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #018","cardCount":14,"w":797,"h":556,"rects":[[29.7,372.9,128.9,102.2],[191.9,404,115.6,73.3],[345.2,308.4,177.8,104.4],[240.8,186.2,144.4,26.7],[423,181.8,146.7,31.1],[611.9,181.8,113.3,62.2],[607.4,306.2,120,17.8],[603,390.7,126.7,22.2],[607.4,501.8,128.9,22.2],[116.3,64,148.9,37.8],[340.8,59.6,144.4,46.7],[551.9,68.4,148.9,33.3],[29.7,337.3,131.1,26.7],[183,332.9,131.1,57.8],[60.8,252.9,173.3,28.9],[343,257.3,180,42.2],[429.7,139.6,135.6,37.8],[240.8,137.3,140,37.8],[603,137.3,122.2,35.6],[607.4,268.4,115.6,33.3],[603,348.4,128.9,33.3],[605.2,430.7,135.6,53.3]]},{"file":"019_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #019","cardCount":6,"w":758,"h":243.00000000000003,"rects":[[16.9,146.7,127.7,60],[179.9,146.7,170.8,84.6],[370.7,145.2,164.6,66.2],[556.9,80.6,180,92.3],[15.3,112.9,113.8,27.7],[178.4,111.4,173.8,29.2],[375.3,117.5,153.8,18.5],[15.3,54.4,140,21.5],[556.9,56,176.9,20]]},{"file":"020_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #020","cardCount":4,"w":875,"h":319,"rects":[[23.2,97.1,330.4,198.2],[383.9,97.1,271.4,142.9],[683.9,95.3,158.9,144.6],[23.2,66.7,333.9,25],[382.1,64.9,271.4,28.6],[678.6,63.1,166.1,30.4]]},{"file":"021_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #021","cardCount":11,"w":716,"h":479,"rects":[[130.8,76.8,128.8,21.2],[338.5,74.8,136.5,23.1],[544.3,74.8,134.6,23.1],[528.9,205.6,173.1,26.9],[373.1,128.7,140.4,130.8],[540.4,128.7,142.3,51.9],[542.3,259.5,146.2,36.5],[36.6,178.7,142.3,50],[207.7,176.8,140.4,57.7],[148.1,390.2,96.2,53.8],[267.3,392.2,161.5,57.7],[461.6,394.1,178.8,51.9],[40.4,151.8,132.7,19.2],[203.9,151.8,144.2,19.2],[148.1,351.8,94.2,32.7],[267.3,351.8,169.2,36.5],[451.9,349.8,192.3,42.3]]},{"file":"022_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #022","cardCount":10,"w":867,"h":416,"rects":[[37.1,275.2,70.2,56.1],[135.3,334.9,133.3,63.2],[302,329.6,135.1,63.2],[163.4,155.9,114,45.6],[296.7,159.4,200,38.6],[517.8,155.9,205.3,63.2],[742.4,155.9,101.8,64.9],[33.6,78.7,96.5,26.3],[159.9,78.7,117.5,28.1],[293.2,80.5,201.8,43.9],[521.3,82.2,193,43.9],[742.4,78.7,101.8,49.1],[33.6,245.4,80.7,19.3],[209,243.6,77.2,24.6],[131.8,303.3,133.3,22.8],[296.7,303.3,143.9,21.1]]},{"file":"023_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #023","cardCount":9,"w":660,"h":437,"rects":[[96.7,361.8,129.8,24.6],[380.9,358.3,193,26.3],[37.1,105.7,242.1,98.2],[307.3,186.4,154.4,96.5],[491.5,186.4,128.1,94.7],[35.3,74.1,240.4,21.1],[356.4,74.1,263.2,21.1],[302,157.2,159.6,17.5],[491.5,157.2,128.1,17.5],[95,315,142.1,35.1],[380.9,315,196.5,35.1]]},{"file":"024_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #024","cardCount":7,"w":970,"h":455,"rects":[[74.4,206.4,192.2,184.3],[288.2,200.6,205.9,190.2],[513.7,206.4,207.8,115.7],[745,347.6,158.8,56.9],[766.6,155.5,154.9,102],[72.5,179,198,21.6],[286.2,177,207.8,21.6],[513.7,173.1,207.8,27.5],[737.2,292.7,164.7,45.1],[239.2,88.8,105.9,31.4],[776.4,92.7,133.3,23.5]]},{"file":"025_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #025","cardCount":5,"w":766,"h":270,"rects":[[28.8,140.4,157.8,43.8],[217.9,127.9,157.8,56.3],[400.7,126.4,178.1,132.8],[605.4,127.9,126.6,56.3],[28.8,96.7,154.7,32.8],[214.7,93.5,157.8,26.6],[403.8,95.1,175,25],[605.4,93.5,121.9,25]]},{"file":"026_Pharmac_Uni_04_Hormones.jpg","deck":"Pharmac Uni::04: Hormones","days":[11,12],"label":"Endocrine & Hormones","topic":"Endocrine, Thyroid, Diabetes & Steroids","title":"Endocrine & Hormones Diagram #026","cardCount":5,"w":671,"h":248,"rects":[[26.3,139.2,104.1,78.1],[161.9,139.2,153.4,76.7],[342.7,136.5,101.4,26],[481.1,139.2,154.8,79.5],[23.5,88.5,108.2,39.7],[161.9,85.8,153.4,42.5],[340,87.2,104.1,38.4],[476.9,89.9,160.3,43.8]]},{"file":"027_Pharmac_Uni_05_PNS.jpg","deck":"Pharmac Uni::05: PNS","days":[6],"label":"Peripheral Nervous System","topic":"Peripheral Nervous System & Muscle Relaxants","title":"Peripheral Nervous System Diagram #027","cardCount":15,"w":808,"h":510,"rects":[[69.6,398.8,130.6,79.6],[241,398.8,132.7,85.7],[408.3,396.8,122.4,20.4],[326.7,280.5,134.7,53.1],[332.8,170.3,136.7,30.6],[592,147.8,132.7,73.5],[592,278.4,132.7,26.5],[587.9,358,142.9,42.9],[596.1,456,130.6,26.5],[583.8,100.9,149,36.7],[585.9,243.7,146.9,26.5],[594,333.5,140.8,22.4],[587.9,425.4,142.9,18.4],[61.4,51.9,167.3,28.6],[500.2,53.9,142.9,26.5],[67.5,119.3,124.5,38.8],[338.9,127.4,138.8,30.6],[65.5,233.5,130.6,59.2],[322.6,229.5,146.9,42.9],[65.5,366.2,142.9,22.4],[236.9,366.2,138.8,24.5],[410.4,364.1,120.4,26.5]]},{"file":"028_Pharmac_Uni_05_PNS.jpg","deck":"Pharmac Uni::05: PNS","days":[6],"label":"Peripheral Nervous System","topic":"Peripheral Nervous System & Muscle Relaxants","title":"Peripheral Nervous System Diagram #028","cardCount":8,"w":629,"h":439,"rects":[[24.8,181.5,126.3,40.4],[182.7,179.7,164.9,38.6],[375.7,176.2,121.1,77.2],[333.6,341.1,115.8,70.2],[484.5,337.6,114,75.4],[31.8,67.4,159.6,22.8],[442.3,63.9,156.1,24.6],[24.8,132.3,133.3,36.8],[182.7,134.1,164.9,35.1],[375.7,134.1,122.8,36.8],[333.6,304.3,119.3,28.1],[484.5,302.5,112.3,26.3]]},{"file":"029_Pharmac_Uni.png","deck":"Pharmac Uni","days":[1],"label":"General Pharmacology","topic":"General Pharmacology Principles","title":"General Pharmacology Diagram #029","cardCount":22,"w":1242,"h":740,"rects":[[22.7,307.1,164.7,176.5],[219.8,304.1,202.9,158.8],[455.1,301.2,182.4,158.8],[378.6,642.4,191.2,61.8],[616.8,642.4,194.1,61.8],[866.8,642.4,211.8,61.8],[740.4,177.6,252.9,123.5],[1028.6,207.1,197.1,314.7],[110.9,142.4,241.2,35.3],[587.4,471.8,202.9,41.2],[740.4,139.4,258.8,32.4],[1022.7,136.5,205.9,58.8],[25.6,254.1,155.9,41.2],[219.8,254.1,202.9,41.2],[458,251.2,188.2,47.1],[378.6,589.4,191.2,41.2],[616.8,589.4,194.1,44.1],[869.8,586.5,211.8,50]]},{"file":"030_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #030","cardCount":10,"w":1254,"h":601,"rects":[[26.3,265.7,164.1,35.9],[234,263.1,176.9,151.3],[472.5,263.1,217.9,148.7],[728.9,383.6,220.5,89.7],[1005.8,388.7,205.1,35.9],[972.5,542.6,151.3,33.3],[475.1,219.5,207.7,33.3],[734,214.4,241,38.5],[728.9,342.6,217.9,35.9],[1005.8,334.9,207.7,38.5],[967.4,468.2,166.7,59],[21.2,216.9,174.4,43.6],[228.9,214.4,187.2,35.9],[46.9,109.3,210.3,43.6],[723.8,106.7,197.4,43.6]]},{"file":"031_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #031","cardCount":7,"w":1169,"h":564,"rects":[[6.4,211.4,252.4,85.7],[294.5,192.3,126.2,111.9],[458.8,211.4,197.6,88.1],[687.3,190,202.4,114.3],[951.6,190,202.4,107.1],[846.9,420.9,245.2,121.4],[8.8,137.6,252.4,69],[292.1,137.6,131,45.2],[449.3,137.6,211.9,61.9],[689.7,140,200,45.2],[946.9,132.8,204.8,50],[842.1,347.1,252.4,61.9]]},{"file":"032_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #032","cardCount":22,"w":1242,"h":740,"rects":[[22.7,307.1,164.7,176.5],[219.8,304.1,202.9,158.8],[455.1,301.2,182.4,158.8],[378.6,642.4,191.2,61.8],[616.8,642.4,194.1,61.8],[866.8,642.4,211.8,61.8],[740.4,177.6,252.9,123.5],[1028.6,207.1,197.1,314.7],[110.9,142.4,241.2,35.3],[587.4,471.8,202.9,41.2],[740.4,139.4,258.8,32.4],[1022.7,136.5,205.9,58.8],[25.6,254.1,155.9,41.2],[219.8,254.1,202.9,41.2],[458,251.2,188.2,47.1],[378.6,589.4,191.2,41.2],[616.8,589.4,194.1,44.1],[869.8,586.5,211.8,50]]},{"file":"033_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #033","cardCount":22,"w":1267,"h":577,"rects":[[19.3,183.7,182.1,61.5],[260.4,188.8,182.1,56.4],[496.2,178.6,189.7,69.2],[734.7,183.7,205.1,120.5],[1057.8,181.1,187.2,179.5],[29.6,414.5,217.9,53.8],[278.3,409.3,210.3,69.2],[529.6,440.1,205.1,107.7],[791.1,463.2,194.9,84.6],[1029.6,481.1,210.3,69.2],[21.9,137.5,179.5,33.3],[262.9,137.5,171.8,33.3],[498.8,142.7,184.6,25.6],[739.8,140.1,200,28.2],[1060.4,140.1,174.4,35.9],[32.1,363.2,210.3,35.9],[280.9,373.4,212.8,25.6],[514.2,363.2,228.2,66.7],[793.7,411.9,179.5,43.6],[1024.5,414.5,217.9,59]]},{"file":"034_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #034","cardCount":11,"w":1080,"h":594,"rects":[[96.2,507.6,152.4,50],[296.2,483.8,119,71.4],[455.7,483.8,323.8,28.6],[15.2,321.9,138.1,28.6],[217.6,319.5,154.8,78.6],[429.5,317.1,140.5,81],[658.1,317.1,181,81],[879.5,319.5,188.1,85.7],[15.2,260,135.7,54.8],[91.4,417.1,166.7,78.6],[210.5,257.6,166.7,52.4],[301,424.3,119,47.6],[429.5,257.6,138.1,52.4],[453.3,419.5,326.2,47.6],[879.5,257.6,185.7,52.4],[648.6,252.8,190.5,54.8],[86.7,119.5,254.8,64.3],[781.9,126.6,266.7,57.1]]},{"file":"035_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #035","cardCount":9,"w":1168,"h":538,"rects":[[25.7,307.2,166.7,50],[223.3,309.6,135.7,52.4],[387.6,304.9,176.2,52.4],[539.9,426.3,181,88.1],[644.7,181,157.1,28.6],[742.3,309.6,197.6,52.4],[973.3,214.4,161.9,214.3],[30.4,250.1,161.9,52.4],[225.7,245.3,131,50],[394.7,243,164.3,57.1],[94.7,143,226.2,38.1],[535.2,381,195.2,38.1],[642.3,152.5,154.8,19],[735.2,250.1,207.1,47.6],[978,147.7,152.4,47.6]]},{"file":"036_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #036","cardCount":9,"w":1027,"h":729,"rects":[[144.6,123.9,123.5,52.9],[388.7,159.2,179.4,79.4],[679.9,182.8,164.7,108.8],[32.8,471,226.5,176.5],[306.3,471,223.5,176.5],[576.9,497.5,164.7,55.9],[800.5,465.1,202.9,91.2],[382.8,121,185.3,29.4],[679.9,123.9,173.5,44.1],[35.7,429.8,223.5,29.4],[300.5,426.9,223.5,32.4],[568.1,423.9,185.3,67.6],[800.5,423.9,200,35.3]]},{"file":"037_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #037","cardCount":8,"w":897,"h":730,"rects":[[28.5,513.1,211.8,158.8],[281.4,513.1,217.6,105.9],[563.8,442.5,294.1,52.9],[28.5,157.3,223.5,52.9],[322.6,151.4,288.2,179.4],[693.2,148.4,173.5,182.4],[28.5,439.6,214.7,67.6],[275.5,448.4,220.6,52.9],[34.4,92.5,211.8,50],[328.5,92.5,276.5,50],[693.2,89.6,170.6,52.9],[175.5,360.2,338.2,29.4],[560.8,374.9,294.1,55.9]]},{"file":"038_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #038","cardCount":5,"w":843,"h":361,"rects":[[16.8,182.7,191.4,148.3],[270.2,186.1,143.1,131],[473.7,205.1,146.6,34.5],[678.8,206.8,146.6,34.5],[16.8,141.3,193.1,31],[265,141.3,151.7,34.5],[473.7,141.3,150,58.6],[682.3,144.7,141.4,53.4]]},{"file":"039_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #039","cardCount":9,"w":1138,"h":513,"rects":[[32.5,283.9,167.4,51.2],[232.5,279.2,183.7,107],[451.1,279.2,162.8,186],[641.8,279.2,260.5,81.4],[948.8,223.4,158.1,93],[809.3,451.3,200,37.2],[37.2,223.4,153.5,46.5],[232.5,218.8,179.1,55.8],[451.1,223.4,153.5,51.2],[646.5,223.4,251.2,55.8],[804.6,383.9,216.3,62.8],[116.3,121.1,311.6,32.6],[604.6,123.4,279.1,34.9],[951.1,121.1,151.2,55.8]]},{"file":"040_Pharmac_Uni_06_CNS.png","deck":"Pharmac Uni::06: CNS","days":[6,7],"label":"Central Nervous System","topic":"Central Nervous System (Sedatives, Antiepileptics, Antidepressants)","title":"Central Nervous System Diagram #040","cardCount":8,"w":1032,"h":674,"rects":[[27.5,484.6,162.2,89.2],[232.9,481.9,202.7,29.7],[503.1,462.9,335.1,129.7],[24.8,146.7,194.6,118.9],[303.1,154.8,162.2,37.8],[538.3,154.8,332.4,127],[19.4,417,170.3,56.8],[230.2,422.4,213.5,54.1],[492.3,417,348.6,35.1],[22.1,111.6,194.6,32.4],[305.8,108.9,154.1,32.4],[538.3,106.2,332.4,37.8]]},{"file":"041_Pharmac_Uni_07_CVS.png","deck":"Pharmac Uni::07: CVS","days":[4,5],"label":"Cardiovascular System","topic":"Cardiovascular System (Antihypertensives, Antianginals, Antiarrhythmics)","title":"Cardiovascular System Diagram #041","cardCount":14,"w":1043,"h":681,"rects":[[146.2,487.5,129.7,164.9],[308.4,495.6,167.6,127],[502.9,503.7,118.9,24.3],[640.8,533.4,151.4,102.7],[816.5,525.3,124.3,48.6],[621.9,360.4,116.2,78.4],[762.4,374,97.3,62.2],[105.6,325.3,170.3,64.9],[292.1,330.7,124.3,56.8],[443.5,328,113.5,64.9],[643.5,479.4,140.5,43.2],[811.1,476.7,137.8,43.2],[627.3,309.1,108.1,43.2],[757,311.8,102.7,54.1],[151.6,452.3,129.7,21.6],[308.4,452.3,162.2,35.1],[505.6,452.3,108.1,35.1],[105.6,295.6,164.9,29.7],[297.5,298.3,110.8,27],[440.8,295.6,108.1,27],[175.9,222.6,151.4,18.9],[502.9,225.3,175.7,35.1],[732.7,222.6,102.7,45.9]]},{"file":"042_Pharmac_Uni_07_CVS.png","deck":"Pharmac Uni::07: CVS","days":[4,5],"label":"Cardiovascular System","topic":"Cardiovascular System (Antihypertensives, Antianginals, Antiarrhythmics)","title":"Cardiovascular System Diagram #042","cardCount":8,"w":923,"h":417,"rects":[[53.1,232.1,111.3,17],[204,205.6,154.7,43.4],[392.7,211.3,160.4,150.9],[581.4,211.3,158.5,62.3],[777.6,235.8,120.8,39.6],[581.4,175.5,160.4,24.5],[779.5,177.3,109.4,41.5],[51.2,173.6,120.8,45.3],[200.3,175.5,167.9,22.6],[388.9,173.6,158.5,28.3],[68.2,96.2,237.7,22.6],[532.3,90.5,147.2,28.3]]},{"file":"043_Pharmac_Uni_07_CVS.png","deck":"Pharmac Uni::07: CVS","days":[4,5],"label":"Cardiovascular System","topic":"Cardiovascular System (Antihypertensives, Antianginals, Antiarrhythmics)","title":"Cardiovascular System Diagram #043","cardCount":9,"w":946,"h":461,"rects":[[20.7,254.4,157.7,84.6],[205.3,250.5,132.7,203.8],[359.1,217.8,103.8,90.4],[486.1,212.1,134.6,125],[645.7,215.9,113.5,26.9],[786.1,217.8,130.8,117.3],[24.5,219.8,146.2,26.9],[209.1,215.9,119.2,25],[113,90.9,101.9,28.8],[270.7,90.9,98.1,28.8],[436.1,96.7,157.7,42.3],[630.3,90.9,128.8,48.1],[795.7,94.8,123.1,69.2]]},{"file":"044_Pharmac_Uni_07_CVS.png","deck":"Pharmac Uni::07: CVS","days":[4,5],"label":"Cardiovascular System","topic":"Cardiovascular System (Antihypertensives, Antianginals, Antiarrhythmics)","title":"Cardiovascular System Diagram #044","cardCount":11,"w":914,"h":413,"rects":[[63.8,90.1,144.4,42.6],[149,225.3,129.6,25.9],[230.4,90.1,192.6,38.9],[447.1,84.5,122.2,51.9],[599,84.5,138.9,27.8],[60.1,304.9,138.9,24.1],[232.3,306.8,127.8,40.7],[399,306.8,168.5,40.7],[600.8,306.8,157.4,40.7],[63.8,140.1,142.6,44.4],[232.3,136.4,190.7,50],[443.4,136.4,125.9,74.1],[600.8,116,137,24.1],[63.8,334.5,131.5,68.5],[232.3,358.6,122.2,40.7],[397.1,354.9,170.4,44.4],[604.5,358.6,148.1,40.7],[782.3,353,98.1,50]]},{"file":"045_Pharmac_Uni_07_CVS.png","deck":"Pharmac Uni::07: CVS","days":[4,5],"label":"Cardiovascular System","topic":"Cardiovascular System (Antihypertensives, Antianginals, Antiarrhythmics)","title":"Cardiovascular System Diagram #045","cardCount":17,"w":1030,"h":597,"rects":[[208.9,80,169,35.7],[225.6,294.3,261.9,26.2],[520.8,82.4,114.3,28.6],[635.1,325.2,133.3,28.6],[787.5,256.2,123.8,40.5],[820.8,84.7,133.3,42.9],[20.8,168.1,95.2,47.6],[139.8,168.1,121.4,50],[292.2,165.7,107.1,50],[444.6,168.1,114.3,38.1],[587.5,168.1,123.8,33.3],[108.9,391.9,140.5,23.8],[306.5,391.9,157.1,45.2],[494.6,391.9,126.2,28.6],[627.9,534.7,145.2,26.2],[675.6,396.7,131,38.1],[16,225.2,100,52.4],[142.2,225.2,119,42.9],[285.1,220.5,119,47.6],[442.2,210.9,111.9,57.1],[594.6,208.6,109.5,90.5],[827.9,182.4,126.2,45.2],[825.6,330,123.8,90.5],[677.9,446.7,123.8,45.2],[627.9,565.7,145.2,28.6],[497,430,114.3,83.3],[308.9,444.3,164.3,71.4],[116,427.6,133.3,83.3]]},{"file":"046_Pharmac_Uni_07_CVS.png","deck":"Pharmac Uni::07: CVS","days":[4,5],"label":"Cardiovascular System","topic":"Cardiovascular System (Antihypertensives, Antianginals, Antiarrhythmics)","title":"Cardiovascular System Diagram #046","cardCount":9,"w":959,"h":551,"rects":[[217.3,76.4,260,42.2],[584,325.3,144.4,71.1],[728.4,232,164.4,64.4],[790.6,78.6,160,64.4],[35.1,172,200,66.7],[255.1,176.4,166.7,64.4],[457.3,172,195.6,75.6],[199.5,380.9,113.3,48.9],[806.2,165.3,135.6,46.7],[770.6,327.5,124.4,100],[550.6,425.3,197.8,93.3],[206.2,438.6,108.9,48.9],[37.3,252,186.7,64.4],[266.2,247.5,151.1,68.9],[455.1,249.7,193.3,60]]},{"file":"047_Pharmac_Uni_08_Kidney.png","deck":"Pharmac Uni::08: Kidney","days":[5],"label":"Kidney & Diuretics","topic":"Kidney & Diuretics","title":"Kidney & Diuretics Diagram #047","cardCount":15,"w":843,"h":554,"rects":[[27.4,93.4,220,60],[287.4,93.4,177.8,62.2],[511.8,91.2,153.3,40],[211.8,215.6,157.8,24.4],[402.9,213.4,115.6,26.7],[551.8,217.9,126.7,62.2],[607.4,355.6,168.9,44.4],[718.5,220.1,82.2,44.4],[527.4,451.2,124.4,42.2],[669.6,449,160,44.4],[20.7,409,180,44.4],[229.6,413.4,104.4,22.2],[360.7,409,140,28.9],[65.1,206.7,117.8,80],[207.4,244.5,171.1,73.3],[402.9,240.1,122.2,113.3],[558.5,282.3,113.3,28.9],[722.9,266.7,77.8,64.4],[531.8,502.3,122.2,44.4],[669.6,502.3,162.2,51.1],[18.5,457.9,184.4,84.4],[234,440.1,102.2,71.1],[365.1,444.5,131.1,62.2]]},{"file":"048_Pharmac_Uni_09_Blood.png","deck":"Pharmac Uni::09: Blood","days":[10],"label":"Blood & Coagulation","topic":"Blood, Coagulation & Antithrombotics","title":"Blood & Coagulation Diagram #048","cardCount":6,"w":834,"h":513,"rects":[[38.8,230.5,155.1,238.8],[224.5,228.5,126.5,130.6],[393.9,148.9,189.8,173.5],[624.5,169.3,128.6,69.4],[28.6,193.8,165.3,26.5],[216.3,195.8,136.7,24.5],[122.5,116.3,106.1,26.5],[391.9,116.3,187.8,22.4],[622.5,118.3,130.6,40.8]]},{"file":"049_Pharmac_Uni_09_Blood.png","deck":"Pharmac Uni::09: Blood","days":[10],"label":"Blood & Coagulation","topic":"Blood, Coagulation & Antithrombotics","title":"Blood & Coagulation Diagram #049","cardCount":3,"w":553,"h":344,"rects":[[15.1,125.4,206.9,191.7],[342.8,125.4,193.1,191.7],[15.1,94.9,204.2,25],[341.4,94.9,197.2,27.8]]},{"file":"050_Pharmac_Uni_09_Blood.png","deck":"Pharmac Uni::09: Blood","days":[10],"label":"Blood & Coagulation","topic":"Blood, Coagulation & Antithrombotics","title":"Blood & Coagulation Diagram #050","cardCount":9,"w":962,"h":450,"rects":[[111.2,97.7,278.4,27.5],[585.7,93.8,205.9,27.5],[621,299.7,219.6,29.4],[26.9,178.1,221.6,41.2],[275.9,176.1,113.7,66.7],[413.2,176.1,180.4,45.1],[621,178.1,121.6,41.2],[770,176.1,168.6,45.1],[30.8,235,219.6,174.5],[277.9,250.7,111.8,64.7],[417.1,235,176.5,180.4],[624.9,235,113.7,39.2],[770,231,168.6,49],[624.9,335,205.9,88.2]]},{"file":"051_Pharmac_Uni_09_Blood.png","deck":"Pharmac Uni::09: Blood","days":[10],"label":"Blood & Coagulation","topic":"Blood, Coagulation & Antithrombotics","title":"Blood & Coagulation Diagram #051","cardCount":9,"w":646,"h":405,"rects":[[85.7,17.6,171,41.9],[384.1,20.8,203.2,37.1],[87.3,64.4,171,96.8],[388.9,69.2,196.8,53.2],[16.4,343.4,100,16.1],[180.9,340.2,109.7,21],[335.7,320.8,145.2,61.3],[526,324,111.3,61.3],[16.4,272.4,111.3,54.8],[176,275.6,117.7,53.2],[335.7,274,148.4,40.3],[527.7,272.4,104.8,41.9]]},{"file":"052_Pharmac_Uni_10_GIT.png","deck":"Pharmac Uni::10: GIT","days":[13],"label":"Gastrointestinal Tract","topic":"Gastrointestinal Tract (Peptic Ulcer & Antiemetics)","title":"Gastrointestinal Tract Diagram #052","cardCount":11,"w":994,"h":492,"rects":[[12.1,225,151,85.7],[59.1,398.5,126.5,65.3],[222.3,243.4,132.7,132.7],[377.4,245.4,124.5,24.5],[375.4,361.7,144.9,42.9],[559.1,353.6,171.4,110.2],[599.9,212.8,163.3,65.3],[799.9,157.7,134.7,138.8],[30.5,104.6,306.1,24.5],[487.6,106.6,222.4,44.9],[604,176,163.3,26.5],[797.8,104.6,142.9,42.9],[373.3,323,153.1,24.5],[557,325,165.3,24.5],[1.9,184.2,167.3,32.7],[52.9,363.8,144.9,24.5],[220.3,190.3,128.6,44.9],[377.4,188.3,130.6,44.9]]},{"file":"053_Pharmac_Uni_10_GIT.png","deck":"Pharmac Uni::10: GIT","days":[13],"label":"Gastrointestinal Tract","topic":"Gastrointestinal Tract (Peptic Ulcer & Antiemetics)","title":"Gastrointestinal Tract Diagram #053","cardCount":8,"w":964,"h":473,"rects":[[36.7,86.5,158.8,33.3],[142.5,298.2,209.8,33.3],[264.1,88.4,174.5,47.1],[497.4,86.5,156.9,31.4],[705.3,84.5,172.5,51],[550.4,302.2,168.6,29.4],[756.3,304.1,151,45.1],[146.5,333.5,198,109.8],[550.4,341.4,166.7,103.9],[756.3,357.1,149,86.3],[711.2,143.3,158.8,90.2],[495.5,125.7,162.7,109.8],[258.2,145.3,182.4,82.4],[38.6,125.7,152.9,45.1]]},{"file":"054_Pharmac_Uni_10_GIT.png","deck":"Pharmac Uni::10: GIT","days":[13],"label":"Gastrointestinal Tract","topic":"Gastrointestinal Tract (Peptic Ulcer & Antiemetics)","title":"Gastrointestinal Tract Diagram #054","cardCount":9,"w":738,"h":529,"rects":[[46.4,106.5,166,44.7],[246.4,104.3,157.4,44.7],[350.7,310.7,191.5,34],[484.7,106.5,163.8,46.8],[40,400.1,178.7,25.5],[237.9,400.1,161.7,46.8],[420.9,402.2,127.7,25.5],[576.2,398,95.7,31.9],[46.4,161.8,166,85.1],[248.5,161.8,151.1,93.6],[486.8,161.8,161.7,127.7],[46.4,442.6,166,68.1],[244.3,455.4,146.8,55.3],[420.9,434.1,129.8,31.9],[578.3,434.1,89.4,31.9]]},{"file":"055_Pharmac_Uni_10_GIT.png","deck":"Pharmac Uni::10: GIT","days":[13],"label":"Gastrointestinal Tract","topic":"Gastrointestinal Tract (Peptic Ulcer & Antiemetics)","title":"Gastrointestinal Tract Diagram #055","cardCount":11,"w":867,"h":589,"rects":[[37,75.3,140.5,45.2],[110.8,339.6,219,52.4],[267.9,72.9,131,23.8],[525.1,77.7,209.5,42.9],[39.3,439.6,150,45.2],[210.8,439.6,192.9,42.9],[429.8,444.3,133.3,38.1],[429.8,187.2,140.5,40.5],[589.3,184.8,147.6,45.2],[632.2,363.4,211.9,33.3],[34.6,134.8,147.6,181],[260.8,115.8,142.9,195.2],[446.5,242,116.7,95.2],[591.7,244.3,147.6,90.5],[632.2,399.1,202.4,81],[425.1,492,140.5,92.9],[213.2,492,188.1,95.2],[46.5,492,128.6,95.2]]},{"file":"056_Pharmac_Uni_11_AMA.png","deck":"Pharmac Uni::11: AMA","days":[8,9],"label":"Antimicrobial Agents","topic":"Antimicrobial Agents (Penicillins, Cephalosporins, Aminoglycosides)","title":"Antimicrobial Agents Diagram #056","cardCount":8,"w":936,"h":509,"rects":[[20.5,167.9,153.1,146.9],[242.9,169.9,161.2,149],[463.3,198.5,165.3,91.8],[122.5,398.5,185.7,89.8],[567.4,390.3,173.5,63.3],[765.4,294.4,138.8,151],[696,169.9,124.5,32.7],[16.4,112.8,159.2,44.9],[122.5,337.3,191.8,53.1],[236.8,112.8,163.3,49],[455.2,114.8,173.5,71.4],[685.8,116.9,142.9,44.9],[563.3,345.4,177.6,26.5],[767.4,223,134.7,61.2]]},{"file":"057_Pharmac_Uni_11_AMA.png","deck":"Pharmac Uni::11: AMA","days":[8,9],"label":"Antimicrobial Agents","topic":"Antimicrobial Agents (Penicillins, Cephalosporins, Aminoglycosides)","title":"Antimicrobial Agents Diagram #057","cardCount":10,"w":921,"h":589,"rects":[[75,361.8,150,33.3],[460.7,433.2,154.8,90.5],[686.9,438,183.3,128.6],[77.4,133.2,157.1,45.2],[275,135.6,178.6,45.2],[503.6,135.6,183.3,42.9],[720.3,128.5,166.7,90.5],[463.1,399.9,159.5,28.6],[684.6,402.3,188.1,26.2],[72.7,309.4,159.5,45.2],[582.2,309.4,159.5,35.7],[70.3,99.9,159.5,26.2],[270.3,95.1,192.9,31],[498.8,95.1,183.3,28.6],[717.9,97.5,166.7,26.2]]},{"file":"058_Pharmac_Uni_11_AMA.png","deck":"Pharmac Uni::11: AMA","days":[8,9],"label":"Antimicrobial Agents","topic":"Antimicrobial Agents (Penicillins, Cephalosporins, Aminoglycosides)","title":"Antimicrobial Agents Diagram #058","cardCount":10,"w":711,"h":591,"rects":[[20,132,164.3,45.2],[39,343.9,145.2,73.8],[239,341.5,133.3,76.2],[400.9,415.3,114.3,64.3],[565.2,415.3,121.4,59.5],[489,558.2,116.7,21.4],[498.5,146.3,142.9,64.3],[15.2,91.5,159.5,23.8],[224.7,96.3,231,19],[498.5,96.3,140.5,38.1],[34.2,258.2,150,76.2],[239,260.6,140.5,69],[455.7,263,176.2,47.6],[393.8,358.2,119,47.6],[560.4,355.8,123.8,50],[486.6,505.8,116.7,45.2]]},{"file":"059_Pharmac_Uni_11_AMA.png","deck":"Pharmac Uni::11: AMA","days":[8,9],"label":"Antimicrobial Agents","topic":"Antimicrobial Agents (Penicillins, Cephalosporins, Aminoglycosides)","title":"Antimicrobial Agents Diagram #059","cardCount":9,"w":891,"h":492,"rects":[[153.4,374.7,96.1,92.2],[286.8,374.7,96.1,86.3],[33.8,217.8,96.1,41.2],[165.2,213.9,96.1,23.5],[400.5,211.9,145.1,139.2],[578.9,213.9,121.6,137.3],[729.9,213.9,119.6,47.1],[35.8,178.6,94.1,29.4],[165.2,178.6,98,27.5],[151.5,331.5,100,35.3],[282.9,339.4,98,19.6],[400.5,178.6,145.1,23.5],[577,180.5,125.5,23.5],[729.9,180.5,117.6,25.5],[84.8,92.3,174.5,27.5],[167.2,259,205.9,21.6],[400.5,94.3,174.5,25.5],[682.9,92.3,172.5,31.4]]},{"file":"060_Pharmac_Uni_11_AMA.png","deck":"Pharmac Uni::11: AMA","days":[8,9],"label":"Antimicrobial Agents","topic":"Antimicrobial Agents (Penicillins, Cephalosporins, Aminoglycosides)","title":"Antimicrobial Agents Diagram #060","cardCount":6,"w":779,"h":406,"rects":[[33,126.2,145.9,119.7],[206.8,203.3,163.9,88.5],[397,206.6,168.9,170.5],[587.1,204.9,145.9,67.2],[201.9,172.1,168.9,21.3],[395.3,170.5,172.1,26.2],[587.1,172.1,147.5,27.9],[31.4,93.5,144.3,29.5],[426.5,96.7,173.8,27.9]]},{"file":"061_Pharmac_Uni_11_AMA.png","deck":"Pharmac Uni::11: AMA","days":[8,9],"label":"Antimicrobial Agents","topic":"Antimicrobial Agents (Penicillins, Cephalosporins, Aminoglycosides)","title":"Antimicrobial Agents Diagram #061","cardCount":11,"w":934,"h":554,"rects":[[23.8,146,173.3,80],[228.2,141.6,148.9,91.1],[403.8,143.8,157.8,88.9],[597.1,163.8,126.7,128.9],[754.9,161.6,144.4,86.7],[146,454.9,84.4,22.2],[274.9,466,115.6,28.9],[430.4,466,142.2,55.6],[612.7,448.2,168.9,91.1],[26,90.4,177.8,48.9],[221.6,94.9,162.2,40],[403.8,88.2,162.2,42.2],[590.4,88.2,137.8,64.4],[754.9,94.9,151.1,60],[141.6,419.3,93.3,24.4],[272.7,419.3,113.3,35.6],[430.4,419.3,137.8,37.8],[612.7,417.1,164.4,24.4]]},{"file":"062_Pharmac_Uni_12_Antiviral_etc.png","deck":"Pharmac Uni::12: Antiviral etc","days":[9],"label":"Antiviral, Antifungal & AntiTB","topic":"Antiviral, Antifungal & Anti-TB Agents","title":"Antiviral, Antifungal & AntiTB Diagram #062","cardCount":13,"w":978,"h":544,"rects":[[35,264,145.7,63],[145.9,383.5,139.1,60.9],[306.8,416.1,121.7,93.5],[226.3,279.2,113,26.1],[459,420.5,121.7,23.9],[552.4,235.7,108.7,80.4],[763.3,148.8,158.7,165.2],[606.8,150.9,106.5,21.7],[235,146.6,132.6,30.4],[76.3,116.1,91.3,23.9],[235,114,134.8,26.1],[430.7,114,100,26.1],[602.4,111.8,115.2,30.4],[761.1,111.8,160.9,30.4],[37.2,222.7,150,34.8],[148.1,348.8,134.8,23.9],[222,229.2,117.4,41.3],[365.5,279.2,100,30.4],[613.3,279.2,117.4,32.6],[313.3,385.7,108.7,26.1],[459,385.7,119.6,23.9]]},{"file":"063_Pharmac_Uni_12_Antiviral_etc.png","deck":"Pharmac Uni::12: Antiviral etc","days":[9],"label":"Antiviral, Antifungal & AntiTB","topic":"Antiviral, Antifungal & Anti-TB Agents","title":"Antiviral, Antifungal & AntiTB Diagram #063","cardCount":6,"w":810,"h":434,"rects":[[393.5,278.9,168.4,57.9],[611.1,277.1,142.1,59.6],[225.1,145.5,147.4,100],[42.6,150.8,136.8,226.3],[42.6,96.4,135.1,43.9],[225.1,98.2,149.1,43.9],[407.5,98.2,214,77.2],[393.5,242,170.2,28.1],[605.8,238.5,149.1,26.3]]},{"file":"064_Pharmac_Uni_12_Antiviral_etc.png","deck":"Pharmac Uni::12: Antiviral etc","days":[9],"label":"Antiviral, Antifungal & AntiTB","topic":"Antiviral, Antifungal & Anti-TB Agents","title":"Antiviral, Antifungal & AntiTB Diagram #064","cardCount":7,"w":917,"h":505,"rects":[[35.4,165.7,177.6,159.2],[290.5,161.7,208.2,77.6],[568,153.5,132.7,155.1],[121.1,406.6,144.9,24.5],[388.4,402.5,234.7,28.6],[712.9,406.6,185.7,22.4],[35.4,88.2,175.5,69.4],[292.5,90.2,200,67.3],[566,92.3,134.7,49],[117,369.8,157.1,28.6],[386.4,371.9,232.7,24.5],[708.9,369.8,191.8,28.6]]},{"file":"065_Pharmac_Uni_12_Antiviral_etc.png","deck":"Pharmac Uni::12: Antiviral etc","days":[9],"label":"Antiviral, Antifungal & AntiTB","topic":"Antiviral, Antifungal & Anti-TB Agents","title":"Antiviral, Antifungal & AntiTB Diagram #065","cardCount":13,"w":1037,"h":497,"rects":[[38.2,135.6,163.8,63.8],[59.5,293.1,178.7,25.5],[157.3,384.6,174.5,51.1],[295.6,135.6,148.9,63.8],[321.2,293.1,178.7,34],[404.1,386.7,174.5,48.9],[540.3,152.6,134,93.6],[595.6,293.1,134,46.8],[608.4,384.6,200,87.2],[833.9,386.7,134,29.8],[772.2,293.1,153.2,27.7],[759.5,131.4,142.6,55.3],[36,103.7,172.3,23.4],[63.7,263.3,176.6,21.3],[157.3,354.8,174.5,21.3],[293.5,103.7,153.2,23.4],[321.2,261.2,180.9,25.5],[404.1,354.8,176.6,23.4],[542.4,105.8,127.7,42.6],[595.6,263.3,131.9,27.7],[608.4,352.6,200,27.7],[757.3,101.6,140.4,25.5],[774.3,263.3,153.2,25.5],[833.9,354.8,136.2,23.4]]},{"file":"066_Pharmac_Uni_12_Antiviral_etc.png","deck":"Pharmac Uni::12: Antiviral etc","days":[9],"label":"Antiviral, Antifungal & AntiTB","topic":"Antiviral, Antifungal & Anti-TB Agents","title":"Antiviral, Antifungal & AntiTB Diagram #066","cardCount":10,"w":924,"h":515,"rects":[[19.1,373.9,145.8,116.7],[204.5,373.9,152.1,58.3],[308.6,253.1,152.1,27.1],[489.9,213.5,177.1,60.4],[773.2,219.7,137.5,64.6],[608.6,336.4,222.9,93.8],[192,96.8,191.7,27.1],[610.7,101,206.3,25],[96.1,173.9,152.1,79.2],[306.6,182.2,156.3,64.6],[17,338.5,145.8,27.1],[206.6,340.6,143.8,22.9],[489.9,176,172.9,31.3],[771.1,180.1,139.6,29.2],[610.7,301,220.8,27.1]]},{"file":"067_Pharmac_Uni_13_Cancer.png","deck":"Pharmac Uni::13: Cancer","days":[10],"label":"Cancer Chemotherapy","topic":"Cancer Chemotherapy & Cytotoxics","title":"Cancer Chemotherapy Diagram #067","cardCount":13,"w":794,"h":540,"rects":[[45.9,419.4,145.7,100],[217.6,406.4,108.7,21.7],[293.7,495.5,121.7,26.1],[380.6,399.9,110.9,43.5],[502.4,497.7,115.2,39.1],[635,402,134.8,23.9],[161.1,189,102.2,63],[298,245.5,115.2,39.1],[435,247.7,143.5,80.4],[606.7,245.5,115.2,82.6],[43.7,119.4,97.8,47.8],[158.9,119.4,108.7,58.7],[408.9,117.2,141.3,32.6],[300.2,197.7,108.7,41.3],[430.6,195.5,154.3,45.7],[608.9,199.9,113,37],[43.7,373.8,145.7,41.3],[217.6,371.6,110.9,26.1],[287.2,467.2,130.4,26.1],[378.5,373.8,117.4,19.6],[498,462.9,123.9,28.3],[635,373.8,134.8,19.6]]},{"file":"068_Pharmac_Uni_13_Cancer.png","deck":"Pharmac Uni::13: Cancer","days":[10],"label":"Cancer Chemotherapy","topic":"Cancer Chemotherapy & Cytotoxics","title":"Cancer Chemotherapy Diagram #068","cardCount":9,"w":973,"h":454,"rects":[[45,324,146,86],[219,322,100,48],[347,318,126,54],[229,186,166,42],[435,184,160,42],[631,164,138,162],[803,160,138,100],[43,288,148,26],[217,288,102,26],[35,130,166,50],[227,128,170,54],[435,128,158,50],[629,128,138,28],[801,130,136,26]]},{"file":"069_Pharmac_Uni_13_Cancer.png","deck":"Pharmac Uni::13: Cancer","days":[10],"label":"Cancer Chemotherapy","topic":"Cancer Chemotherapy & Cytotoxics","title":"Cancer Chemotherapy Diagram #069","cardCount":17,"w":1011,"h":605,"rects":[[29.7,222.6,165.9,41.5],[234.5,222.6,131.7,68.3],[410.1,220.2,131.7,68.3],[583.3,222.6,119.5,26.8],[739.4,225.1,117.1,26.8],[39.4,371.4,146.3,48.8],[129.7,527.5,148.8,46.3],[254,373.9,107.3,46.3],[312.6,547,109.8,31.7],[434.5,398.3,112.2,65.9],[517.5,525.1,148.8,48.8],[632.1,393.4,124.4,75.6],[824.8,373.9,148.8,78],[729.7,522.6,153.7,68.3],[117.5,86.1,163.4,24.4],[780.9,86.1,165.9,24.4],[29.7,166.5,165.9,48.8],[229.7,164.1,141.5,46.3],[407.7,164.1,136.6,48.8],[580.9,169,122,43.9],[739.4,164.1,114.6,48.8],[37,339.7,151.2,29.3],[129.7,490.9,151.2,29.3],[254,339.7,107.3,24.4],[310.1,493.4,112.2,41.5],[429.7,337.3,114.6,51.2],[517.5,490.9,148.8,26.8],[632.1,339.7,124.4,41.5],[824.8,339.7,148.8,29.3],[729.7,493.4,151.2,24.4]]},{"file":"070_Pharmac_Uni_14_Misc.png","deck":"Pharmac Uni::14: Misc","days":[14],"label":"Miscellaneous & Toxicology","topic":"Miscellaneous & Heavy Metal Chelators","title":"Miscellaneous & Toxicology Diagram #070","cardCount":11,"w":863,"h":512,"rects":[[14.6,158.7,124.5,73.5],[173.7,158.7,102,69.4],[308.4,158.7,206.1,118.4],[545.2,134.3,146.9,51],[16.6,385.3,118.4,63.3],[161.5,385.3,116.3,22.4],[304.3,383.2,118.4,44.9],[449.2,383.2,157.1,26.5],[635,385.3,155.1,87.8],[14.6,103.6,122.4,44.9],[171.7,101.6,102,49],[308.4,103.6,206.1,44.9],[545.2,99.6,146.9,30.6],[724.8,101.6,114.3,49],[16.6,328.1,116.3,46.9],[161.5,328.1,116.3,46.9],[304.3,330.2,118.4,49],[449.2,328.1,153.1,49],[635,330.2,155.1,46.9]]},{"file":"071_Pharmac_Uni_14_Misc.png","deck":"Pharmac Uni::14: Misc","days":[14],"label":"Miscellaneous & Toxicology","topic":"Miscellaneous & Heavy Metal Chelators","title":"Miscellaneous & Toxicology Diagram #071","cardCount":8,"w":853,"h":342,"rects":[[17.1,206.3,153.4,117.2],[199.9,206.3,139.7,117.2],[368.8,175.2,113.8,25.9],[532.6,204.6,129.3,79.3],[693,206.3,125.9,82.8],[179.2,92.5,141.4,24.1],[599.9,94.2,150,22.4],[17.1,173.5,148.3,25.9],[196.4,175.2,141.4,24.1],[534.4,175.2,120.7,24.1],[691.3,175.2,129.3,25.9]]},{"file":"072_Pharmac_Uni_14_Misc.png","deck":"Pharmac Uni::14: Misc","days":[14],"label":"Miscellaneous & Toxicology","topic":"Miscellaneous & Heavy Metal Chelators","title":"Miscellaneous & Toxicology Diagram #072","cardCount":9,"w":936,"h":575,"rects":[[29.1,180,237.2,169.8],[305.9,182.4,227.9,246.5],[564,180,137.2,107],[738.4,180,181.4,132.6],[652.4,389.3,220.9,55.8],[24.5,459.1,614,100],[31.4,144.4,234.9,30.2],[301.2,144.4,232.6,32.6],[147.7,79.3,258.1,23.3],[698.9,76.9,230.2,25.6],[650,332.8,227.9,27.9],[22.1,430.4,223.3,20.9],[564,144.4,132.6,25.6],[738.4,146.7,181.4,27.9]]}];
 
     // --- CLASSIFICATION TREES DATA ---
     const CLASSIFICATIONS = [
@@ -1806,7 +2338,7 @@
       cardRatings: {}, // { "c1": "green" }
       bossesDefeated: {}, // { 1: true }
       activeCardIndex: 0,
-      cardFilter: 'all',
+      cardFilter: 'today',
       isCardFlipped: false,
       pomoSeconds: 25 * 60,
       pomoRunning: false,
@@ -2024,6 +2556,7 @@
       });
 
       renderDayPickerPills();
+      renderTodayAtlasWidget();
     }
 
     function toggleObjective(day, idx) {
@@ -2087,9 +2620,33 @@
     }
 
     // --- 7. ACTIVE RECALL CARDS LOGIC ---
+    function startTodayDeck() {
+      state.cardFilter = 'today';
+      switchTab('cards');
+      renderCurrentCard();
+    }
+
+    function filterCardsByDay(val) {
+      if (val === 'today') {
+        filterCards('today');
+      } else if (val === 'all') {
+        filterCards('all');
+      } else {
+        state.cardFilter = 'day_' + val;
+        state.activeCardIndex = 0;
+        updateFilterButtonStyles();
+        renderCurrentCard();
+      }
+    }
+
     function getFilteredCards() {
       let cards = [...FLASHCARDS];
-      if (state.cardFilter === 'red') {
+      if (state.cardFilter === 'today') {
+        cards = cards.filter(c => c.day === state.currentDay);
+      } else if (state.cardFilter && state.cardFilter.startsWith('day_')) {
+        const targetDay = parseInt(state.cardFilter.split('_')[1], 10);
+        cards = cards.filter(c => c.day === targetDay);
+      } else if (state.cardFilter === 'red') {
         cards = cards.filter(c => state.cardRatings[c.id] === 'red');
       } else if (state.cardFilter === 'green') {
         cards = cards.filter(c => state.cardRatings[c.id] === 'green');
@@ -2103,20 +2660,80 @@
       return cards;
     }
 
+    function updateFilterButtonStyles() {
+      const isToday = state.cardFilter === 'today';
+      const isAll = state.cardFilter === 'all';
+      const isRed = state.cardFilter === 'red';
+      const isGreen = state.cardFilter === 'green';
+      const isWhy = state.cardFilter === 'why';
+      const isDoc = state.cardFilter === 'doc';
+      const isAntidote = state.cardFilter === 'antidote';
+
+      const btnToday = document.getElementById('btnFilterToday');
+      const btnAll = document.getElementById('btnFilterAll');
+      const btnRed = document.getElementById('btnFilterRed');
+      const btnGreen = document.getElementById('btnFilterGreen');
+      const btnWhy = document.getElementById('btnFilterWhy');
+      const btnDoc = document.getElementById('btnFilterDoc');
+      const btnAnti = document.getElementById('btnFilterAntidote');
+      const selectDay = document.getElementById('selectCardDay');
+
+      const activeClass = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs shadow-md";
+      const inactiveClass = "px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs";
+
+      if (btnToday) btnToday.className = isToday ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-md shadow-emerald-600/30 flex items-center gap-1.5" : inactiveClass;
+      if (btnAll) btnAll.className = isAll ? activeClass : inactiveClass;
+      if (btnRed) btnRed.className = isRed ? "px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold text-xs shadow-md" : inactiveClass;
+      if (btnGreen) btnGreen.className = isGreen ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-md" : inactiveClass;
+      if (btnWhy) btnWhy.className = isWhy ? activeClass : inactiveClass;
+      if (btnDoc) btnDoc.className = isDoc ? activeClass : inactiveClass;
+      if (btnAnti) btnAnti.className = isAntidote ? activeClass : inactiveClass;
+
+      if (selectDay) {
+        if (state.cardFilter && state.cardFilter.startsWith('day_')) {
+          selectDay.value = state.cardFilter.split('_')[1];
+        } else if (isToday) {
+          selectDay.value = 'today';
+        } else if (isAll) {
+          selectDay.value = 'all';
+        }
+      }
+    }
+
     function renderCurrentCard() {
+      const todayCards = FLASHCARDS.filter(c => c.day === state.currentDay);
       const cards = getFilteredCards();
       const total = cards.length;
 
-      document.getElementById('countAll').textContent = FLASHCARDS.length;
-      document.getElementById('countRed').textContent = FLASHCARDS.filter(c => state.cardRatings[c.id] === 'red').length;
-      document.getElementById('countGreen').textContent = FLASHCARDS.filter(c => state.cardRatings[c.id] === 'green').length;
+      // Update counters
+      const labelToday = document.getElementById('labelFilterTodayDay');
+      if (labelToday) labelToday.textContent = state.currentDay;
+      const countToday = document.getElementById('countTodayCards');
+      if (countToday) countToday.textContent = todayCards.length;
+      const countAll = document.getElementById('countAll');
+      if (countAll) countAll.textContent = FLASHCARDS.length;
+      const countRed = document.getElementById('countRed');
+      if (countRed) countRed.textContent = FLASHCARDS.filter(c => state.cardRatings[c.id] === 'red').length;
+      const countGreen = document.getElementById('countGreen');
+      if (countGreen) countGreen.textContent = FLASHCARDS.filter(c => state.cardRatings[c.id] === 'green').length;
+
+      // Update quick badge on today screen
+      const quickCount = document.getElementById('quickTodayCardCount');
+      if (quickCount) quickCount.textContent = todayCards.length;
+      const quickDay = document.getElementById('quickTodayDayNum');
+      if (quickDay) quickDay.textContent = state.currentDay;
+      const badgeNav = document.getElementById('badgeCardCount');
+      if (badgeNav) badgeNav.textContent = FLASHCARDS.length;
+
+      updateFilterButtonStyles();
 
       if (total === 0) {
         document.getElementById('currentCardIndex').textContent = '0';
         document.getElementById('totalCardsCount').textContent = '0';
-        document.getElementById('cardFrontText').textContent = "No cards found in this filter.";
+        document.getElementById('cardFrontText').textContent = "No cards found for this filter/day.";
         document.getElementById('cardBackText').textContent = "";
         document.getElementById('cardBack').classList.add('hidden');
+        document.getElementById('flipPrompt').textContent = "Select another day or click 'Cumulative All'";
         return;
       }
 
@@ -2126,7 +2743,7 @@
       const card = cards[state.activeCardIndex];
       document.getElementById('currentCardIndex').textContent = state.activeCardIndex + 1;
       document.getElementById('totalCardsCount').textContent = total;
-      document.getElementById('currentCardTag').textContent = card.tag;
+      document.getElementById('currentCardTag').textContent = `Day ${card.day} • ${card.tag}`;
       document.getElementById('cardFrontText').innerHTML = card.front;
       document.getElementById('cardBackText').innerHTML = card.back;
 
@@ -2181,19 +2798,6 @@
     function filterCards(type) {
       state.cardFilter = type;
       state.activeCardIndex = 0;
-      
-      const filterBtns = ['All', 'Red', 'Green', 'Why', 'Doc', 'Antidote'];
-      filterBtns.forEach(b => {
-        const el = document.getElementById(`btnFilter${b}`);
-        if (el) {
-          if (b.toLowerCase() === type) {
-            el.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium text-xs";
-          } else {
-            el.className = "px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs";
-          }
-        }
-      });
-
       renderCurrentCard();
     }
 
@@ -2290,6 +2894,340 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    // --- 9B. COMMUNITY CLASSIFICATION ATLAS & INTERACTIVE OCCLUSION LOGIC ---
+    let atlasState = {
+      subView: 'visual',
+      systemFilter: 'all',
+      searchQuery: '',
+      modalIndex: 0,
+      zoom: 1,
+      occlusionMode: true,
+      revealedBoxes: new Set()
+    };
+
+    function setAtlasSubView(view) {
+      atlasState.subView = view;
+      const btnVisual = document.getElementById('btnSubViewVisual');
+      const btnTrees = document.getElementById('btnSubViewTrees');
+      const visualGrid = document.getElementById('visualAtlasGrid');
+      const treesView = document.getElementById('asciiTreesView');
+      const filterPills = document.getElementById('atlasFilterPillsContainer');
+      const searchContainer = document.getElementById('atlasSearchContainer');
+
+      if (view === 'visual') {
+        btnVisual.className = "px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-md";
+        btnTrees.className = "px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5";
+        visualGrid.classList.remove('hidden');
+        treesView.classList.add('hidden');
+        filterPills.classList.remove('hidden');
+        searchContainer.classList.remove('hidden');
+        renderVisualAtlas();
+      } else {
+        btnTrees.className = "px-4 py-2 rounded-lg font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-md";
+        btnVisual.className = "px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5";
+        visualGrid.classList.add('hidden');
+        treesView.classList.remove('hidden');
+        filterPills.classList.add('hidden');
+        searchContainer.classList.add('hidden');
+        renderClassifications();
+      }
+    }
+
+    function filterAtlasBySystem(sys) {
+      atlasState.systemFilter = sys;
+      
+      const buttons = document.querySelectorAll('#atlasFilterPillsContainer button');
+      buttons.forEach(btn => {
+        btn.className = "px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap";
+      });
+
+      const activeBtnId = sys === 'all' ? 'atlasFilterAll' :
+                          sys === 'today' ? 'atlasFilterToday' :
+                          'atlasFilter' + sys;
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) {
+        activeBtn.className = "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold whitespace-nowrap shadow-sm";
+      }
+
+      renderVisualAtlas();
+    }
+
+    function filterAtlas() {
+      atlasState.searchQuery = (document.getElementById('atlasSearchInput').value || '').toLowerCase().trim();
+      renderVisualAtlas();
+    }
+
+    function getFilteredAtlasData() {
+      return ATLAS_DATA.filter(item => {
+        if (atlasState.systemFilter === 'today') {
+          if (!item.days.includes(state.currentDay)) return false;
+        } else if (atlasState.systemFilter !== 'all') {
+          const s = atlasState.systemFilter.toLowerCase();
+          const matchLabel = item.label.toLowerCase().includes(s);
+          const matchDeck = item.deck.toLowerCase().includes(s);
+          if (!matchLabel && !matchDeck) return false;
+        }
+
+        if (atlasState.searchQuery) {
+          const q = atlasState.searchQuery;
+          const matchText = (item.label + ' ' + item.topic + ' ' + item.deck + ' ' + item.title).toLowerCase();
+          if (!matchText.includes(q)) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function renderVisualAtlas() {
+      const grid = document.getElementById('visualAtlasGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const items = getFilteredAtlasData();
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400 space-y-2">
+            <div class="text-3xl">🔍</div>
+            <div class="font-bold text-white text-base">No classification charts found</div>
+            <div class="text-xs">Try clearing the search query or selecting "All" systems.</div>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(item => {
+        const fullIndex = ATLAS_DATA.indexOf(item);
+        const card = document.createElement('div');
+        card.className = "bg-slate-800/70 border border-slate-700/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden shadow-lg transition-all transform hover:-translate-y-1 flex flex-col justify-between";
+        
+        const daysLabel = item.days.map(d => 'Day ' + d).join(', ');
+
+        card.innerHTML = `
+          <div>
+            <div class="relative h-44 bg-slate-950 overflow-hidden cursor-pointer group" onclick="openAtlasModal(${fullIndex})">
+              <img src="anki/classification_images/${item.file}" loading="lazy" alt="${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+              <div class="absolute top-2.5 right-2.5 bg-slate-900/90 backdrop-blur-sm border border-slate-700 px-2 py-0.5 rounded-full text-[10px] text-amber-300 font-mono font-semibold flex items-center gap-1">
+                <span>⚡</span> ${item.rects.length || item.cardCount} Occlusion Boxes
+              </div>
+              <div class="absolute bottom-2.5 left-2.5">
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">
+                  ${daysLabel}
+                </span>
+              </div>
+            </div>
+
+            <div class="p-4 space-y-1.5">
+              <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">${item.label}</div>
+              <h4 class="text-white font-bold text-sm leading-snug line-clamp-1">${item.topic}</h4>
+              <p class="text-[11px] text-slate-400 font-mono truncate">${item.deck}</p>
+            </div>
+          </div>
+
+          <div class="px-4 pb-4 pt-2 border-t border-slate-700/50 flex items-center justify-between gap-2">
+            <button onclick="openAtlasModal(${fullIndex}, false)" class="flex-1 py-2 px-3 rounded-xl bg-slate-700/80 hover:bg-slate-600 text-slate-200 text-xs font-semibold transition text-center">
+              👁️ Study
+            </button>
+            <button onclick="openAtlasModal(${fullIndex}, true)" class="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition text-center shadow-md shadow-indigo-600/30 flex items-center justify-center gap-1">
+              <span>⚡</span> Test Recall
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderTodayAtlasWidget() {
+      const grid = document.getElementById('todayAtlasThumbGrid');
+      const badge = document.getElementById('todayAtlasCountBadge');
+      if (!grid) return;
+
+      const todayCharts = ATLAS_DATA.filter(item => item.days.includes(state.currentDay));
+      if (badge) badge.textContent = todayCharts.length + ' Charts Available';
+
+      grid.innerHTML = '';
+      if (todayCharts.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-4 text-center text-slate-400 text-xs">
+            Review the high-yield flowcharts in the Visual Atlas or ASCII quick-draw trees.
+          </div>
+        `;
+        return;
+      }
+
+      todayCharts.slice(0, 6).forEach(item => {
+        const fullIndex = ATLAS_DATA.indexOf(item);
+        const thumb = document.createElement('div');
+        thumb.onclick = () => openAtlasModal(fullIndex, true);
+        thumb.className = "group relative bg-slate-900 border border-slate-700/80 hover:border-indigo-500 rounded-xl overflow-hidden cursor-pointer shadow-md transition transform hover:scale-[1.02]";
+        thumb.innerHTML = `
+          <div class="h-24 overflow-hidden relative">
+            <img src="anki/classification_images/${item.file}" loading="lazy" class="w-full h-full object-cover object-top opacity-80 group-hover:opacity-100 transition">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent"></div>
+            <div class="absolute bottom-1.5 left-2 right-2 flex items-center justify-between text-[10px]">
+              <span class="font-bold text-white truncate max-w-[85%]">${item.label}</span>
+              <span class="text-amber-300 font-mono">⚡${item.rects.length}</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(thumb);
+      });
+    }
+
+    function openAtlasModal(index, startWithOcclusion = true) {
+      if (index < 0 || index >= ATLAS_DATA.length) return;
+      atlasState.modalIndex = index;
+      atlasState.zoom = 1;
+      atlasState.occlusionMode = startWithOcclusion;
+      atlasState.revealedBoxes = new Set();
+
+      const item = ATLAS_DATA[index];
+      document.getElementById('atlasModalTitle').textContent = item.title || item.label;
+      document.getElementById('atlasModalBadge').textContent = 'Day ' + item.days.join(', ') + ' • ' + item.label;
+      document.getElementById('atlasModalSubtitle').textContent = 'Deck: ' + item.deck + ' • ' + item.rects.length + ' Interactive Occlusion Boxes';
+      document.getElementById('atlasModalNavIndex').textContent = 'Chart ' + (index + 1) + ' of ' + ATLAS_DATA.length;
+
+      const img = document.getElementById('atlasModalImg');
+      img.src = 'anki/classification_images/' + item.file;
+
+      updateOcclusionButtonState();
+      resetAtlasZoom();
+
+      img.onload = () => {
+        renderOcclusionBoxes();
+      };
+      if (img.complete) {
+        renderOcclusionBoxes();
+      }
+
+      document.getElementById('atlasModal').classList.remove('hidden');
+    }
+
+    function closeAtlasModal() {
+      document.getElementById('atlasModal').classList.add('hidden');
+    }
+
+    function navAtlasModal(step) {
+      let newIdx = atlasState.modalIndex + step;
+      if (newIdx < 0) newIdx = ATLAS_DATA.length - 1;
+      if (newIdx >= ATLAS_DATA.length) newIdx = 0;
+      openAtlasModal(newIdx, atlasState.occlusionMode);
+    }
+
+    function toggleOcclusionMode() {
+      atlasState.occlusionMode = !atlasState.occlusionMode;
+      updateOcclusionButtonState();
+      renderOcclusionBoxes();
+    }
+
+    function updateOcclusionButtonState() {
+      const btn = document.getElementById('btnToggleOcclusion');
+      const label = document.getElementById('labelOcclusionToggle');
+      const banner = document.getElementById('occlusionStatusBanner');
+
+      if (atlasState.occlusionMode) {
+        btn.className = "px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1.5 transition";
+        label.textContent = "Occlusion Mode: ON";
+        banner.classList.remove('hidden');
+      } else {
+        btn.className = "px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 font-medium flex items-center gap-1.5 transition";
+        label.textContent = "Study Mode (Unmasked)";
+        banner.classList.add('hidden');
+      }
+    }
+
+    function renderOcclusionBoxes() {
+      const overlay = document.getElementById('atlasOcclusionOverlay');
+      if (!overlay) return;
+      overlay.innerHTML = '';
+
+      if (!atlasState.occlusionMode) {
+        overlay.classList.add('hidden');
+        return;
+      }
+
+      overlay.classList.remove('hidden');
+      const item = ATLAS_DATA[atlasState.modalIndex];
+      const w = item.w || 1000;
+      const h = item.h || 800;
+      const total = item.rects.length;
+
+      document.getElementById('occlusionBoxesCount').textContent = atlasState.revealedBoxes.size + ' / ' + total + ' Revealed';
+
+      item.rects.forEach((rect, boxIdx) => {
+        const [rx, ry, rw, rh] = rect;
+        const leftPct = (rx / w) * 100;
+        const topPct = (ry / h) * 100;
+        const widthPct = (rw / w) * 100;
+        const heightPct = (rh / h) * 100;
+
+        const isRevealed = atlasState.revealedBoxes.has(boxIdx);
+
+        const box = document.createElement('div');
+        box.style.left = leftPct + '%';
+        box.style.top = topPct + '%';
+        box.style.width = widthPct + '%';
+        box.style.height = heightPct + '%';
+
+        box.className = 'absolute pointer-events-auto cursor-pointer rounded transition-all duration-200 flex items-center justify-center ' + 
+          (isRevealed 
+            ? 'opacity-0 hover:opacity-20 bg-emerald-400/50' 
+            : 'bg-amber-300 hover:bg-amber-200 border border-amber-500 shadow-md');
+
+        box.innerHTML = isRevealed ? '' : '<span class="text-[9px] font-black text-amber-900 select-none">?</span>';
+
+        box.onclick = (e) => {
+          e.stopPropagation();
+          toggleSingleBox(boxIdx);
+        };
+
+        overlay.appendChild(box);
+      });
+    }
+
+    function toggleSingleBox(boxIdx) {
+      if (atlasState.revealedBoxes.has(boxIdx)) {
+        atlasState.revealedBoxes.delete(boxIdx);
+      } else {
+        atlasState.revealedBoxes.add(boxIdx);
+        playChime('card_flip');
+        addXP(10, 'Occlusion recall');
+      }
+      renderOcclusionBoxes();
+    }
+
+    function revealAllOcclusionBoxes() {
+      const item = ATLAS_DATA[atlasState.modalIndex];
+      item.rects.forEach((_, idx) => atlasState.revealedBoxes.add(idx));
+      renderOcclusionBoxes();
+    }
+
+    function hideAllOcclusionBoxes() {
+      atlasState.revealedBoxes.clear();
+      renderOcclusionBoxes();
+    }
+
+    function zoomAtlasImage(delta) {
+      atlasState.zoom = Math.max(0.6, Math.min(2.5, atlasState.zoom + delta));
+      applyAtlasZoom();
+    }
+
+    function resetAtlasZoom() {
+      atlasState.zoom = 1;
+      applyAtlasZoom();
+    }
+
+    function applyAtlasZoom() {
+      const stage = document.getElementById('atlasStage');
+      if (stage) {
+        stage.style.transform = 'scale(' + atlasState.zoom + ')';
+      }
+      const label = document.getElementById('atlasZoomLabel');
+      if (label) {
+        label.textContent = Math.round(atlasState.zoom * 100) + '%';
+      }
     }
 
     // --- 10. 15-DAY MASTER TIMELINE GRID ---
@@ -2595,7 +3533,10 @@
 
       if (tabId === 'cards') renderCurrentCard();
       if (tabId === 'matrix') renderMatrixTables();
-      if (tabId === 'classifications') renderClassifications();
+      if (tabId === 'classifications') {
+        if (atlasState.subView === 'visual') renderVisualAtlas();
+        else renderClassifications();
+      }
       if (tabId === 'timeline') renderTimeline();
     }
 
@@ -2604,6 +3545,35 @@
       // Don't intercept typing in inputs/textareas
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+      const atlasModal = document.getElementById('atlasModal');
+      const isAtlasOpen = atlasModal && !atlasModal.classList.contains('hidden');
+
+      if (isAtlasOpen) {
+        if (e.code === 'Escape') {
+          closeAtlasModal();
+        } else if (e.code === 'ArrowRight') {
+          navAtlasModal(1);
+        } else if (e.code === 'ArrowLeft') {
+          navAtlasModal(-1);
+        } else if (e.code === 'KeyR') {
+          revealAllOcclusionBoxes();
+        } else if (e.code === 'KeyH') {
+          hideAllOcclusionBoxes();
+        } else if (e.code === 'Space') {
+          e.preventDefault();
+          // Reveal next unrevealed box
+          const item = ATLAS_DATA[atlasState.modalIndex];
+          for (let i = 0; i < item.rects.length; i++) {
+            if (!atlasState.revealedBoxes.has(i)) {
+              toggleSingleBox(i);
+              break;
+            }
+          }
+        }
+        return;
+      }
+
+      // Flashcard navigation
       if (e.code === 'Space') {
         e.preventDefault();
         flipCurrentCard();
@@ -2629,6 +3599,8 @@
       renderCurrentCard();
       renderMatrixTables();
       renderClassifications();
+      renderVisualAtlas();
+      renderTodayAtlasWidget();
       renderTimeline();
     });
   </script>
