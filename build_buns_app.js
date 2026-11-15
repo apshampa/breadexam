@@ -2095,10 +2095,10 @@ const htmlTemplate = `<!DOCTYPE html>
         card.className = "bg-neutral-950 p-5 rounded-3xl border border-neutral-800 space-y-3";
         card.innerHTML = \`
           <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
-            <h4 class="font-bold text-white text-sm">\\\${c.title}</h4>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-400 font-mono border border-neutral-800">\\\${c.badge}</span>
+            <h4 class="font-bold text-white text-sm">\\${c.title}</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-400 font-mono border border-neutral-800">\\${c.badge}</span>
           </div>
-          <pre class="text-xs font-mono text-neutral-300 whitespace-pre overflow-x-auto leading-relaxed bg-black/50 p-3 rounded-xl border border-neutral-800/60">\\\${c.tree}</pre>
+          <pre class="text-xs font-mono text-neutral-300 whitespace-pre overflow-x-auto leading-relaxed bg-black/50 p-3 rounded-xl border border-neutral-800/60">\\${c.tree}</pre>
         \`;
         container.appendChild(card);
       });
@@ -2110,11 +2110,11 @@ const htmlTemplate = `<!DOCTYPE html>
       if (!grid) return;
 
       const todayCharts = ATLAS_DATA.filter(item => item.days && item.days.includes(state.currentDay));
-      if (badge) badge.textContent = \`\\\${todayCharts.length} Charts Available\`;
+      if (badge) badge.textContent = \`\\${todayCharts.length} Charts Available\`;
       grid.innerHTML = '';
 
       if (todayCharts.length === 0) {
-        grid.innerHTML = \`<div class="col-span-full py-4 text-center text-neutral-500 text-xs">No direct chart matching Day \\\${state.currentDay}. Explore all 73 charts in the Visual Atlas tab!</div>\`;
+        grid.innerHTML = \`<div class="col-span-full py-4 text-center text-neutral-500 text-xs">No direct chart matching Day \\${state.currentDay}. Explore all 73 charts in the Visual Atlas tab!</div>\`;
         return;
       }
 
@@ -2125,11 +2125,11 @@ const htmlTemplate = `<!DOCTYPE html>
         thumb.className = "group relative bg-neutral-900 border border-neutral-800 hover:border-neutral-600 rounded-2xl overflow-hidden cursor-pointer shadow-md transition transform hover:scale-[1.02] flex flex-col justify-between";
         thumb.innerHTML = \`
           <div class="h-28 overflow-hidden relative bg-black flex items-center justify-center">
-            <img src="anki/classification_images/\\\${item.file}" loading="lazy" alt="\\\${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 transition duration-300">
+            <img src="anki/classification_images/\\${item.file}" loading="lazy" alt="\\${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 transition duration-300">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
             <div class="absolute bottom-1.5 left-2 right-2 flex items-center justify-between text-[10px]">
-              <span class="font-bold text-white truncate max-w-[80%]">\\\${item.label}</span>
-              <span class="text-amber-300 font-mono font-bold">⚡\\\${item.rects.length}</span>
+              <span class="font-bold text-white truncate max-w-[80%]">\\${item.label}</span>
+              <span class="text-amber-300 font-mono font-bold">⚡\\${item.rects.length}</span>
             </div>
           </div>
         \`;
@@ -2161,7 +2161,7 @@ const htmlTemplate = `<!DOCTYPE html>
 
         if (atlasState.searchQuery) {
           const q = atlasState.searchQuery;
-          const matchText = \`\\\${item.label || ''} \\\${item.topic || ''} \\\${item.deck || ''} \\\${item.title || ''}\`.toLowerCase();
+          const matchText = \`\\${item.label || ''} \\${item.topic || ''} \\${item.deck || ''} \\${item.title || ''}\`.toLowerCase();
           if (!matchText.includes(q)) return false;
         }
 
@@ -2195,31 +2195,31 @@ const htmlTemplate = `<!DOCTYPE html>
 
         card.innerHTML = \`
           <div>
-            <div class="relative h-44 bg-black overflow-hidden cursor-pointer group" onclick="openAtlasModal(\\\${fullIndex})">
-              <img src="anki/classification_images/\\\${item.file}" loading="lazy" alt="\\\${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
+            <div class="relative h-44 bg-black overflow-hidden cursor-pointer group" onclick="openAtlasModal(\\${fullIndex})">
+              <img src="anki/classification_images/\\${item.file}" loading="lazy" alt="\\${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
               <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
               <div class="absolute top-2.5 right-2.5 bg-neutral-900/90 backdrop-blur-sm border border-neutral-700 px-2 py-0.5 rounded-full text-[10px] text-amber-300 font-mono font-semibold flex items-center gap-1">
-                <span>⚡</span> \\\${item.rects.length || item.cardCount} Occlusions
+                <span>⚡</span> \\${item.rects.length || item.cardCount} Occlusions
               </div>
               <div class="absolute bottom-2.5 left-2.5">
                 <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-neutral-900/90 text-white border border-neutral-700">
-                  \\\${daysLabel}
+                  \\${daysLabel}
                 </span>
               </div>
             </div>
 
             <div class="p-4 space-y-1.5">
-              <div class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">\\\${item.label}</div>
-              <h4 class="text-white font-bold text-sm leading-snug line-clamp-1">\\\${item.topic}</h4>
-              <p class="text-[10px] text-neutral-500 font-mono truncate">\\\${item.deck}</p>
+              <div class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">\\${item.label}</div>
+              <h4 class="text-white font-bold text-sm leading-snug line-clamp-1">\\${item.topic}</h4>
+              <p class="text-[10px] text-neutral-500 font-mono truncate">\\${item.deck}</p>
             </div>
           </div>
 
           <div class="px-4 pb-4 pt-2 border-t border-neutral-800/80 flex items-center justify-between gap-2">
-            <button onclick="openAtlasModal(\\\${fullIndex}, false)" class="flex-1 py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs font-semibold transition text-center border border-neutral-800">
+            <button onclick="openAtlasModal(\\${fullIndex}, false)" class="flex-1 py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs font-semibold transition text-center border border-neutral-800">
               👁️ Study
             </button>
-            <button onclick="openAtlasModal(\\\${fullIndex}, true)" class="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold transition text-center shadow-md flex items-center justify-center gap-1">
+            <button onclick="openAtlasModal(\\${fullIndex}, true)" class="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold transition text-center shadow-md flex items-center justify-center gap-1">
               <span>⚡</span> Test Recall
             </button>
           </div>
@@ -2242,12 +2242,12 @@ const htmlTemplate = `<!DOCTYPE html>
       const navIdxEl = document.getElementById('atlasModalNavIndex');
 
       if (titleEl) titleEl.textContent = item.title || item.label;
-      if (badgeEl) badgeEl.textContent = \`Day \\\${item.days ? item.days.join(', ') : 'Ref'} • \\\${item.label}\`;
-      if (subtitleEl) subtitleEl.textContent = \`Deck: \\\${item.deck} • \\\${item.rects.length} Interactive Occlusion Boxes\`;
-      if (navIdxEl) navIdxEl.textContent = \`Chart \\\${index + 1} of \\\${ATLAS_DATA.length}\`;
+      if (badgeEl) badgeEl.textContent = \`Day \\${item.days ? item.days.join(', ') : 'Ref'} • \\${item.label}\`;
+      if (subtitleEl) subtitleEl.textContent = \`Deck: \\${item.deck} • \\${item.rects.length} Interactive Occlusion Boxes\`;
+      if (navIdxEl) navIdxEl.textContent = \`Chart \\${index + 1} of \\${ATLAS_DATA.length}\`;
 
       const img = document.getElementById('atlasModalImg');
-      img.src = \`anki/classification_images/\\\${item.file}\`;
+      img.src = \`anki/classification_images/\\${item.file}\`;
 
       updateOcclusionButtonState();
       resetAtlasZoom();
@@ -2312,7 +2312,7 @@ const htmlTemplate = `<!DOCTYPE html>
       const total = item.rects.length;
 
       const countEl = document.getElementById('occlusionBoxesCount');
-      if (countEl) countEl.textContent = \`\\\${atlasState.revealedBoxes.size} / \\\${total} Revealed\`;
+      if (countEl) countEl.textContent = \`\\${atlasState.revealedBoxes.size} / \\${total} Revealed\`;
 
       item.rects.forEach((rect, boxIdx) => {
         const [rx, ry, rw, rh] = rect;
@@ -2380,11 +2380,11 @@ const htmlTemplate = `<!DOCTYPE html>
     function applyAtlasZoom() {
       const stage = document.getElementById('atlasStage');
       if (stage) {
-        stage.style.transform = \`scale(\\\${atlasState.zoom})\`;
+        stage.style.transform = \`scale(\\${atlasState.zoom})\`;
       }
       const label = document.getElementById('atlasZoomLabel');
       if (label) {
-        label.textContent = \`\\\${Math.round(atlasState.zoom * 100)}%\`;
+        label.textContent = \`\\${Math.round(atlasState.zoom * 100)}%\`;
       }
     }
 
