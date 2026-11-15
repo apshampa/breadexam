@@ -960,49 +960,79 @@ const htmlTemplate = `<!DOCTYPE html>
   </div>
 
   <!-- MODAL: INTERACTIVE OCCLUSION FULLSCREEN ATLAS MODAL -->
-  <div id="atlasModal" class="fixed inset-0 z-50 bg-black/95 hidden flex flex-col">
-    <!-- Top toolbar -->
-    <div class="p-4 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between shrink-0">
-      <div class="flex items-center gap-3">
-        <span class="text-lg">📷</span>
+  <div id="atlasModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-neutral-950 border border-neutral-800 rounded-3xl max-w-5xl w-full h-[95vh] flex flex-col shadow-2xl relative overflow-hidden">
+      
+      <!-- Top Modal Bar -->
+      <div class="p-4 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-3 bg-neutral-950">
         <div>
-          <h3 id="atlasModalTitle" class="font-bold text-white text-sm">Classification Chart</h3>
-          <span id="atlasModalSystem" class="text-[10px] text-neutral-400 font-mono">System</span>
+          <div class="flex items-center gap-2">
+            <h3 id="atlasModalTitle" class="font-bold text-white text-base">Classification Chart</h3>
+            <span id="atlasModalBadge" class="text-[10px] px-2.5 py-0.5 rounded-full font-semibold bg-neutral-900 text-neutral-200 border border-neutral-700">Day 2 • ANS</span>
+          </div>
+          <div id="atlasModalSubtitle" class="text-xs text-neutral-400 mt-0.5">Deck: Pharmac Uni::01: ANS • 10 Interactive Occlusion Cards</div>
+        </div>
+
+        <!-- Mode & Occlusion Controls -->
+        <div class="flex items-center gap-2 text-xs">
+          <!-- Occlusion Mode Toggle -->
+          <button onclick="toggleOcclusionMode()" id="btnToggleOcclusion" class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1.5 transition">
+            <span>⚡</span> <span id="labelOcclusionToggle">Occlusion Mode: ON</span>
+          </button>
+          
+          <button onclick="revealAllOcclusionBoxes()" id="btnRevealAll" class="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 font-medium">
+            👁️ Reveal All
+          </button>
+          <button onclick="hideAllOcclusionBoxes()" id="btnHideAll" class="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 font-medium">
+            🔒 Hide All
+          </button>
+
+          <!-- Zoom Controls -->
+          <div class="hidden sm:flex items-center gap-1 bg-neutral-900 px-2 py-1 rounded-lg border border-neutral-800">
+            <button onclick="zoomAtlasImage(-0.2)" class="text-neutral-400 hover:text-white font-bold px-1.5">-</button>
+            <span id="atlasZoomLabel" class="text-[10px] text-neutral-300 font-mono w-10 text-center">100%</span>
+            <button onclick="zoomAtlasImage(0.2)" class="text-neutral-400 hover:text-white font-bold px-1.5">+</button>
+            <button onclick="resetAtlasZoom()" class="text-[10px] text-neutral-400 hover:text-white pl-1">↺</button>
+          </div>
+
+          <button onclick="closeAtlasModal()" class="text-neutral-500 hover:text-white text-xl p-1 ml-2">✕</button>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button onclick="revealAllOcclusionBoxes()" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-xs border border-neutral-800">
-          Reveal All (R)
+      <!-- Occlusion Progress Bar Banner -->
+      <div id="occlusionStatusBanner" class="bg-neutral-900/80 px-4 py-2 border-b border-neutral-800 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2 text-neutral-300">
+          <span>🎯 Click any yellow box to test your recall:</span>
+          <span id="occlusionBoxesCount" class="font-bold text-amber-400">0 / 0 Revealed</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] text-neutral-500">💡 Tip: Recall the drug name aloud before clicking!</span>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Area (Scrollable & Zoomable) -->
+      <div id="atlasCanvasContainer" class="flex-1 overflow-auto p-4 flex items-center justify-center bg-black/95 relative select-none">
+        <div id="atlasStage" class="relative inline-block transition-transform duration-200 origin-center max-w-full">
+          <img id="atlasModalImg" src="" alt="Classification Chart" class="max-h-[70vh] w-auto h-auto block rounded-xl shadow-2xl border border-neutral-800">
+          <!-- Dynamic Occlusion Overlay Container -->
+          <div id="atlasOcclusionOverlay" class="absolute inset-0 pointer-events-none"></div>
+        </div>
+      </div>
+
+      <!-- Footer Bar with Prev / Next Navigation -->
+      <div class="p-3 border-t border-neutral-800 bg-neutral-950 flex items-center justify-between text-xs">
+        <button onclick="navAtlasModal(-1)" class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 font-semibold flex items-center gap-1.5 transition border border-neutral-800">
+          ◀ Previous Chart
         </button>
-        <button onclick="hideAllOcclusionBoxes()" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-xs border border-neutral-800">
-          Hide All (H)
-        </button>
-        <button onclick="closeAtlasModal()" class="px-3 py-1.5 rounded-lg bg-white text-black font-bold text-xs">
-          Close (Esc)
+        <span id="atlasModalNavIndex" class="text-neutral-400 font-mono text-xs">Chart 1 of 73</span>
+        <button onclick="navAtlasModal(1)" class="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black font-semibold flex items-center gap-1.5 shadow-sm transition">
+          Next Chart ▶
         </button>
       </div>
-    </div>
 
-    <!-- Main Occlusion Arena -->
-    <div class="flex-1 overflow-auto flex items-center justify-center p-4 relative select-none">
-      <div id="atlasImageWrapper" class="relative inline-block max-w-full max-h-full">
-        <img id="atlasModalImg" src="" alt="Classification Chart" class="max-w-full max-h-[82vh] object-contain rounded-xl border border-neutral-800">
-        <!-- Interactive occlusion overlay boxes injected via JS -->
-      </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <div class="p-3 bg-neutral-950 border-t border-neutral-800 flex items-center justify-between text-xs text-neutral-400 shrink-0">
-      <button onclick="navAtlasModal(-1)" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-800">
-        ◀ Previous Chart
-      </button>
-      <span id="atlasModalCounter" class="font-mono">Chart 1 of 73</span>
-      <button onclick="navAtlasModal(1)" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-800">
-        Next Chart ▶
-      </button>
     </div>
   </div>
+
 
   <!-- MODAL: DAILY BOSS ARENA -->
   <div id="bossModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -2016,6 +2046,8 @@ const htmlTemplate = `<!DOCTYPE html>
       systemFilter: 'all',
       searchQuery: '',
       modalIndex: 0,
+      zoom: 1,
+      occlusionMode: true,
       revealedBoxes: new Set()
     };
 
@@ -2031,24 +2063,25 @@ const htmlTemplate = `<!DOCTYPE html>
       const inactive = "px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 font-medium text-xs border border-neutral-800 flex items-center gap-1.5";
 
       if (sub === 'visual') {
-        btnV.className = active;
-        btnT.className = inactive;
-        viewV.classList.remove('hidden');
-        viewT.classList.add('hidden');
-        filtersV.classList.remove('hidden');
+        if (btnV) btnV.className = active;
+        if (btnT) btnT.className = inactive;
+        if (viewV) viewV.classList.remove('hidden');
+        if (viewT) viewT.classList.add('hidden');
+        if (filtersV) filtersV.classList.remove('hidden');
         renderVisualAtlas();
       } else {
-        btnV.className = inactive;
-        btnT.className = active;
-        viewV.classList.add('hidden');
-        viewT.classList.remove('hidden');
-        filtersV.classList.add('hidden');
+        if (btnV) btnV.className = inactive;
+        if (btnT) btnT.className = active;
+        if (viewV) viewV.classList.add('hidden');
+        if (viewT) viewT.classList.remove('hidden');
+        if (filtersV) filtersV.classList.add('hidden');
         renderClassifications();
       }
     }
 
     function renderClassifications() {
       const container = document.getElementById('classificationsGrid');
+      if (!container) return;
       const query = (document.getElementById('classificationSearchInput')?.value || '').toLowerCase().trim();
       container.innerHTML = '';
 
@@ -2062,62 +2095,45 @@ const htmlTemplate = `<!DOCTYPE html>
         card.className = "bg-neutral-950 p-5 rounded-3xl border border-neutral-800 space-y-3";
         card.innerHTML = \`
           <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
-            <h4 class="font-bold text-white text-sm">\${c.title}</h4>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-400 font-mono border border-neutral-800">\${c.badge}</span>
+            <h4 class="font-bold text-white text-sm">\\\${c.title}</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-400 font-mono border border-neutral-800">\\\${c.badge}</span>
           </div>
-          <pre class="text-xs font-mono text-neutral-300 whitespace-pre overflow-x-auto leading-relaxed bg-black/50 p-3 rounded-xl border border-neutral-800/60">\${c.tree}</pre>
+          <pre class="text-xs font-mono text-neutral-300 whitespace-pre overflow-x-auto leading-relaxed bg-black/50 p-3 rounded-xl border border-neutral-800/60">\\\${c.tree}</pre>
         \`;
         container.appendChild(card);
       });
     }
 
     function renderTodayAtlasWidget() {
-      const container = document.getElementById('todayAtlasThumbGrid');
+      const grid = document.getElementById('todayAtlasThumbGrid');
       const badge = document.getElementById('todayAtlasCountBadge');
-      if (!container) return;
+      if (!grid) return;
 
-      const currentDayData = DAYS_DATA.find(d => d.day === state.currentDay);
-      const system = currentDayData ? currentDayData.system.toLowerCase() : '';
+      const todayCharts = ATLAS_DATA.filter(item => item.days && item.days.includes(state.currentDay));
+      if (badge) badge.textContent = \`\\\${todayCharts.length} Charts Available\`;
+      grid.innerHTML = '';
 
-      const matched = ATLAS_DATA.filter(item => {
-        const itemSys = item.system.toLowerCase();
-        if (state.currentDay === 1 && itemSys.includes('general')) return true;
-        if ((state.currentDay === 2 || state.currentDay === 3) && itemSys.includes('ans')) return true;
-        if (state.currentDay === 4 && (itemSys.includes('renal') || itemSys.includes('diuretic'))) return true;
-        if ((state.currentDay === 5 || state.currentDay === 6) && itemSys.includes('cvs')) return true;
-        if (state.currentDay === 7 && (itemSys.includes('autacoid') || itemSys.includes('nsaid'))) return true;
-        if (state.currentDay === 8 && itemSys.includes('respiratory')) return true;
-        if (state.currentDay === 9 && itemSys.includes('blood')) return true;
-        if (state.currentDay === 10 && itemSys.includes('git')) return true;
-        if (state.currentDay === 11 && itemSys.includes('endocrine')) return true;
-        if ((state.currentDay === 12 || state.currentDay === 13) && (itemSys.includes('antimicrobial') || itemSys.includes('chemo'))) return true;
-        if ((state.currentDay === 14 || state.currentDay === 15) && itemSys.includes('cns')) return true;
-        return itemSys.includes(system);
-      });
-
-      if (badge) badge.textContent = \`\${matched.length} Charts\`;
-      container.innerHTML = '';
-
-      if (matched.length === 0) {
-        container.innerHTML = \`<div class="col-span-3 text-xs text-neutral-500 py-4 text-center">Charts available in full atlas tab.</div>\`;
+      if (todayCharts.length === 0) {
+        grid.innerHTML = \`<div class="col-span-full py-4 text-center text-neutral-500 text-xs">No direct chart matching Day \\\${state.currentDay}. Explore all 73 charts in the Visual Atlas tab!</div>\`;
         return;
       }
 
-      matched.slice(0, 6).forEach(item => {
-        const globalIdx = ATLAS_DATA.findIndex(x => x.id === item.id);
-        const card = document.createElement('div');
-        card.className = "bg-neutral-900 border border-neutral-800 rounded-2xl p-2 cursor-pointer hover:border-neutral-700 transition flex flex-col justify-between";
-        card.onclick = () => openAtlasModal(globalIdx);
-
-        card.innerHTML = \`
-          <div class="h-24 bg-black/60 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center border border-neutral-800">
-            <img src="\${item.img}" alt="\${item.title}" class="max-h-full max-w-full object-cover">
-            <span class="absolute bottom-1 right-1 text-[9px] bg-black/80 px-1.5 py-0.5 rounded text-neutral-300 font-mono">\${item.rects.length} Masks</span>
+      todayCharts.slice(0, 6).forEach(item => {
+        const fullIndex = ATLAS_DATA.indexOf(item);
+        const thumb = document.createElement('div');
+        thumb.onclick = () => openAtlasModal(fullIndex, true);
+        thumb.className = "group relative bg-neutral-900 border border-neutral-800 hover:border-neutral-600 rounded-2xl overflow-hidden cursor-pointer shadow-md transition transform hover:scale-[1.02] flex flex-col justify-between";
+        thumb.innerHTML = \`
+          <div class="h-28 overflow-hidden relative bg-black flex items-center justify-center">
+            <img src="anki/classification_images/\\\${item.file}" loading="lazy" alt="\\\${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 transition duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+            <div class="absolute bottom-1.5 left-2 right-2 flex items-center justify-between text-[10px]">
+              <span class="font-bold text-white truncate max-w-[80%]">\\\${item.label}</span>
+              <span class="text-amber-300 font-mono font-bold">⚡\\\${item.rects.length}</span>
+            </div>
           </div>
-          <div class="text-[11px] font-bold text-white line-clamp-1">\${item.title}</div>
-          <div class="text-[9px] text-neutral-400 mt-0.5">\${item.system}</div>
         \`;
-        container.appendChild(card);
+        grid.appendChild(thumb);
       });
     }
 
@@ -2133,51 +2149,116 @@ const htmlTemplate = `<!DOCTYPE html>
 
     function getFilteredAtlasData() {
       return ATLAS_DATA.filter(item => {
-        const matchesSys = atlasState.systemFilter === 'all' || item.system.toLowerCase().includes(atlasState.systemFilter.toLowerCase());
-        const matchesSearch = !atlasState.searchQuery || item.title.toLowerCase().includes(atlasState.searchQuery) || item.system.toLowerCase().includes(atlasState.searchQuery);
-        return matchesSys && matchesSearch;
+        if (atlasState.systemFilter === 'today') {
+          if (!item.days || !item.days.includes(state.currentDay)) return false;
+        } else if (atlasState.systemFilter !== 'all') {
+          const s = atlasState.systemFilter.toLowerCase();
+          const matchLabel = (item.label || '').toLowerCase().includes(s);
+          const matchDeck = (item.deck || '').toLowerCase().includes(s);
+          const matchTopic = (item.topic || '').toLowerCase().includes(s);
+          if (!matchLabel && !matchDeck && !matchTopic) return false;
+        }
+
+        if (atlasState.searchQuery) {
+          const q = atlasState.searchQuery;
+          const matchText = \`\\\${item.label || ''} \\\${item.topic || ''} \\\${item.deck || ''} \\\${item.title || ''}\`.toLowerCase();
+          if (!matchText.includes(q)) return false;
+        }
+
+        return true;
       });
     }
 
     function renderVisualAtlas() {
-      const container = document.getElementById('atlasThumbGrid');
-      if (!container) return;
-      const items = getFilteredAtlasData();
-      container.innerHTML = '';
+      const grid = document.getElementById('atlasThumbGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
 
+      const items = getFilteredAtlasData();
       if (items.length === 0) {
-        container.innerHTML = \`<div class="col-span-4 p-8 text-center text-xs text-neutral-500">No charts match your filter.</div>\`;
+        grid.innerHTML = \`
+          <div class="col-span-full py-12 text-center text-neutral-400 space-y-2">
+            <div class="text-3xl">🔍</div>
+            <div class="font-bold text-white text-base">No classification charts found</div>
+            <div class="text-xs text-neutral-500">Try selecting "All Systems" or clearing the search query.</div>
+          </div>
+        \`;
         return;
       }
 
       items.forEach(item => {
-        const globalIdx = ATLAS_DATA.findIndex(x => x.id === item.id);
+        const fullIndex = ATLAS_DATA.indexOf(item);
         const card = document.createElement('div');
-        card.className = "bg-neutral-950 border border-neutral-800 rounded-3xl p-3 cursor-pointer hover:border-neutral-700 transition flex flex-col justify-between";
-        card.onclick = () => openAtlasModal(globalIdx);
+        card.className = "bg-neutral-950 border border-neutral-800 hover:border-neutral-600 rounded-3xl overflow-hidden shadow-lg transition-all flex flex-col justify-between";
+
+        const daysLabel = item.days && item.days.length ? item.days.map(d => 'Day ' + d).join(', ') : 'Reference';
 
         card.innerHTML = \`
-          <div class="h-36 bg-black rounded-2xl overflow-hidden mb-3 relative flex items-center justify-center border border-neutral-800/80">
-            <img src="\${item.img}" alt="\${item.title}" class="max-h-full max-w-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2">
-              <span class="text-[10px] bg-neutral-900/90 text-neutral-200 px-2 py-0.5 rounded-full border border-neutral-700 font-mono">
-                \${item.rects.length} Occlusions
-              </span>
+          <div>
+            <div class="relative h-44 bg-black overflow-hidden cursor-pointer group" onclick="openAtlasModal(\\\${fullIndex})">
+              <img src="anki/classification_images/\\\${item.file}" loading="lazy" alt="\\\${item.label}" class="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+              <div class="absolute top-2.5 right-2.5 bg-neutral-900/90 backdrop-blur-sm border border-neutral-700 px-2 py-0.5 rounded-full text-[10px] text-amber-300 font-mono font-semibold flex items-center gap-1">
+                <span>⚡</span> \\\${item.rects.length || item.cardCount} Occlusions
+              </div>
+              <div class="absolute bottom-2.5 left-2.5">
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-neutral-900/90 text-white border border-neutral-700">
+                  \\\${daysLabel}
+                </span>
+              </div>
+            </div>
+
+            <div class="p-4 space-y-1.5">
+              <div class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">\\\${item.label}</div>
+              <h4 class="text-white font-bold text-sm leading-snug line-clamp-1">\\\${item.topic}</h4>
+              <p class="text-[10px] text-neutral-500 font-mono truncate">\\\${item.deck}</p>
             </div>
           </div>
-          <div>
-            <div class="text-xs font-bold text-white line-clamp-2 mb-1">\${item.title}</div>
-            <div class="text-[10px] text-neutral-400 font-mono">\${item.system}</div>
+
+          <div class="px-4 pb-4 pt-2 border-t border-neutral-800/80 flex items-center justify-between gap-2">
+            <button onclick="openAtlasModal(\\\${fullIndex}, false)" class="flex-1 py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs font-semibold transition text-center border border-neutral-800">
+              👁️ Study
+            </button>
+            <button onclick="openAtlasModal(\\\${fullIndex}, true)" class="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold transition text-center shadow-md flex items-center justify-center gap-1">
+              <span>⚡</span> Test Recall
+            </button>
           </div>
         \`;
-        container.appendChild(card);
+        grid.appendChild(card);
       });
     }
 
-    function openAtlasModal(index) {
+    function openAtlasModal(index, startWithOcclusion = true) {
+      if (index < 0 || index >= ATLAS_DATA.length) return;
       atlasState.modalIndex = index;
-      atlasState.revealedBoxes.clear();
-      renderAtlasModalContent();
+      atlasState.zoom = 1;
+      atlasState.occlusionMode = startWithOcclusion;
+      atlasState.revealedBoxes = new Set();
+
+      const item = ATLAS_DATA[index];
+      const titleEl = document.getElementById('atlasModalTitle');
+      const badgeEl = document.getElementById('atlasModalBadge');
+      const subtitleEl = document.getElementById('atlasModalSubtitle');
+      const navIdxEl = document.getElementById('atlasModalNavIndex');
+
+      if (titleEl) titleEl.textContent = item.title || item.label;
+      if (badgeEl) badgeEl.textContent = \`Day \\\${item.days ? item.days.join(', ') : 'Ref'} • \\\${item.label}\`;
+      if (subtitleEl) subtitleEl.textContent = \`Deck: \\\${item.deck} • \\\${item.rects.length} Interactive Occlusion Boxes\`;
+      if (navIdxEl) navIdxEl.textContent = \`Chart \\\${index + 1} of \\\${ATLAS_DATA.length}\`;
+
+      const img = document.getElementById('atlasModalImg');
+      img.src = \`anki/classification_images/\\\${item.file}\`;
+
+      updateOcclusionButtonState();
+      resetAtlasZoom();
+
+      img.onload = () => {
+        renderOcclusionBoxes();
+      };
+      if (img.complete) {
+        renderOcclusionBoxes();
+      }
+
       document.getElementById('atlasModal').classList.remove('hidden');
     }
 
@@ -2185,67 +2266,128 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('atlasModal').classList.add('hidden');
     }
 
-    function navAtlasModal(delta) {
-      atlasState.modalIndex = (atlasState.modalIndex + delta + ATLAS_DATA.length) % ATLAS_DATA.length;
-      atlasState.revealedBoxes.clear();
-      renderAtlasModalContent();
+    function navAtlasModal(step) {
+      let newIdx = atlasState.modalIndex + step;
+      if (newIdx < 0) newIdx = ATLAS_DATA.length - 1;
+      if (newIdx >= ATLAS_DATA.length) newIdx = 0;
+      openAtlasModal(newIdx, atlasState.occlusionMode);
     }
 
-    function renderAtlasModalContent() {
+    function toggleOcclusionMode() {
+      atlasState.occlusionMode = !atlasState.occlusionMode;
+      updateOcclusionButtonState();
+      renderOcclusionBoxes();
+    }
+
+    function updateOcclusionButtonState() {
+      const btn = document.getElementById('btnToggleOcclusion');
+      const label = document.getElementById('labelOcclusionToggle');
+      const banner = document.getElementById('occlusionStatusBanner');
+
+      if (atlasState.occlusionMode) {
+        if (btn) btn.className = "px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-1.5 transition";
+        if (label) label.textContent = "Occlusion Mode: ON";
+        if (banner) banner.classList.remove('hidden');
+      } else {
+        if (btn) btn.className = "px-3 py-1.5 rounded-lg bg-neutral-900 text-neutral-400 border border-neutral-800 font-medium flex items-center gap-1.5 transition";
+        if (label) label.textContent = "Study Mode (Unmasked)";
+        if (banner) banner.classList.add('hidden');
+      }
+    }
+
+    function renderOcclusionBoxes() {
+      const overlay = document.getElementById('atlasOcclusionOverlay');
+      if (!overlay) return;
+      overlay.innerHTML = '';
+
+      if (!atlasState.occlusionMode) {
+        overlay.classList.add('hidden');
+        return;
+      }
+
+      overlay.classList.remove('hidden');
       const item = ATLAS_DATA[atlasState.modalIndex];
-      if (!item) return;
+      const w = item.w || 1000;
+      const h = item.h || 800;
+      const total = item.rects.length;
 
-      document.getElementById('atlasModalTitle').textContent = item.title;
-      document.getElementById('atlasModalSystem').textContent = \`System: \${item.system}\`;
-      document.getElementById('atlasModalCounter').textContent = \`Chart \${atlasState.modalIndex + 1} of \${ATLAS_DATA.length}\`;
+      const countEl = document.getElementById('occlusionBoxesCount');
+      if (countEl) countEl.textContent = \`\\\${atlasState.revealedBoxes.size} / \\\${total} Revealed\`;
 
-      const img = document.getElementById('atlasModalImg');
-      img.src = item.img;
+      item.rects.forEach((rect, boxIdx) => {
+        const [rx, ry, rw, rh] = rect;
+        const leftPct = (rx / w) * 100;
+        const topPct = (ry / h) * 100;
+        const widthPct = (rw / w) * 100;
+        const heightPct = (rh / h) * 100;
 
-      const wrapper = document.getElementById('atlasImageWrapper');
-      const existingBoxes = wrapper.querySelectorAll('.occlusion-box');
-      existingBoxes.forEach(b => b.remove());
+        const isRevealed = atlasState.revealedBoxes.has(boxIdx);
 
-      item.rects.forEach((rect, idx) => {
         const box = document.createElement('div');
-        box.className = \`occlusion-box absolute rounded cursor-pointer transition-all flex items-center justify-center text-[10px] font-bold select-none \${atlasState.revealedBoxes.has(idx) ? 'bg-transparent border border-neutral-600/50 text-transparent pointer-events-none' : 'bg-neutral-900 border border-neutral-700 text-white shadow-md hover:bg-neutral-800'}\`;
-        box.style.left = \`\${rect.x}%\`;
-        box.style.top = \`\${rect.y}%\`;
-        box.style.width = \`\${rect.w}%\`;
-        box.style.height = \`\${rect.h}%\`;
+        box.style.left = leftPct + '%';
+        box.style.top = topPct + '%';
+        box.style.width = widthPct + '%';
+        box.style.height = heightPct + '%';
 
-        if (!atlasState.revealedBoxes.has(idx)) {
-          box.textContent = '?';
-        }
+        box.className = 'absolute pointer-events-auto cursor-pointer rounded transition-all duration-200 flex items-center justify-center ' + 
+          (isRevealed 
+            ? 'opacity-0 hover:opacity-20 bg-emerald-400/50' 
+            : 'bg-amber-300 hover:bg-amber-200 border border-amber-500 shadow-md');
+
+        box.innerHTML = isRevealed ? '' : '<span class="text-[9px] font-black text-amber-950 select-none">?</span>';
 
         box.onclick = (e) => {
           e.stopPropagation();
-          toggleSingleBox(idx);
+          toggleSingleBox(boxIdx);
         };
-        wrapper.appendChild(box);
+
+        overlay.appendChild(box);
       });
     }
 
-    function toggleSingleBox(idx) {
-      if (atlasState.revealedBoxes.has(idx)) {
-        atlasState.revealedBoxes.delete(idx);
+    function toggleSingleBox(boxIdx) {
+      if (atlasState.revealedBoxes.has(boxIdx)) {
+        atlasState.revealedBoxes.delete(boxIdx);
       } else {
-        atlasState.revealedBoxes.add(idx);
+        atlasState.revealedBoxes.add(boxIdx);
         playChime('success');
+        addXP(10, 'Occlusion recall');
       }
-      renderAtlasModalContent();
+      renderOcclusionBoxes();
     }
 
     function revealAllOcclusionBoxes() {
       const item = ATLAS_DATA[atlasState.modalIndex];
       item.rects.forEach((_, idx) => atlasState.revealedBoxes.add(idx));
-      renderAtlasModalContent();
+      renderOcclusionBoxes();
     }
 
     function hideAllOcclusionBoxes() {
       atlasState.revealedBoxes.clear();
-      renderAtlasModalContent();
+      renderOcclusionBoxes();
     }
+
+    function zoomAtlasImage(delta) {
+      atlasState.zoom = Math.max(0.6, Math.min(2.5, atlasState.zoom + delta));
+      applyAtlasZoom();
+    }
+
+    function resetAtlasZoom() {
+      atlasState.zoom = 1;
+      applyAtlasZoom();
+    }
+
+    function applyAtlasZoom() {
+      const stage = document.getElementById('atlasStage');
+      if (stage) {
+        stage.style.transform = \`scale(\\\${atlasState.zoom})\`;
+      }
+      const label = document.getElementById('atlasZoomLabel');
+      if (label) {
+        label.textContent = \`\\\${Math.round(atlasState.zoom * 100)}%\`;
+      }
+    }
+
 
     // --- 13. DAILY BOSS ARENA LOGIC ---
     let bossState = {
